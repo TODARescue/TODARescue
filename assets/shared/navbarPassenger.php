@@ -9,6 +9,7 @@
 </head>
 
 <style>
+
     .custom-navbar {
         background-color: #F4FAFF;
         box-shadow:
@@ -29,6 +30,7 @@
             inset 0 0 3px 3px rgba(64, 64, 64, 0.4),
             0 0 6px rgba(123, 123, 123, 0.15);
     }
+
 </style>
 
 <body>
@@ -42,6 +44,16 @@
             <div class="col text-center" data-icon="users">
                 <div class="nav-button w-100 h-100 p-2 d-flex justify-content-center align-items-center">
                     <img src="navbar-icons/users.svg" alt="Users" class="img-fluid" />
+                </div>
+            </div>
+            <div class="col text-center" data-icon="circle">
+                <div class="nav-button w-100 h-100 p-2 d-flex justify-content-center align-items-center">
+                    <img src="navbar-icons/circle.svg" alt="Add" class="img-fluid" />
+                </div>
+            </div>
+            <div class="col text-center" data-icon="phone">
+                <div class="nav-button w-100 h-100 p-2 d-flex justify-content-center align-items-center">
+                    <img src="navbar-icons/phone.svg" alt="Phone" class="img-fluid" />
                 </div>
             </div>
             <div class="col text-center" data-icon="settings">
@@ -68,8 +80,6 @@
             });
         });
     </script>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
