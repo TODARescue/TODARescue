@@ -20,13 +20,13 @@
         <h5 class="fw-semibold mb-4">Admin Dashboard</h5>
 
         <div class="d-flex flex-wrap gap-3 position-relative z-1">
-            <div class="bg-secondary-subtle rounded p-3 d-flex flex-column justify-content-between text-start flex-fill"
+            <div class="bg-secondary-subtle rounded-5 p-3 d-flex flex-column justify-content-between text-start flex-fill"
                 style="min-width: 140px;">
                 <span class="fw-semibold text-dark">Total Drivers:</span>
                 <span class="fw-bold fs-4" style="color: #2DAAA7;">130</span>
             </div>
 
-            <div class="bg-secondary-subtle rounded p-3 d-flex flex-column justify-content-between text-start flex-fill"
+            <div class="bg-secondary-subtle rounded-5 p-3 d-flex flex-column justify-content-between text-start flex-fill"
                 style="min-width: 140px;">
                 <span class="fw-semibold text-dark">Total Passengers:</span>
                 <span class="fw-bold fs-4" style="color: #2DAAA7;">3,403</span>
