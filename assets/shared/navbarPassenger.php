@@ -28,12 +28,14 @@
         <div class="row custom-navbar mx-0">
             <div class="col text-center" data-icon="home">
                 <div class="nav-button w-100 h-100 p-2 d-flex justify-content-center align-items-center">
-                    <img src="../assets/shared/navbar-icons/home.svg" alt="Home" class="img-fluid" />
+                    <img src="../assets/shared/navbar-icons/home.svg" alt="Home" class="img-fluid" /> 
                 </div>
             </div>
             <div class="col text-center" data-icon="users">
                 <div class="nav-button w-100 h-100 p-2 d-flex justify-content-center align-items-center">
-                    <img src="../assets/shared/navbar-icons/users.svg" alt="Users" class="img-fluid" />
+                    <a href="passenger/emergencyContact.php">
+                        <img src="../assets/shared/navbar-icons/users.svg" alt="Users" class="img-fluid" />
+                    </a>
                 </div>
             </div>
             <div class="col text-center" data-icon="circle">
