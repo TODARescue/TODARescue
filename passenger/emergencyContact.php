@@ -21,8 +21,11 @@
         border: 1px solid black;
         background-color: transparent;
         color: black;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
-        
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);   
+    }
+    .contact-card {
+        background-color: #D9D9D9;
+        max-width: 600px; margin-left: auto; margin-right: auto;
     }
 
 </style>
@@ -41,34 +44,84 @@
 
         <ul class="dropdown-menu" aria-labelledby="filterButton">
             <li><a class="dropdown-item" href="#" data-type="all">All</a></li>
-            <li><a class="dropdown-item" href="#" data-type="toda">TODA Officers</a></li>
+            <li><a class="dropdown-item" href="#" data-type="toda">TODA Office</a></li>
             <li><a class="dropdown-item" href="#" data-type="police">Police</a></li>
             <li><a class="dropdown-item" href="#" data-type="medical">Medical Services</a></li>
             <li><a class="dropdown-item" href="#" data-type="personal">Personal Contacts</a></li>
         </ul>
     </div>
 
-<script>
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', function (e) {
-            e.preventDefault();
-            const selected = this.getAttribute('data-type');
-            filterContactsByType(selected); 
-        });
-    });
+<div class="container px-3"> 
+    <div class="row justify-content-center">
+        <div class="card contact-card col-12 col-md-8 p-4 rounded-5 shadow mb-5" data-type="police">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0 m-1">PNP (Philippine National Police)</h3>
+                <a href="#">
+                    <img src="../assets/images/call-button.svg" alt="Call Button" class="img-fluid" style="max-width: 60px;" />
+                </a>
+            </div>
+            <div class="mb-2">
+                <h5 class="fw-semibold mb-1">Number:</h5>
+                <p class="mb-2">0978-439-54267</p>
+            </div>
+            <div class="mb-3">
+                <h5 class="fw-semibold mb-1">Permanent Address:</h5>
+                <p>Tanauan City, Batangas</p>
+            </div>
+        </div>
 
-    function filterContactsByType(type) {
-        console.log("Filter applied:", type); 
+        <div class="card contact-card col-12 col-md-8 p-4 rounded-5 shadow mb-5" data-type="medical">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0 m-1">Tanauan Medical Center</h3>
+                <a href="#">
+                    <img src="../assets/images/call-button.svg" alt="Call Button" class="img-fluid" style="max-width: 60px;" />
+                </a>
+            </div>
+            <div class="mb-2">
+                <h5 class="fw-semibold mb-1">Number:</h5>
+                <p class="mb-2">0921-345-6789</p>
+            </div>
+            <div class="mb-3">
+                <h5 class="fw-semibold mb-1">Permanent Address:</h5>
+                <p>Tanauan City, Batangas</p>
+            </div>
+        </div>
 
-        document.querySelectorAll('.contact-card').forEach(card => {
-            card.style.display = 'none';
+        <div class="card contact-card col-12 col-md-8 p-4 rounded-5 shadow mb-5" data-type="toda">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0 m-1">Janopol TODA Office</h3>
+                <a href="#">
+                    <img src="../assets/images/call-button.svg" alt="Call Button" class="img-fluid" style="max-width: 60px;" />
+                </a>
+            </div>
+            <div class="mb-2">
+                <h5 class="fw-semibold mb-1">Number:</h5>
+                <p class="mb-2">0998-765-4321</p>
+            </div>
+            <div class="mb-3">
+                <h5 class="fw-semibold mb-1">Permanent Address:</h5>
+                <p>Janopol East, Tanauan</p>
+            </div>
+        </div>
 
-            if (type === 'all' || card.getAttribute('data-type') === type) {
-                card.style.display = 'block';
-            }
-        });
-    }
-</script>
+        <div class="card contact-card col-12 col-md-8 p-4 rounded-5 shadow mb-5" data-type="personal">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0 m-1">My Brother</h3>
+                <a href="#">
+                    <img src="../assets/images/call-button.svg" alt="Call Button" class="img-fluid" style="max-width: 60px;" />
+                </a>
+            </div>
+            <div class="mb-2">
+                <h5 class="fw-semibold mb-1">Number:</h5>
+                <p class="mb-2">0917-123-4567</p>
+            </div>
+            <div class="mb-3">
+                <h5 class="fw-semibold mb-1">Permanent Address:</h5>
+                <p>Tanauan City, Batangas</p>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
