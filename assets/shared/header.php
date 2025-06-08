@@ -11,13 +11,12 @@
 </style>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col header d-flex flex-row p-2 rounded-5">
-                <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Emergency Contact" class="img-fluid m-3" />
-                <div class="h3 p-3 m-1 px-1 fw-bolder">Emergency Contact</div>
-
-            </div>
+   <div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-5" style="z-index: 1030;">
+    <div class="row">
+        <div class="col d-flex align-items-center p-2 rounded-bottom-4">
+            <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Back" class="img-fluid m-2" style="height: 40px;" />
+            <h3 class="fw-bold m-0 ps-2">Emergency Contact</h3>
         </div>
     </div>
+</div>
 </body>
