@@ -13,76 +13,73 @@
 <body class="d-flex justify-content-center align-items-center vh-100"
     style="background-color: #2c2c2c; font-family: 'Inter', sans-serif; margin: 0;">
 
-
-
     <div class="container-fluid p-0 m-0 vh-100">
         <div class="row h-100 g-0">
-            <div class="col-12 d-flex justify-content-center align-items-center">
-                <div class="card bg-white w-100 h-100 d-flex flex-column px-3 py-2" style="border-radius: 0 0 25px 25px;
- box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
+            <div class="col-12 d-flex justify-content-center align-items-start h-100">
+
+                <!-- Removed px-3, replaced with px-0 to eliminate horizontal padding -->
+                <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
+                    style="border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
                     <!-- Header -->
-                    <div class="d-flex align-items-center shadow px-4"
-                        style="width: calc(100% + 2rem); margin-left: -1rem; margin-right: -1rem; border-radius: 0 0 43px 43px; background-color: #fff; height: 80px;">
+                    <div class="d-flex align-items-center justify-content-start shadow px-4"
+                        style="border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; background-color: #fff; height: 100px;">
                         <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">&#8592;</a>
                         <h5 class="mb-0 fw-bold">Settings</h5>
                     </div>
-
                     <!-- Settings List -->
-                    <div class="list-group list-group-flush mt-2">
-                        <a href="#" class="list-group-item list-group-item-action py-3 border-bottom border-secondary">
-                            Circle Settings
-                        </a>
-                        <a href="#"
-                            class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary"
-                            style="background-color: #EDEDED;">
-                            Circle Management
-                        </a>
+                    <div class="list-group list-group-flush mt-2 px-0 w-100">
 
-                        <a href="#"
-                            class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom border-secondary"
-                            style="background-color: #EDEDED;">
+                        <!-- Subheader -->
+                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                            style="font-size: 0.85rem; user-select: none;">
+                            Circle Settings
+                        </div>
+
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                            onclick="handleClick('circleManagement')">
+                            Circle Management
+                        </div>
+
+                        <div
+                            class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom border-secondary w-100 bg-light">
                             <span>Location Sharing</span>
                             <div class="form-check form-switch m-0">
                                 <input class="form-check-input" type="checkbox" role="switch" checked>
                             </div>
-                        </a>
+                        </div>
 
-                        <a href="#"
-                            class="list-group-item list-group-item-action py-3 bg-white border-bottom border-secondary">
+                        <!-- Universal Settings -->
+                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                            style="font-size: 0.85rem; user-select: none;">
                             Universal Settings
-                        </a>
+                        </div>
 
-                        <a href="#"
-                            class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary"
-                            style="background-color: #EDEDED;">
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                            onclick="handleClick('privacySecurity')">
                             Account
-                        </a>
+                        </div>
 
-                        <a href="#"
-                            class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary"
-                            style="background-color: #EDEDED;">
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                            onclick="handleClick('privacySecurity')">
                             Privacy and Security
-                        </a>
+                        </div>
 
-                        <a href="#"
-                            class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary"
-                            style="background-color: #EDEDED;">
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                            onclick="handleClick('about')">
                             About
-                        </a>
+                        </div>
 
-                        <a href="#"
-                            class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary"
-                            style="background-color: #EDEDED;">
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                            onclick="handleClick('logout')">
                             Logout
-                        </a>
+                        </div>
                     </div>
 
                 </div>
 
             </div>
         </div>
-    </div>
     </div>
 
     <?php include '../assets/shared/navbarPassenger.php'; ?>
