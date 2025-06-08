@@ -1,5 +1,4 @@
 <style>
-
     .custom-navbar {
         background-color: #F4FAFF;
         box-shadow:
@@ -20,7 +19,6 @@
             inset 0 0 3px 3px rgba(64, 64, 64, 0.4),
             0 0 6px rgba(123, 123, 123, 0.15);
     }
-
 </style>
 
 <body>
@@ -28,7 +26,7 @@
         <div class="row custom-navbar mx-0">
             <div class="col text-center" data-icon="home">
                 <div class="nav-button w-100 h-100 p-2 d-flex justify-content-center align-items-center">
-                    <img src="../assets/shared/navbar-icons/home.svg" alt="Home" class="img-fluid" /> 
+                    <img src="../assets/shared/navbar-icons/home.svg" alt="Home" class="img-fluid" />
                 </div>
             </div>
             <div class="col text-center" data-icon="users">
