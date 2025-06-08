@@ -56,12 +56,12 @@
         <div class="card contact-card col-12 col-md-8 p-4 rounded-5 shadow mb-5" data-type="police">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="fw-bold mb-0 m-1">PNP (Philippine National Police)</h3>
-                <a href="#">
+                <a href="tel:097843954267">
                     <img src="../assets/images/call-button.svg" alt="Call Button" class="img-fluid" style="max-width: 60px;" />
                 </a>
             </div>
             <div class="mb-2">
-                <h5 class="fw-semibold mb-1">Number:</h5>
+                <h5 class="fw-semibold mb-1">Contact Number:</h5>
                 <p class="mb-2">0978-439-54267</p>
             </div>
             <div class="mb-3">
@@ -73,12 +73,12 @@
         <div class="card contact-card col-12 col-md-8 p-4 rounded-5 shadow mb-5" data-type="medical">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="fw-bold mb-0 m-1">Tanauan Medical Center</h3>
-                <a href="#">
+                <a href="tel:097843954267">
                     <img src="../assets/images/call-button.svg" alt="Call Button" class="img-fluid" style="max-width: 60px;" />
                 </a>
             </div>
             <div class="mb-2">
-                <h5 class="fw-semibold mb-1">Number:</h5>
+                <h5 class="fw-semibold mb-1">Contact Number:</h5>
                 <p class="mb-2">0921-345-6789</p>
             </div>
             <div class="mb-3">
@@ -90,12 +90,12 @@
         <div class="card contact-card col-12 col-md-8 p-4 rounded-5 shadow mb-5" data-type="toda">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="fw-bold mb-0 m-1">Janopol TODA Office</h3>
-                <a href="#">
+                <a href="tel:097843954267">
                     <img src="../assets/images/call-button.svg" alt="Call Button" class="img-fluid" style="max-width: 60px;" />
                 </a>
             </div>
             <div class="mb-2">
-                <h5 class="fw-semibold mb-1">Number:</h5>
+                <h5 class="fw-semibold mb-1">Contact Number:</h5>
                 <p class="mb-2">0998-765-4321</p>
             </div>
             <div class="mb-3">
@@ -107,12 +107,12 @@
         <div class="card contact-card col-12 col-md-8 p-4 rounded-5 shadow mb-5" data-type="personal">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="fw-bold mb-0 m-1">My Brother</h3>
-                <a href="#">
+                <a href="tel:097843954267">
                     <img src="../assets/images/call-button.svg" alt="Call Button" class="img-fluid" style="max-width: 60px;" />
                 </a>
             </div>
             <div class="mb-2">
-                <h5 class="fw-semibold mb-1">Number:</h5>
+                <h5 class="fw-semibold mb-1">Contact Number:</h5>
                 <p class="mb-2">0917-123-4567</p>
             </div>
             <div class="mb-3">
