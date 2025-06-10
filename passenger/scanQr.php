@@ -9,17 +9,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <style>
-    body {
-        font-family: 'Inter', san serif;
-    }
-
-    .header {
-        box-shadow:
-            0 -1px 6px 3px rgba(0, 0, 0, 0.1),
-            0 0 18px 6px rgba(0, 0, 0, 0.15);
-    }
-    </style>
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
