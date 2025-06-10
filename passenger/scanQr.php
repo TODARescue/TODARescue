@@ -32,13 +32,11 @@
             </div>
         </div>
     </div>
-    <!-- navbar -->
-    <?php include '../assets/shared/navbarPassenger.php'; ?>
 
     <div class="container">
         <div class="row">
             <div class="col-sm-12 d-flex justify-content-center align-items-center">
-                <video id="preview" width="100%" class="video-frame object-cover-fit z-1" style="width: 100vw; height: 82.5vh; background-color: #000;"></video>
+                <video id="preview" width="100%" class="video-frame object-cover-fit z-1" style="width: 100vw; height: 100vh; background-color: #000;"></video>
             </div>
         </div>
     </div>

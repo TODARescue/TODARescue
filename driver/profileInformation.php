@@ -98,7 +98,7 @@
                     <div class="row">
                         <div class="col-auto">
                             <button class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill" type="submit"
-                                onclick="generateQr()" style="background-color: #2DAAA7;">Download QR Code</button>
+                                onclick="" style="background-color: #2DAAA7;">Download QR Code</button>
                         </div>
                     </div>
 
