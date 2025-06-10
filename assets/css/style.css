@@ -140,7 +140,7 @@ h5 {
 }
 
 .profile-container.collapsed .profile-pic {
-  display: none;
+  display: none !important;
 }
 
 .profile-card {
@@ -152,11 +152,18 @@ h5 {
   border: none;
   padding: 20px;
   transition: background-color 0.3s ease, transform 0.3s ease,
-    box-shadow 0.3s ease;
+    box-shadow 0.3s ease, top 0.3s ease;
 }
 .arrive-button:hover {
   background-color: #249e9e;
   color: white;
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.pointer-pass {
+  pointer-events: none;
+}
+.pointer-pass * {
+  pointer-events: auto;
 }
