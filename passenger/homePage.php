@@ -24,72 +24,82 @@
 
 <body>
 
-    <div class="container mt-4">
-        <!-- Icon and Text -->
-        <div class="d-flex align-items-center mb-3">
-            <img src="../assets/images/Logo.png" alt="TodaRescue" class="small-logo me-2">
-            <span class="fw-bold fs-5">TodaRescue</span>
+    <div class="position-relative vh-100 w-100">
+
+        <!-- Fullscreen Map (Background) -->
+        <div class="position-absolute top-0 start-0 w-100 h-100 z-0">
+            <div id="map" class="w-100 h-100" style="pointer-events: auto;"></div>
         </div>
 
-        <!-- Leaflet Map -->
-        <div class="px-2">
-            <div id="map" class="border rounded-3 shadow-lg" style="height: 50vh;"></div>
-        </div>
-    </div>
+        <!-- Floating Content -->
+        <div class="position-relative z-1 w-100 h-100 container py-3 pointer-pass">
 
-    <div class="container mt-4">
-        <div class="card rounded-3 shadow px-4 py-4" style="background-color: #2EBCBC;">
-            <div class="d-flex flex-row align-items-center justify-content-between profile-container" id="profile-details">
+            <!-- Logo and App Name -->
+            <div class="d-flex align-items-center mb-3 position-absolute end-0 me-3">
+                <img src="../assets/images/Logo.png" alt="TodaRescue" class="me-2" style="width: 40px; height: 40px;">
+                <span class="fw-bold fs-5">TodaRescue</span>
+            </div>
 
-                <!-- Profile Picture -->
-                <div class="me-3 profile-pic">
-                    <img src="../assets/images/profile-default.png" alt="Profile" class="rounded-circle" width="50" height="50">
-                </div>
+            <!-- Profile Card -->
+            <div class="card rounded-4 shadow px-4 py-4 mb-4 start-50 translate-middle-x"
+                style="background-color: #2EBCBC; top: 55%; width: 90%; max-width: 500px;">
+                <div class="d-flex flex-row align-items-center justify-content-between profile-container" id="profile-details">
 
-                <!-- User Name -->
-                <div class="flex-grow-1">
-                    <h5 class="mb-0">Juan Dela Cruz</h5>
-                    <div class="align-items-center">
-                        <small class="">Driver</small>
-                        <img src="../assets/images/verified.png" alt="Verified">
+                    <!-- Profile Picture -->
+                    <div class="me-3 profile-pic">
+                        <img src="../assets/images/profile-default.png" alt="Profile" class="rounded-circle" width="50" height="50">
                     </div>
-                    <div class="collapse mt-3" id="driver-details">
-                        <div class="border-top border-dark pt-2">
-                            <p class="mb-1"><strong>License No:</strong> DRV-2023-0012</p>
-                            <p class="mb-1"><strong>Vehicle Plate:</strong> NAX 1234</p>
-                            <p class="mb-1"><strong>Contact:</strong> +63 912 345 6789</p>
-                            <p class="mb-0"><strong>Address:</strong> Tanauan City, Batangas</p>
+
+                    <!-- User Info -->
+                    <div class="flex-grow-1 me-2">
+                        <div class="d-flex align-items-center">
+                            <h5 class="mb-0 me-2">Juan Dela Cruz</h5>
+                            <img src="../assets/images/verified.png" alt="Verified" style="width: 12px;">
+                        </div>
+                        <div class="align-items-center">
+                            <small>Plate No:</small>
+                            <b>NAX 1234</b>
+                        </div>
+                        <div class="collapse mt-3" id="driver-details">
+                            <div class="border-top border-dark pt-2">
+                                <p class="mb-1"><b>Tricycle Model:</b>DRV-2023-0012</p>
+                                <p class="mb-1"><b>Toda Registration:</b> NAX 1234</p>
+                                <p class="mb-1"><b>Contact:</b> +63 912 345 6789</p>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Dropdown Toggle -->
+                    <button class="btn p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#driver-details" aria-expanded="false">
+                        <img src="../assets/images/drop-down.png" alt="Dropdown" width="13" class="drop-arrow text-center" id="arrow-icon">
+                    </button>
+
                 </div>
+            </div>
 
-                <!-- Dropdown Arrow Icon -->
-                <button class="btn p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#driver-details" aria-expanded="false" aria-controls="driverDetails">
-                    <img src="../assets/images/drop-down.png" alt="Dropdown" class="drop-arrow" id="arrow-icon" width="20">
+            <!-- Button -->
+            <div class="container-fluid my-4 align-items-center rounded-5 text-center">
+                <button class="arrive-button rounded-pill text-bold position-absolute start-50 translate-middle-x px-4 py-4"
+                    style="top: 75%; width: 90%; max-width: 200px;" id="arrive-button">
+                    ARRIVED SAFELY
                 </button>
-
             </div>
         </div>
 
-        <div class="container-fluid my-4 align-items-center rounded-5 text-center">
-            <button class="arrive-button rounded-pill text-bold">ARRIVED SAFELY</button>
-        </div>
-    </div>
+        <!-- NAVBAR -->
+        <?php include '../assets/shared/navbarPassenger.php'; ?>
 
-    <!-- NAVBAR -->
-    <?php include '../assets/shared/navbarPassenger.php'; ?>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <!-- For map integration -->
+        <script src="../assets/js/homePage/map.js"></script>
 
-    <!-- For map integration -->
-    <script src="../assets/js/homePage/map.js"></script>
-
-    <!-- Toggling Details -->
-    <script src="../assets/js/homePage/details.js"></script>
+        <!-- Toggling Details -->
+        <script src="../assets/js/homePage/details.js"></script>
 </body>
 
 </html>
