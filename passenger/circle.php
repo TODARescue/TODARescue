@@ -30,7 +30,7 @@
 
                     <!-- Circle List Section -->
                     <div class="p-4">
-                        <h6 class="fw-bold mb-3">Circle List</h6>
+                        <h6 class="fw-bold mb-4">Circle List</h6>
 
                         <!-- Group 1 -->
                         <div class="d-flex align-items-center mb-3">
@@ -51,10 +51,13 @@
                         </div>
 
                         <!-- Buttons -->
-                        <div class="d-flex gap-3">
-                            <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create Circle</button>
-                            <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join Circle</button>
+                        <div class="d-flex justify-content-center gap-3">
+                            <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create
+                                Circle</button>
+                            <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join
+                                Circle</button>
                         </div>
+
                     </div>
 
                 </div>
