@@ -44,6 +44,11 @@
                     <img src="../assets/shared/navbar-icons/users.svg" alt="Users" class="img-fluid" />
                 </div>
             </div>
+             <div class="col text-center" data-icon="drivers">
+                <div class="nav-button w-100 h-100 p-2 d-flex justify-content-center align-items-center">
+                    <img src="../assets/shared/navbar-icons/drivers.svg" alt="Users" class="img-fluid" />
+                </div>
+            </div>
             <div class="col text-center" data-icon="settings">
                 <div class="nav-button w-100 h-100 p-2 d-flex justify-content-center align-items-center">
                     <img src="../assets/shared/navbar-icons/settings.svg" alt="Settings" class="img-fluid" />
@@ -59,12 +64,12 @@
                 cols.forEach(c => {
                     c.classList.remove('active');
                     const iconName = c.getAttribute('data-icon');
-                    c.querySelector('img').src = `navbar-icons/${iconName}.svg`;
+                    c.querySelector('img').src = `../assets/shared/navbar-icons/${iconName}.svg`;
                 });
 
                 col.classList.add('active');
                 const iconName = col.getAttribute('data-icon');
-                col.querySelector('img').src = `navbar-icons/${iconName}-white.svg`;
+                col.querySelector('img').src = `../assets/shared/navbar-icons/${iconName}-white.svg`;
             });
         });
     </script>
