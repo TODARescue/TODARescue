@@ -35,11 +35,11 @@
                         <!-- Profile Form -->
                         <form class="w-100 px-3">
                             <!-- Avatar -->
-                            <div class="list-group-item list-group-item-action py-3 border-0 bg-light">
+                            <div class="list-group-item list-group-item-action py-3 border-0 px-0">
                                 <div class="d-flex align-items-center">
                                     <!-- Smaller Circular Avatar (left side) -->
                                     <div class="rounded-circle me-3"
-                                        style="width: 40px; height: 40px; background-color: #a59e9e;"></div>
+                                        style="width: 65px; height: 65px; background-color: #a59e9e;"></div>
                                     <div class="flex-grow-1 d-flex justify-content-between align-items-center">
                                         <span>Username</span>
                                     </div>
