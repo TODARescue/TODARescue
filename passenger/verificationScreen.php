@@ -12,10 +12,10 @@
 <body>
     <?php include '../assets/shared/header.php'; ?>
     
-    <div class="container-fluid vh-100   overflow-auto">
+    <div class="container-fluid">
         <div class="d-flex justify-content-center py-3">
-            <div class="card border-1 rounded-5 w-75" style="background-color: #D9D9D9">
-                <div class="card-body p-4 ">
+            <div class="card border-1 rounded-5 w-75 my-4" style="background-color: #D9D9D9">
+                <div class="card-body p-4">
                     <!-- Driver Photo -->
                     <div class="row">
                         <div class="text-center mb-4">
@@ -42,22 +42,22 @@
                         <div class="mb-4">
                             <div class="mb-3">
                                 <h6 class="fw-bold mb-2 text-dark">Tricycle Details:</h6>
-                                <p class="mb-0 text-muted" id="tricycleDetails">HONDA CIVIC - XHY-IWU</p>
+                                <p class="mb-0 text-muted fw-bold" id="tricycleDetails">HONDA CIVIC - XHY-IWU</p>
                             </div>
 
                             <div class="mb-3">
                                 <h6 class="fw-bold mb-2 text-dark">Tricycle Number:</h6>
-                                <p class="mb-0 text-muted" id="tricycleNumber">12345678910</p>
+                                <p class="mb-0 text-muted fw-bold" id="tricycleNumber">12345678910</p>
                             </div>
 
                             <div class="mb-3">
                                 <h6 class="fw-bold mb-2 text-dark">Permanent Address:</h6>
-                                <p class="mb-0 text-muted" id="permanentAddress">Lorem Ipsum Dolor</p>
+                                <p class="mb-0 text-muted fw-bold" id="permanentAddress">Lorem Ipsum Dolor</p>
                             </div>
 
                             <div class="mb-3">
                                 <h6 class="fw-bold mb-2 text-dark">TODA Registration:</h6>
-                                <p class="mb-0 text-muted" id="todaRegistration">Lorem Ipsum Dolor</p>
+                                <p class="mb-0 text-muted fw-bold" id="todaRegistration">Lorem Ipsum Dolor</p>
                             </div>
                         </div>
                     </div>
@@ -66,9 +66,9 @@
         </div>
 
         <!-- Start Ride -->
-        <div class="row d-flex justify-content-center align-items-center">
+        <div class="row d-flex justify-content-center align-items-center mt-0">
             <div class="col-auto py-5">
-                <button class="btn btn-primary btn-lg rounded-pill custom-hover text-black fw-semibold">Start Ride</button>
+                <button class="btn btn-lg rounded-pill custom-hover text-black fw-semibold fs-6">Start Ride</button>
             </div>
         </div>
     </div>

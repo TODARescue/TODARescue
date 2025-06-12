@@ -23,15 +23,15 @@
     </div>
 
 
-    <div class="container-fluid vh-100 overflow-auto">
+    <div class="container-fluid">
         <div class="d-flex justify-content-center py-3">
             <div class="card border-0">
                 <div class="card-body p-4 text-center">
                     <!-- Driver Photo -->
                     <div class="row">
                         <div class="col mb-4 py-1">
-                            <div class="rounded-circle custom-hover d-flex justify-content-center align-items-center mx-auto"
-                                style="width: 120px; height: 120px;">
+                            <div class="rounded-circle d-flex justify-content-center align-items-center mx-auto"
+                                style="width: 120px; height: 120px; background-color: #958D8D">
                                 <span class="text-white fw-bold">Driver Photo</span>
                             </div>
                         </div>
@@ -41,8 +41,8 @@
                     <!-- Tricycle Details -->
                     <div class="row">
                         <div class="col mb-3 py-1">
-                            <h6 class="fw-bold mb-2 text-dark">Tricycle Details</h6>
-                            <p class="mb-1 text-dark fw-semibold">HONDA CIVIC - XHY - IWU</p>
+                            <h6 class="mb-2 text-dark">Tricycle Details</h6>
+                            <p class="mb-1 text-dark">HONDA CIVIC - XHY - IWU</p>
                         </div>
                     </div>
 
@@ -50,8 +50,8 @@
                     <!-- Tricycle number -->
                     <div class="row">
                         <div class="col mb-3 py-1">
-                            <h6 class="fw-bold mb-2 text-dark">Tricycle Number</h6>
-                            <p class="mb-1 text-dark fw-semibold" id="tricycle-number">12345678910</p>
+                            <h6 class="mb-2 text-dark">Tricycle Number</h6>
+                            <p class="mb-1 text-dark" id="tricycle-number">12345678910</p>
                         </div>
                     </div>
 
@@ -59,8 +59,8 @@
                     <!-- Permanent Address -->
                     <div class="row">
                         <div class="col mb-3 py-1">
-                            <h6 class="fw-bold mb-2 text-dark">Permanent Address</h6>
-                            <p class="mb-1 text-dark fw-semibold">Lorem Ipsum Dolor</p>
+                            <h6 class="mb-2 text-dark">Permanent Address</h6>
+                            <p class="mb-1 text-dark">Lorem Ipsum Dolor</p>
                         </div>
                     </div>
 
@@ -68,8 +68,8 @@
                     <!-- Toda Registration -->
                     <div class="row">
                         <div class="col mb-4 py-1">
-                            <h6 class="fw-bold mb-2 text-dark">TODA Registration</h6>
-                            <p class="mb-1 text-dark fw-semibold">Lorem Ipsum Dolor</p>
+                            <h6 class="-2 text-dark">TODA Registration</h6>
+                            <p class="mb-1 text-dark">Lorem Ipsum Dolor</p>
                         </div>
                     </div>
 
@@ -89,14 +89,13 @@
                                 onclick="" style="background-color: #2DAAA7;">Download QR Code</button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Navbar for Driver -->
-    <?php include '../assets/shared/navbarAD.php'; ?>
+    <?php include '../assets/shared/navbarDriver.php'; ?>
 
 
     <script>
