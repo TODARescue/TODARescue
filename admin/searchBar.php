@@ -14,7 +14,7 @@
 <body>
     <div class="container px-0">
         <div class="search-bar">
-            <div class="input-group">
+            <div class="input-group shadow">
                 <input type="text" class="form-control" placeholder="Search Passengers" aria-label="Search"
                     aria-describedby="search-addon">
                 <button class="btn btn-outline-secondary" type="button" id="search-addon">

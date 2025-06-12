@@ -25,6 +25,7 @@
                 style="background-color: #2EBCBC; border: none; width: 60px; height: 30px; padding: 0;">
                 <i class="bi bi-plus" style="font-size: 20px; color: white;"></i>
             </button>
+            
         </div>
 
 
