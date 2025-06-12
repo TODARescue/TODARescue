@@ -34,7 +34,7 @@
                     <div class="container-fluid mt-5 pt-5">
                         <div class="row">
                             <div class="col list-group list-group-flush px-0 w-100">
-                                <div class="mb-3">
+                                <div class="mb-1">
                                     <h4 class="fs-5 mt-5 px-2">Remove Members</h4>
                                 </div>
 
@@ -71,10 +71,10 @@
 
                     <!-- Modal Backdrop -->
                     <div id="modalBackdrop"
-                        class="position-fixed top-0 start-0 w-100 h-100 d-none justify-content-center align-items-center"
-                        style="background-color: rgba(255, 255, 255, 0.4); z-index: 1050;">
+                        class="position-fixed top-0 start-0 w-100 h-100 d-none justify-content-center align-items-center z-1"
+                        style="background-color: rgba(255, 255, 255, 0.4);">
                         <!-- Modal Box -->
-                        <div class="bg-white p-4 rounded-4 shadow text-center" style="width: 85%; max-width: 320px;">
+                        <div class="bg-white p-4 rounded-5 shadow text-center" style="width: 85%; max-width: 320px;">
                             <h5 class="fw-bold mb-2">Remove Member</h5>
                             <p class="mb-4" style="font-size: 0.95rem;">
                                 Are you sure you want to remove <b id="modalMemberName">[Name]</b> from this circle?
