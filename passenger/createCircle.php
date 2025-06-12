@@ -27,7 +27,7 @@
             
             <!-- Submit button -->
             <div class="text-center mt-4">
-                <button class="btn custom-hover px-4 py-2 rounded-pill">Submit</button>
+                <button class="btn custom-hover px-4 py-2 rounded-pill fw-bold">SUBMIT</button>
             </div>
         </div>
    </div>

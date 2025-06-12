@@ -29,7 +29,7 @@
                 </div>
 
                 <!-- Card -->
-                <div class="card border-0 mb-4" style="background-color: #D9D9D9">
+                <div class="card border-0 rounded-4 mb-4" style="background-color: #D9D9D9">
                     <div class="card-body text-center py-5">
                         <h2 class="fw-bold mb-2 fs-2"> 911 - TWN</h2>
                         <p class="text-muted mb-0"> This code is active for 2 days</p>

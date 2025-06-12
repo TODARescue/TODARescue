@@ -29,19 +29,19 @@
 
                     <!-- Input field -->
                     <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
-                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-3" maxlength="1" value="" style="width: 45px; height: 55px;">
-                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-3" maxlength="1" value="" style="width: 45px; height: 55px;">
-                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-3" maxlength="1" value="" style="width: 45px; height: 55px;">
+                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-4" maxlength="1" value="" style="width: 45px; height: 55px;">
+                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-4" maxlength="1" value="" style="width: 45px; height: 55px;">
+                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-4" maxlength="1" value="" style="width: 45px; height: 55px;">
                         <span class="fw-bold fs-3 mx-2 text-dark">-</span>
-                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-3" maxlength="1" value="" style="width: 45px; height: 55px;">
-                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-3" maxlength="1" value="" style="width: 45px; height: 55px;">
-                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-3" maxlength="1" value="" style="width: 45px; height: 55px;">
+                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-4" maxlength="1" value="" style="width: 45px; height: 55px;">
+                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-4" maxlength="1" value="" style="width: 45px; height: 55px;">
+                        <input type="text" class="form-control custom-hover text-center fw-bold fs-6 py-3 px-3 border-0 rounded-4" maxlength="1" value="" style="width: 45px; height: 55px;">
                     </div>
 
                     <p class="text-muted small mb-3">Get the code from the person<br>setting up your circle.</p>
                     
                     <!-- Join button -->
-                    <button class="btn btn-info text-white px-4 py-2 rounded-pill fw-semibold">JOIN</button>
+                    <button class="btn custom-hover text-black px-4 py-2 rounded-pill fw-semibold">JOIN</button>
                 </div>
             </div>
         </div>
