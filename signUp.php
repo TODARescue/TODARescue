@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TODA Rescue - Sign Up</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link href="../assets/css/style.css" rel="stylesheet">
 </head>
 
 <body class="d-flex justify-content-center align-items-center vh-100"
@@ -19,12 +20,12 @@
                     style="max-width: 100%; border-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
                     <div class="text-center mb-4" style="margin-top: -80px;">
-                        <img src="assets/images/Logo.png" alt="TODA Rescue Logo" style="width: 80px;">
-                        <h4 class="fw-bold mt-2">TODA Rescue</h4>
+                        <img src="assets/images/Logo.png" alt="TODA Rescue Logo" style="width: 120px;">
+                        <h1 class="mt-1" style="font-weight: 800;">TODA Rescue</h1>
                     </div>
 
                     <div class="mx-auto" style="width: 100%; max-width: 350px;">
-                        <h5 class="fw-bold mb-3 text-center">Sign Up</h5>
+                        <h5 class="fw-bold mb-3">Sign Up</h5>
 
                         <form>
                             <div class="mb-3">
@@ -53,7 +54,8 @@
                             </div>
 
                             <div class="d-flex justify-content-center mt-2">
-                                <button type="submit" class="btn btn-info text-white fw-bold px-4 py-2 rounded-pill">
+                                <button type="submit" class="btn text-white fw-bold px-4 py-2 rounded-pill"
+                                    style="background-color: #2EBCBC; border: none;">
                                     Sign Up
                                 </button>
                             </div>
