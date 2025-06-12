@@ -18,6 +18,13 @@ h5 {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
+/* header */
+.header {
+  box-shadow:
+    0 -1px 6px 3px rgba(0, 0, 0, 0.1),
+    0 0 18px 6px rgba(0, 0, 0, 0.15);
+}
+
 /* EMERGEGENCY CONTACT  */
 .contact-card {
   background-color: #d9d9d9;
@@ -30,6 +37,27 @@ h5 {
   font-weight: bold;
   background-color: #2daaa7;
   color: black;
+}
+
+/* NAVBAR */
+.custom-navbar {
+  background-color: #F4FAFF;
+  box-shadow:
+    0 -1px 6px 3px rgba(0, 0, 0, 0.1),
+    0 0 18px 6px rgba(0, 0, 0, 0.15);
+}
+
+.col-navbar {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+.col-navbar.active {
+  background-color: #2DAAA7;
+  box-shadow:
+    inset 0 0 3px 3px rgba(64, 64, 64, 0.4),
+    0 0 6px rgba(123, 123, 123, 0.15);
 }
 
 /* Home Page */
@@ -110,12 +138,14 @@ h5 {
   border-bottom-left-radius: 50%;
   border-bottom-right-radius: 50%;
 }
+
 .leaflet-control-attribution {
   opacity: 0;
   height: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
+
 .leaflet-control-attribution:hover {
   opacity: 1;
   height: auto;
@@ -135,6 +165,7 @@ h5 {
 .drop-arrow:not(.rotate):hover {
   transform: translateY(-4px) scale(1.2);
 }
+
 .drop-arrow.rotate:hover {
   transform: rotate(180deg) translateY(4px) scale(1.2);
 }
@@ -154,6 +185,7 @@ h5 {
   transition: background-color 0.3s ease, transform 0.3s ease,
     box-shadow 0.3s ease, top 0.3s ease;
 }
+
 .arrive-button:hover {
   background-color: #249e9e;
   color: white;
@@ -164,34 +196,33 @@ h5 {
 .pointer-pass {
   pointer-events: none;
 }
+
 .pointer-pass * {
   pointer-events: auto;
 }
 
 .search-bar {
-    max-width: 500px;
-    margin: auto auto;
-   
+  max-width: 500px;
+  margin: auto auto;
+
 }
 
 .search-bar .input-group {
-    border-radius: 30px;
-    overflow: hidden;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
 
-    
+
 }
 
 .search-bar .form-control {
-    border: none;
-    padding-left: 20px;
-    
-    
+  border: none;
+  padding-left: 20px;
+
+
 }
 
 .search-bar .btn {
-    border: none;
-    padding: 10px 20px;
+  border: none;
+  padding: 10px 20px;
 }
-
-
