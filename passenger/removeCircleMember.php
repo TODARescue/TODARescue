@@ -35,7 +35,7 @@
                         <div class="row">
                             <div class="col list-group list-group-flush px-0 w-100">
                                 <div class="mb-1">
-                                    <h4 class="fs-5 mt-5 px-2">Remove Members</h4>
+                                    <h4 class="fs-5 mt-5 px-4">Remove Members</h4>
                                 </div>
 
                                 <div class="container-fluid p-0">
