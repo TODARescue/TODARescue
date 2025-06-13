@@ -12,7 +12,6 @@
 
 <body class="d-flex justify-content-center align-items-center vh-100"
     style="background-color: #2c2c2c; font-family: 'Inter', sans-serif; margin: 0;">
-
     <div class="container-fluid p-0 m-0 h-100">
         <div class="row h-100 g-0">
             <div class="col-12 d-flex justify-content-center align-items-start h-100">
