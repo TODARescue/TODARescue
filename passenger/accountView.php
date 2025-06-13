@@ -11,20 +11,19 @@
 
 </head>
 
-<body class="bg-dark d-flex justify-content-center align-items-center vh-100"
-    style="font-family: 'Inter', sans-serif; margin: 0;">
+<body class="bg-dark d-flex justify-content-center align-items-center vh-100">
     <div class="container-fluid p-0 m-0 vh-100">
         <div class="row h-100 g-0">
             <div class="col-12 d-flex justify-content-center align-items-start h-100">
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0 rounded-0 rounded-bottom-4 shadow-lg"
                     style="--bs-border-radius-bottom: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
+
                     <!-- Header -->
-                    <div class="d-flex align-items-center justify-content-start shadow px-4 bg-white"
-                        style="height: 100px; border-bottom-left-radius: 43px; border-bottom-right-radius: 43px;">
-                        <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">←</a>
+                    <div class="d-flex align-items-center justify-content-start shadow px-4"
+                        style="border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; background-color: #fff; height: 100px;">
+                        <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">&#8592;</a>
                         <h5 class="mb-0 fw-bold">Account</h5>
                     </div>
-
                     <!-- Account Content -->
                     <div class="list-group list-group-flush mt-2 px-0 w-100 flex-grow-1 overflow-auto">
                         <!-- Profile Section -->
