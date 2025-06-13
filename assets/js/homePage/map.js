@@ -73,9 +73,7 @@ hospitals.forEach(function (hospital) {
       iconAnchor: [12, 25],
       popupAnchor: [0, 0],
     }),
-  })
-    .addTo(map)
-    .addTo(map).bindPopup(`
+  }).addTo(map).bindPopup(`
     <div style="font-family: "Inter", sans-serif; font-size: 14px; line-height: 1.4; text-align: left;">
       <strong style="font-size: 15px; color: #000;">${hospital.name}</strong><br>
       <span style="color: #333;">📞 <strong>${hospital.contact}</strong></span>
