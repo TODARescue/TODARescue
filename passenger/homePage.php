@@ -23,6 +23,24 @@
 </head>
 
 <body>
+    <div class="modal fade" id="gpsWarningModal" tabindex="-1" aria-labelledby="gpsWarningModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-2 border-teal">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title" id="gpsWarningModalLabel">📌 Location Outside Tanauan Bounds</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    Showing default location on the map.
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-ok" data-bs-dismiss="modal">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="position-relative vh-100 w-100">
 
