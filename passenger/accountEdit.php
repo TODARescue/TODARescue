@@ -5,9 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TODA Rescue - accountView</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
 
 </head>
 
@@ -23,11 +23,11 @@
           style="border-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
           <!-- Header -->
-                    <div class="d-flex align-items-center justify-content-start shadow px-4"
-                        style="border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; background-color: #fff; height: 100px;">
-                        <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">&#8592;</a>
-                        <h5 class="mb-0 fw-bold">Account</h5>
-                    </div>
+          <div class="d-flex align-items-center justify-content-start shadow px-4"
+            style="border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; background-color: #fff; height: 100px;">
+            <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">&#8592;</a>
+            <h5 class="mb-0 fw-bold">Account</h5>
+          </div>
           <!-- Profile Content -->
           <div class="d-flex flex-column align-items-center justify-content-start px-4 pt-4 overflow-auto">
 
@@ -38,12 +38,13 @@
             <form class="w-100">
               <div class="d-flex flex-column align-items-start mb-3">
                 <label class="form-label text-muted small fw-bold ">First Name</label>
-                <input type="text" class="form-control border-0 border-bottom rounded-0 shadow-none p-0" style="border-bottom: 2px solid #000;" />
+                <input type="text" class="form-control border-0 border-bottom rounded-0 shadow-none p-0"
+                  style="border-bottom: 2px solid #000;" />
               </div>
 
               <div class="mb-3">
                 <label class="form-label text-muted small fw-bold">Last Name</label>
-                <input type="text" class="form-control border-0 border-bottom rounded-0 shadow-none p-0"/>
+                <input type="text" class="form-control border-0 border-bottom rounded-0 shadow-none p-0" />
               </div>
 
               <div class="mb-3">
@@ -60,7 +61,8 @@
 
               <!-- Save Button -->
               <div class="d-flex justify-content-center">
-                <button type="submit" class="btn text-white px-5" style="background-color: #24b3a7; border-radius: 15px;">Save</button>
+                <button type="submit" class="btn text-white px-5"
+                  style="background-color: #24b3a7; border-radius: 15px;">Save</button>
               </div>
             </form>
 
