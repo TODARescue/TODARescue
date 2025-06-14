@@ -51,10 +51,12 @@
                             Circle Settings
                         </div>
 
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
-                            onclick="handleClick('circleManagement')">
-                            Circle Management
-                        </div>
+                        <a href="../passenger/circleDetails.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                Circle Management
+                            </div>
+                        </a>
 
                         <div
                             class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom border-secondary w-100 bg-light">
@@ -70,10 +72,12 @@
                             Universal Settings
                         </div>
 
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
-                            onclick="handleClick('account')">
-                            Account
-                        </div>
+                        <a href="../passenger/accountView.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                Account
+                            </div>
+                        </a>
 
                         <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
                             onclick="handleClick('privacySecurity')">
@@ -90,7 +94,7 @@
                             style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
-                                Leave Circle
+                                Log Out
                             </div>
                         </a>
 
@@ -112,7 +116,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    Are you sure you want to leave the circle?
+                    Are you sure you want to Log Out?
                 </div>
                 <div class="modal-footer justify-content-center border-top-0">
                     <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
@@ -126,25 +130,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Navigation Handler -->
-    <script>
-        function handleClick(page) {
-            switch (page) {
-                case 'circleManagement':
-                    window.location.href = '../passenger/createCircle.php';
-                    break;
-                case 'account':
-                    window.location.href = '../passenger/account.php';
-                    break;
-                case 'privacySecurity':
-                    window.location.href = '../passenger/privacySettings.php';
-                    break;
-                case 'about':
-                    window.location.href = '../passenger/about.php';
-                    break;
-            }
-        }
-    </script>
 
 </body>
 

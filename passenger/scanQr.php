@@ -10,15 +10,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-bottom-5" style="z-index: 1030;">
         <div class="row">
-            <div class="col header d-flex flex-row p-2 rounded-5">
-                <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="TODA Rescue" class="img-fluid m-3" />
-                <div class="h3 p-3 m-1 px-1 fw-bolder">TODA Rescue</div>
-
+            <div class="col d-flex align-items-center p-3">
+                <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Back" style="height: 40px;" />
+                <h3 class="fw-bold m-0 ms-2">TODA Rescue</h3>
             </div>
         </div>
     </div>

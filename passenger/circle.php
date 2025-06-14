@@ -57,10 +57,10 @@
 
                             <!-- Buttons -->
                             <div class="d-flex justify-content-center gap-3">
-                                <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create
-                                    Circle</button>
-                                <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join
-                                    Circle</button>
+                            <a href="../passenger/createCircle.php" ><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create
+                                    Circle</button></a>
+                                    <a href="../passenger/joinCircle.php" ><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join
+                                    Circle</button></a>
                             </div>
                         </div>
                     </div>

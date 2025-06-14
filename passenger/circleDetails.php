@@ -31,7 +31,8 @@
                     <!-- Options List -->
                     <div class="list-group list-group-flush mt-2 w-100">
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
+                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                            style="font-size: 0.85rem; user-select: none;">
                             Circle Details
                         </div>
 
@@ -39,22 +40,32 @@
                             <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
                         </div>
 
-
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
+                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                            style="font-size: 0.85rem; user-select: none;">
                             Circle Management
                         </div>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            Change Admin Status
-                        </div>
+                        <a href="../passenger/changeAdminStatusPassenger.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                Change Admin Status
+                            </div>
+                        </a>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            Add Circle Members
-                        </div>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            Remove Circle Members
-                        </div>
+                        <a href="../passenger/inviteMember.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                Add Circle Members
+                            </div>
+                        </a>
+
+                        <a href="../passenger/removeCircleMember.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                Remove Circle Members
+                            </div>
+                        </a>
 
                         <a href="../passenger/leaveCircleModal.php" style="text-decoration: none; color: inherit;">
                             <div
