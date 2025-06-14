@@ -58,10 +58,10 @@
 
                             <!-- Buttons -->
                             <div class="d-flex justify-content-center gap-3">
-                                <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create
-                                    Circle</button>
-                                <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join
-                                    Circle</button>
+                            <a href="../passenger/createCircle.php" ><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create
+                                    Circle</button></a>
+                                    <a href="../passenger/joinCircle.php" ><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join
+                                    Circle</button></a>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <?php include '../assets/shared/navbarDriver.php'; ?>
+    <?php include '../assets/shared/navbarPassenger.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

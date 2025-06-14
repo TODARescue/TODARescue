@@ -18,7 +18,7 @@
    <?php include '../assets/shared/navbarPassenger.php'; ?>
 
 
-   <div class="container-fluid py-5 d-flex justify-content-center">
+   <div class="container-fluid py-5 mt-5 d-flex justify-content-center">
         <!-- Invite members text -->
         <div class="row d-flex justify-content-center">
             <div class="col-12 col-md-6 col-lg-4" >

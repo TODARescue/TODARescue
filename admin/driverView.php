@@ -80,6 +80,8 @@
         </div>
     </div>
 
+    <?php include '../assets/shared/navbarAdmin.php'; ?>
+
 </body>
 
 </html>

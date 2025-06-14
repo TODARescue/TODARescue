@@ -21,11 +21,11 @@
         <h3 class="fw-bold text-center mb-3">TODA Rescue</h3>
         <div class="d-flex align-items-center justify-content-between">
             <h5 class="mb-3">Drivers</h5>
-            <button class="btn rounded-pill d-flex align-items-center justify-content-center mb-3"
-                style="background-color: #2EBCBC; border: none; width: 60px; height: 30px; padding: 0;">
+            <a href="../admin/addDrivers.php"
+                class="btn rounded-pill d-flex align-items-center justify-content-center mb-3"
+                style="background-color: #2EBCBC; border: none; width: 60px; height: 30px; padding: 0; text-decoration: none;">
                 <i class="bi bi-plus" style="font-size: 20px; color: white;"></i>
-            </button>
-            
+            </a>
         </div>
 
 
