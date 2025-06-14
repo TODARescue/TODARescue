@@ -33,7 +33,6 @@
                         </div>
                     </div>
 
-                    <!-- Main Content Wrapper with padding -->
                     <div style="padding-top: 100px;">
                         <div class="p-4">
                             <h6 class="fw-bold mb-4">Circle List</h6>
