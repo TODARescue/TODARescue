@@ -8,6 +8,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .list-group-item-action:hover {
+            background-color: #e0e0e0 !important;
+            cursor: pointer;
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.7;
+        }
+    </style>
 </head>
 
 <body class="d-flex justify-content-center align-items-center vh-100"
@@ -61,7 +71,7 @@
                         </div>
 
                         <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
-                            onclick="handleClick('privacySecurity')">
+                            onclick="handleClick('account')">
                             Account
                         </div>
 
@@ -75,10 +85,15 @@
                             About
                         </div>
 
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
-                            onclick="handleClick('logout')">
-                            Logout
-                        </div>
+                        <!-- Leave Circle / Log Out (with modal) -->
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#leaveCircleModal"
+                            style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                Leave Circle
+                            </div>
+                        </a>
+
                     </div>
 
                 </div>
@@ -87,8 +102,50 @@
         </div>
     </div>
 
+    <!-- Leave Circle Modal -->
+    <div class="modal fade" id="leaveCircleModal" tabindex="-1" aria-labelledby="leaveCircleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header bg-light border-bottom-0">
+                    <h5 class="modal-title" id="leaveCircleModalLabel">Confirm Leave</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    Are you sure you want to leave the circle?
+                </div>
+                <div class="modal-footer justify-content-center border-top-0">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <a href="../passenger/leaveCircleAction.php" class="btn btn-danger px-4">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php include '../assets/shared/navbarPassenger.php'; ?>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Navigation Handler -->
+    <script>
+        function handleClick(page) {
+            switch (page) {
+                case 'circleManagement':
+                    window.location.href = '../passenger/createCircle.php';
+                    break;
+                case 'account':
+                    window.location.href = '../passenger/account.php';
+                    break;
+                case 'privacySecurity':
+                    window.location.href = '../passenger/privacySettings.php';
+                    break;
+                case 'about':
+                    window.location.href = '../passenger/about.php';
+                    break;
+            }
+        }
+    </script>
+
 </body>
 
 </html>

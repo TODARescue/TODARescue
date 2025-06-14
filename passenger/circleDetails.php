@@ -56,9 +56,11 @@
                             Remove Circle Members
                         </div>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            Leave Circle
-                        </div>
+                        <a href="../passenger/leaveCircleModal.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                Leave Circle
+                            </div>
 
                     </div>
 
