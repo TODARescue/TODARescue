@@ -1,5 +1,5 @@
-const fallbackCoords = [14.08849, 121.0995];
-const tanauanBounds = L.latLngBounds(
+window.fallbackCoords = [14.08849, 121.0995];
+window.tanauanBounds = L.latLngBounds(
   [14.04146, 121.06599], //SW
   [14.10694, 121.15791] //NE
 );
@@ -110,6 +110,7 @@ policeStations.forEach(function (station) {
     </div>
   `);
 });
+
 // Custom marker icon
 const profileIcon = L.icon({
   iconUrl: "../assets/images/profile-default.png",

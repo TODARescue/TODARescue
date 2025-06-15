@@ -25,13 +25,14 @@
                     <div class="d-flex align-items-center justify-content-start shadow px-4"
                         style="border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; background-color: #fff; height: 100px;">
                         <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">&#8592;</a>
-                        <h5 class="mb-0 fw-bold">Group 1 Name </h5>
+                        <h5 class="mb-0 fw-bold">Group 1 Name</h5>
                     </div>
 
                     <!-- Options List -->
                     <div class="list-group list-group-flush mt-2 w-100">
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
+                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                            style="font-size: 0.85rem; user-select: none;">
                             Circle Details
                         </div>
 
@@ -39,41 +40,76 @@
                             <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
                         </div>
 
-
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
+                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                            style="font-size: 0.85rem; user-select: none;">
                             Circle Management
                         </div>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            Change Admin Status
-                        </div>
+                        <a href="../passenger/changeAdminStatusPassenger.php"
+                            style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                                Change Admin Status
+                            </div>
+                        </a>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            Add Circle Members
-                        </div>
+                        <a href="../passenger/inviteMember.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                                Add Circle Members
+                            </div>
+                        </a>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            Remove Circle Members
-                        </div>
+                        <a href="../passenger/removeCircleMember.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                                Remove Circle Members
+                            </div>
+                        </a>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
+                        <!-- Modal Trigger -->
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light"
+                            data-bs-toggle="modal" data-bs-target="#leaveCircleModal">
                             Leave Circle
                         </div>
 
                     </div>
-
                 </div>
-
             </div>
         </div>
+
+        <!-- Leave Circle Modal -->
+        <div id="leaveCircleModal" class="modal fade" tabindex="-1" aria-labelledby="leaveCircleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                    style="width: 85%; max-width: 320px; margin: auto;">
+                    <h5 class="fw-bold mb-2" id="leaveCircleModalLabel">Leaving Circle</h5>
+                    <p class="mb-4" style="font-size: 0.95rem;">
+                        You will no longer see or share locations with this Circle. Are you sure you want to leave?
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn rounded-pill px-4"
+                            style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
+                            No
+                        </button>
+                        <a href="../passenger/leaveCircleAction.php" class="btn rounded-pill px-4 text-white"
+                            style="background-color: #1cc8c8; font-weight: 600;">
+                            Yes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <?php include '../assets/shared/navbarPassenger.php'; ?>
+
+        <!-- Scripts -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </div>
 
-    <!-- Bottom Navigation (Placeholder for PHP Include) -->
-    <?php include '../assets/shared/navbarPassenger.php'; ?>
-
-    <!-- Bootstrap Icons (for pencil icon) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

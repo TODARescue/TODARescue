@@ -65,21 +65,25 @@
                                     value="bryan.reano@gmail.com" style="border-bottom: 1px solid #dee2e6;" />
                             </div>
 
-                            <!-- Ride History Section -->
-                            <div class="pt-3 pb-1 text-secondary fw-bold text-uppercase small">
-                                Ride History
-                            </div>
-
                             <!-- Ride History Content -->
-                            <div class="mb-4 text-center text-muted py-2">
-                                No ride history available
-                            </div>
+                            <a href="../passenger/rideHistory.php" style="text-decoration: none; color: inherit;">
+                                <div class="mb-4">
+                                    <input type="email"
+                                        class="form-control border-0 border-bottom rounded-0 shadow-none p-0"
+                                        value="Ride History" style="border-bottom: 1px solid #dee2e6;" />
+                                </div>
+                            </a>
 
                             <!-- Edit Profile Button -->
                             <div class="d-flex justify-content-center mt-4">
-                                <button type="submit" class="btn text-white px-5"
-                                    style="background-color: #24b3a7; border-radius: 15px;">Edit Profile</button>
+                                <a href="../passenger/accountEdit.php" style="text-decoration: none;">
+                                    <button type="button" class="btn text-white px-5"
+                                        style="background-color: #24b3a7; border-radius: 15px;">
+                                        Edit Profile
+                                    </button>
+                                </a>
                             </div>
+
                         </form>
                     </div>
 

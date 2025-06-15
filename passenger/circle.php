@@ -5,10 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TODA Rescue - Circle Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
 
 <body class="d-flex justify-content-center align-items-center vh-100"
@@ -22,42 +22,47 @@
                     style="border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
                     <!-- Header -->
-                    <div class="d-flex align-items-center justify-content-start shadow px-4"
-                        style="border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; background-color: #fff; height: 100px;">
-                        <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">&#8592;</a>
-                        <h5 class="mb-0 fw-bold">Circle Management</h5>
+                    <div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-5"
+                        style="z-index: 1030;">
+                        <div class="row">
+                            <div class="col d-flex align-items-center p-2 rounded-bottom-4">
+                                <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Back" class="img-fluid m-2"
+                                    style="height: 40px;" />
+                                <h3 class="fw-bold m-0 ps-2">Circle Management</h3>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Circle List Section -->
-                    <div class="p-4">
-                        <h6 class="fw-bold mb-4">Circle List</h6>
+                    <div style="padding-top: 100px;">
+                        <div class="p-4">
+                            <h6 class="fw-bold mb-4">Circle List</h6>
 
-                        <!-- Group 1 -->
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
-                                style="width: 48px; height: 48px; background-color: #1cc8c8;">
-                                <i class="bi bi-people-fill text-white fs-5"></i>
+                            <!-- Group 1 -->
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
+                                    style="width: 48px; height: 48px; background-color: #1cc8c8;">
+                                    <i class="bi bi-people-fill text-white fs-5"></i>
+                                </div>
+                                <span class="fw-medium">Group 1 Name</span>
                             </div>
-                            <span class="fw-medium">Group 1 Name</span>
-                        </div>
 
-                        <!-- Group 2 -->
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
-                                style="width: 48px; height: 48px; background-color: #1cc8c8;">
-                                <i class="bi bi-people-fill text-white fs-5"></i>
+                            <!-- Group 2 -->
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
+                                    style="width: 48px; height: 48px; background-color: #1cc8c8;">
+                                    <i class="bi bi-people-fill text-white fs-5"></i>
+                                </div>
+                                <span class="fw-medium">Group 2 Name</span>
                             </div>
-                            <span class="fw-medium">Group 2 Name</span>
-                        </div>
 
-                        <!-- Buttons -->
-                        <div class="d-flex justify-content-center gap-3">
-                            <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create
-                                Circle</button>
-                            <button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join
-                                Circle</button>
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-center gap-3">
+                            <a href="../passenger/createCircle.php" ><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create
+                                    Circle</button></a>
+                                    <a href="../passenger/joinCircle.php" ><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join
+                                    Circle</button></a>
+                            </div>
                         </div>
-
                     </div>
 
                 </div>
@@ -66,7 +71,7 @@
         </div>
     </div>
 
-    <?php include '../assets/shared/navbarDriver.php'; ?>
+    <?php include '../assets/shared/navbarPassenger.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
