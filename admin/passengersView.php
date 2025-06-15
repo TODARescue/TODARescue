@@ -28,10 +28,10 @@
                     <h5 class="mb-0 fw">Passengers</h5>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-info btn-sm rounded-circle">
+                    <button onclick="location.href='editProfilePassenger.php'" class="btn btn-info text-white btn-sm rounded-circle">
                         <i class="bi bi-pencil-square"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm rounded-circle">
+                    <button onclick="location.href='#'" class="btn btn-danger btn-sm rounded-circle">
                         <i class="bi bi-trash-fill"></i>
                     </button>
                 </div>
