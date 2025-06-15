@@ -27,7 +27,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-2 border-teal">
                 <div class="modal-header bg-light border-0">
-                    <h5 class="modal-title" id="gpsWarningModalLabel">📌 Location Outside Tanauan Bounds</h5>
+                    <h5 class="modal-title" id="gpsWarningModalLabel">📌 Location Outside Map Bounds</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
@@ -114,7 +114,7 @@
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
         <!-- For map integration -->
-        <script src="../assets/js/homePage/map.js"></script>
+        <script src="../assets/js/sharedMap.js"></script>
 
         <!-- Toggling Details -->
         <script src="../assets/js/homePage/details.js"></script>

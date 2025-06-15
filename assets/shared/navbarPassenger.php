@@ -8,7 +8,7 @@
             </a>
         </div>
         <div class="col col-navbar text-center" data-icon="users">
-            <a href="../passenger/circle.php" class="d-flex flex-column justify-content-center align-items-center py-2 w-100 h-100">
+            <a href="../passenger/groupPage.php" class="d-flex flex-column justify-content-center align-items-center py-2 w-100 h-100">
                 <img src="../assets/shared/navbar-icons/users.svg" alt="Users" class="img-fluid" />
             </a>
         </div>
