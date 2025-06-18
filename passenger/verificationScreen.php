@@ -162,7 +162,7 @@ try {
             startRideBtn.addEventListener('click', function() {
                 const driverId = <?php echo $driver['driverId']; ?>;
                 const userId = <?php echo $driver['userId']; ?>;
-                const riderId = <?php echo isset($_SESSION['userId']) ? $_SESSION['userId'] : 1; ?>;
+                const riderId = <?php echo isset($_SESSION['userId']) ? $_SESSION['userId'] : 3; ?>;
                 
                 startRideBtn.disabled = true;
                 startRideBtn.textContent = 'Starting ride...';

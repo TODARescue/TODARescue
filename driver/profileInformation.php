@@ -7,8 +7,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+if (isset($_GET['testUser'])) {
+    $_SESSION['userId'] = (int)$_GET['testUser'];
+}
+
 if (!isset($_SESSION['userId'])) {
-    $_SESSION['userId'] = 3;
+    $_SESSION['userId'] = 1;
 }
 
 $userId = $_SESSION['userId'];
