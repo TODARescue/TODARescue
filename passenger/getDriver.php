@@ -1,15 +1,12 @@
 <?php
-// API endpoint to get driver data when QR code is scanned
+
 header('Content-Type: application/json');
 
-// Include database connection
 require_once '../assets/php/connect.php';
 
-// DISABLE error reporting for production JSON output
 ini_set('display_errors', 0);
 error_reporting(0);
 
-// DEFINE FUNCTIONS FIRST
 function sanitize_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -26,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     try {
-        // Trim whitespace to handle potential scanning issues
         $qrData = trim($qrData);
         
         $stmt = $conn->prepare("SELECT d.driverId, d.plateNumber, d.model, d.address, d.todaRegistration, 
@@ -65,7 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'message' => 'Driver found successfully'
             ]);
         } else {
-            // No driver found with the given QR code data
             echo json_encode(['success' => false, 'message' => 'No driver found with the provided QR code']);
         }
         
@@ -77,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
 
-// Close the database connection
 if (isset($conn) && $conn) {
     $conn->close();
 }

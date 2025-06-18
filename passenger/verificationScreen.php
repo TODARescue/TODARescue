@@ -162,19 +162,16 @@ try {
             startRideBtn.addEventListener('click', function() {
                 const driverId = <?php echo $driver['driverId']; ?>;
                 const userId = <?php echo $driver['userId']; ?>;
-                // Default riderId or get from session if available
                 const riderId = <?php echo isset($_SESSION['userId']) ? $_SESSION['userId'] : 1; ?>;
                 
-                // Disable button and show status
                 startRideBtn.disabled = true;
                 startRideBtn.textContent = 'Starting ride...';
                 statusMessage.style.display = 'flex';
                 
                 console.log(`Starting ride with driverId=${driverId}, riderId=${riderId}`);
                 
-                // Simulate successful ride start (replace with actual API call)
                 setTimeout(function() {
-                    // Show success message
+
                     statusMessage.innerHTML = `
                         <div class="col-10">
                             <div class="alert alert-success text-center">
@@ -184,7 +181,6 @@ try {
                         </div>
                     `;
                     
-                    // Redirect after showing success message
                     setTimeout(function() {
                         window.location.href = 'index.php';
                     }, 1500);

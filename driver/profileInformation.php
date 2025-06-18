@@ -45,14 +45,11 @@ if (isset($_POST['generateQR']) && isset($driver)) {
     $stmt->execute();
     $stmt->close();
     
-    // Refresh driver data
     $driver['qrCode'] = $qrUrl;
-    
-    // Show success message
+
     $success = "QR Code has been generated successfully!";
 }
 
-// Handle QR code download (this would normally be handled by JS)
 $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 ?>
 
