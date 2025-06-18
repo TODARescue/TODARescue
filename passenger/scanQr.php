@@ -24,20 +24,74 @@
     <!-- Camera -->
     <div class="position-fixed top-0 start-0 w-100 vh-100" style="z-index: 1;">
         <video id="preview" autoplay playsinline class="w-100 h-100 object-fit-cover bg-dark"></video>
+        <canvas id="qr-canvas" style="display: none;"></canvas>
     </div>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <script>
         const video = document.getElementById('preview');
+        const canvas = document.getElementById('qr-canvas');
+        const ctx = canvas.getContext('2d');
+        let scanning = true;
 
         // Start camera
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
             .then((stream) => {
                 video.srcObject = stream;
+                video.play();
+                requestAnimationFrame(tick);
             })
             .catch((err) => {
                 console.error("No cameras found!", err);
+                alert("Camera access is required for QR scanning. Please allow camera access and try again.");
             });
+        
+        function tick(){
+            if (video.readyState === video.HAVE_ENOUGH_DATA && scanning){
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const code = jsQr(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                });
+
+                if(code){
+                    console.log("Qr Code detected: ", code.data);
+                    processQrCode(code.data);
+                }
+            }
+            if (scanning) {
+                requestAnimationFrame(tick);
+            }
+        }
+
+
+        function processQrCode(qrData){
+            fetch('../passenger/getDriver.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                },
+                body: 'qrData=' + encodeURIComponent(qrData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    window.location.href = 'verificationScreen.php?driverId= ' + data.driverId;
+                } else {
+                    alert('Invalid QR code or driver not found: ' + data.message);
+                    scanning = true;
+                    requestAnimationFrame(tick);
+                }
+            })
+            .catch(error => {
+                console.error('Error: ', error);
+                alert("An error occured while processing the QR Code. Please Try Again.");
+                scanning = true;
+                requestAnimationFrame(tick);
+            })
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
