@@ -21,15 +21,11 @@
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
                     style="border-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
-                    <!-- Header -->
-                    <div class="d-flex align-items-center justify-content-start shadow px-4"
-                        style="border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; background-color: #fff; height: 100px;">
-                        <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">&#8592;</a>
-                        <h5 class="mb-0 fw-bold">Group 1 Name</h5>
-                    </div>
+                    <!-- HEADER -->
+                    <?php include '../assets/shared/header.php'; ?>
 
                     <!-- Options List -->
-                    <div class="list-group list-group-flush mt-2 w-100">
+                    <div class="list-group list-group-flush w-100"  style="padding-top: 120px;">
 
                         <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">

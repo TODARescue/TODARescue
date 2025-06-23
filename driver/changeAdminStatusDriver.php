@@ -31,7 +31,7 @@
                     </div>
 
                     <!-- Member List -->
-                    <div class="container-fluid mt-5 pt-5">
+                    <div class="container-fluid pt-5">
                         <div class="row">
                             <div class="col list-group list-group-flush px-0 w-100">
                                 <div class="mb-1">

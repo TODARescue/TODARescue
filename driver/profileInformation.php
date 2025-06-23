@@ -10,21 +10,12 @@
 </head>
 
 <body>
-    <!-- Header for Profile Info -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col header d-flex flex-row p-2 rounded-5">
-                <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Profile Information"
-                    class="img-fluid m-3" />
-                <div class="h3 p-3 m-1 px-1 fw-bolder">Profile Information</div>
-
-            </div>
-        </div>
-    </div>
+    <!-- HEADER -->
+    <?php include '../assets/shared/header.php'; ?>
 
 
     <div class="container-fluid">
-        <div class="d-flex justify-content-center py-3">
+        <div class="d-flex justify-content-center" style="padding-top: 120px;">
             <div class="card border-0">
                 <div class="card-body p-4 text-center">
                     <!-- Driver Photo -->
