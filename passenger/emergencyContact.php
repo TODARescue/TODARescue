@@ -22,7 +22,7 @@
     <!-- NAVBAR -->
    <?php include '../assets/shared/navbarPassenger.php'; ?>
 
-  <div class="dropdown pt-5">
+  <div class="dropdown"  style="padding-top: 60px;">
     <button class="btn border border-black bg-transparent text-black shadow rounded-5 fw-semibold dropdown-toggle d-flex align-items-center gap-5 mt-5 mx-3 mb-3"
         type="button"
         id="filterButton"

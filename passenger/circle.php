@@ -21,17 +21,8 @@
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
                     style="border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
-                    <!-- Header -->
-                    <div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-5"
-                        style="z-index: 1030;">
-                        <div class="row">
-                            <div class="col d-flex align-items-center p-2 rounded-bottom-4">
-                                <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Back" class="img-fluid m-2"
-                                    style="height: 40px;" />
-                                <h3 class="fw-bold m-0 ps-2">Circle Management</h3>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- HEADER -->
+                    <?php include '../assets/shared/header.php'; ?>
 
                     <div style="padding-top: 100px;">
                         <div class="p-4">

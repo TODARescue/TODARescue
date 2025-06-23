@@ -18,14 +18,10 @@
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0 rounded-0 rounded-bottom-4 shadow-lg"
                     style="--bs-border-radius-bottom: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
-                    <!-- Header -->
-                    <div class="d-flex align-items-center justify-content-start shadow px-4"
-                        style="border-bottom-left-radius: 43px; border-bottom-right-radius: 43px; background-color: #fff; height: 100px;">
-                        <a href="#" class="me-2 fs-5 fw-bold text-decoration-none text-dark">&#8592;</a>
-                        <h5 class="mb-0 fw-bold">Account</h5>
-                    </div>
+                    <!-- HEADER -->
+                    <?php include '../assets/shared/header.php'; ?>
                     <!-- Account Content -->
-                    <div class="list-group list-group-flush mt-2 px-0 w-100 flex-grow-1 overflow-auto">
+                    <div class="list-group list-group-flush m-2 px-0 w-100 flex-grow-1 overflow-auto" style="padding-top: 110px;">
                         <!-- Profile Section -->
                         <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase small">
                             Profile

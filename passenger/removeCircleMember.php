@@ -19,19 +19,11 @@
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
                     style="border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
-                    <!-- Header -->
-                    <div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-bottom-5"
-                        style="z-index: 1030;">
-                        <div class="row">
-                            <div class="col d-flex align-items-center p-3">
-                                <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Back" style="height: 40px;" />
-                                <h3 class="fw-bold m-0 ms-2">Remove Circle Member</h3>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- HEADER -->
+                    <?php include '../assets/shared/header.php'; ?>
 
                     <!-- Member List -->
-                    <div class="container-fluid mt-5 pt-5">
+                    <div class="container-fluid" style="padding-top: 70px;">
                         <div class="row">
                             <div class="col list-group list-group-flush px-0 w-100">
                                 <div class="mb-1">

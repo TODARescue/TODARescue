@@ -18,7 +18,7 @@
 
    <div class="container-fluid py-5 mt-5 vh-100 d-flex flex-column">
         <!-- Invite members text -->
-        <div class="flex-grow-1 px-3">
+        <div class="flex-grow-1 px-3 pt-4">
             <div class="mb-4">
                 <h3 class="fw-bold mb-3">Name Your Circle</h3   >
                 <input type="text" class="form-control border-0 rounded-pill py-3 px-4" 

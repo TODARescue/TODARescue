@@ -15,7 +15,7 @@
     <?php include '../assets/shared/header.php'; ?>
     
     <div class="container-fluid">
-        <div class="d-flex justify-content-center py-3">
+        <div class="d-flex justify-content-center"  style="padding-top: 120px;">
             <div class="card border-1 rounded-5 w-75 my-4" style="background-color: #D9D9D9">
                 <div class="card-body p-4">
                     <!-- Driver Photo -->
