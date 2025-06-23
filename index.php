@@ -43,12 +43,9 @@
                             </div>
 
                             <div class="d-flex justify-content-center mt-4">
-                                <button type="submit"
-                                    class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill">
+                                <a href="passenger/index.php" class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill">
                                     Login
-                                </button>
-
-
+                                </a>
                             </div>
                         </form>
 
