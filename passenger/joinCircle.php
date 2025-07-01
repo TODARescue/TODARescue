@@ -16,16 +16,13 @@
     <!-- NAVBAR -->
    <?php include '../assets/shared/navbarPassenger.php'; ?>
 
-   <div class="container-fluid py-5 d-flex justify-content-center">
+   <div class="container-fluid py-5 mt-5 d-flex justify-content-center">
         <!-- Invite members text -->
-        <div class="flex-grow-1 px-3">
-            <div class="mb-4">
-                <h3 class="fw-bold mb-3">Join a Circle</h3>
-            </div>
+        <div class="flex-grow-1 px-3 pt-5">
             
             <div class="card border-0 mb-4 rounded-5" style="background-color: #D9D9D9">
                 <div class="card-body text-center py-5">
-                    <div class="card-text mb-3 fw-bold">Enter the Invite Code</div>
+                    <div class="card-text mb-3 fs-3 fw-bold">Enter the Invite Code</div>
 
                     <!-- Input field -->
                     <div class="d-flex justify-content-center align-items-center gap-2 mb-3">

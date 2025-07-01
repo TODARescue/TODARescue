@@ -67,19 +67,10 @@ try {
 </head>
 
 <body>
-    <div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-bottom-5" style="z-index: 1030;">
-        <div class="row">
-            <div class="col d-flex align-items-center p-3">
-                <a href="javascript:history.back()">
-                    <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Back" style="height: 40px;" />
-                </a>
-                <h3 class="fw-bold m-0 ms-2">TODA Rescue</h3>
-            </div>
-        </div>
-    </div>
+    <?php include '../assets/shared/header.php'; ?>
     
-    <div class="container-fluid" style="margin-top: 70px;">
-        <div class="d-flex justify-content-center py-3">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center"  style="padding-top: 120px;">
             <div class="card border-1 rounded-5 w-75 my-4" style="background-color: #D9D9D9">
                 <div class="card-body p-4">
                     <!-- Driver Photo -->

@@ -18,12 +18,12 @@
    <?php include '../assets/shared/navbarPassenger.php'; ?>
 
 
-   <div class="container-fluid py-5 d-flex justify-content-center">
+   <div class="container-fluid py-5 mt-5 d-flex justify-content-center">
         <!-- Invite members text -->
         <div class="row d-flex justify-content-center">
             <div class="col-12 col-md-6 col-lg-4" >
 
-                <div class="mb-4">
+                <div class="mb-4 pt-3">
                     <h3 class="fw-bold mb-2">Invite Members to Group 1</h3>
                     <p class="text-muted mb-0">Share your code personally with your trusted friend</p>
                 </div>

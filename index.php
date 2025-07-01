@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-
 </head>
 
 <body class="d-flex justify-content-center align-items-center vh-100"
@@ -44,12 +43,9 @@
                             </div>
 
                             <div class="d-flex justify-content-center mt-4">
-                                <button type="submit"
-                                    class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill">
+                                <a href="passenger/index.php" class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill">
                                     Login
-                                </button>
-
-
+                                </a>
                             </div>
                         </form>
 

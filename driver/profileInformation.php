@@ -82,6 +82,8 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
             </div>
         </div>
     </div>
+    <!-- HEADER -->
+    <?php include '../assets/shared/header.php'; ?>
 
     <?php if (isset($error)): ?>
     <div class="container-fluid mt-4">
@@ -99,7 +101,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 
     <?php if (isset($driver)): ?>
     <div class="container-fluid">
-        <div class="d-flex justify-content-center py-3">
+        <div class="d-flex justify-content-center" style="padding-top: 120px;">
             <div class="card border-0">
                 <div class="card-body p-4 text-center">
                     <!-- Driver Photo -->

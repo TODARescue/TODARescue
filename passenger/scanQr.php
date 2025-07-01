@@ -12,16 +12,8 @@
 </head>
 
 <body>
-    <div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-bottom-5" style="z-index: 1030;">
-        <div class="row">
-            <div class="col d-flex align-items-center p-3">
-                <a href="javascript:history.back()">
-                    <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Back" style="height: 40px;" />
-                </a>
-                <h3 class="fw-bold m-0 ms-2">TODA Rescue</h3>
-            </div>
-        </div>
-    </div>
+    <!-- HEADER -->
+    <?php include '../assets/shared/header.php'; ?>
 
     <!-- Camera -->
     <div class="position-fixed top-0 start-0 w-100 vh-100" style="z-index: 1;">
