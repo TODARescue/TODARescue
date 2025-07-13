@@ -17,10 +17,6 @@ h4 {
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08); 
 }
 
-.container-fluid.position-fixed.bottom-0 {
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
-}
-
 .col-navbar {
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
