@@ -93,7 +93,7 @@ if (isset($_POST['btnSignUp'])) {
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" placeholder="Contact Number" name="contact"
+                                <input type="text" class="form-control" placeholder="09123456781" name="contact"
                                     required style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
                             <div class="mb-3 position-relative">
