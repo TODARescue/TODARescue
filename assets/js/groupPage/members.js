@@ -152,6 +152,20 @@ function resetStyling() {
 }
 
 function showDriverContainer(userID, userName, driverInfo, status, profilePic) {
+  let ridingDetails = "";
+  switch (status) {
+    case "Riding":
+      ridingDetails = "Riding with";
+      break;
+    case "Offline":
+      ridingDetails = "Last Rode With";
+      break;
+    case "Available":
+      ridingDetails = "Last Rode With";
+      break;
+    default:
+      ridingDetails = "New to Application";
+  }
   isViewed = true;
   mapContainer.classList.add("h-50");
   mapContainer.classList.add("w-100");
@@ -172,9 +186,9 @@ function showDriverContainer(userID, userName, driverInfo, status, profilePic) {
                                         </div>
                                         <div class="fw-bold">Group 1</div>
                                     </div>
-                                    <div class="my-3 mx-2 fw-bold">Riding With</div>
-                                    <div class="card rounded-4 shadow px-4 py-4 mb-5 start-50 translate-middle-x"
-                                        style="background-color: #2EBCBC; top: 55%; width: 90%; max-width: 500px;">
+                                    <div class="my-3 mx-2 fw-bold">${ridingDetails}</div>
+                                    <div class="card rounded-4 glass shadow px-4 py-4 mb-5 start-50 translate-middle-x"
+                                        style="top: 55%; width: 90%; max-width: 500px;">
                                         <div class="d-flex flex-row align-items-center justify-content-between profile-container" id="profile-details">
                                             <div class="me-3 profile-pic">
                                                 <img src="${driverInfo.profilePic}" alt="Driver" class="rounded-circle" width="50" height="50">
