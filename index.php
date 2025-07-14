@@ -16,8 +16,8 @@
     <div class="container-fluid p-0 m-0 vh-100">
         <div class="row h-100 g-0">
             <div class="col-12 d-flex justify-content-center align-items-center">
-                <div class="card bg-white w-100 h-100 d-flex flex-column justify-content-center px-4"
-                    style="max-width: 100%; border-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
+                <div class="bg-white w-100 h-100 d-flex flex-column justify-content-center px-4"
+                    style="max-width: 100%; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
                     <div class="text-center mb-5" style="margin-top: -200px;">
                         <img src="assets/images/Logo.png" alt="TODA Rescue Logo" style="width: 80px;">

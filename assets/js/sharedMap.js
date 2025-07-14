@@ -60,10 +60,26 @@ const streetLayer = L.tileLayer(
 ).addTo(map);
 
 // Start locating
-map.locate({
-  watch: true,
-  enableHighAccuracy: true,
-});
+if (navigator.permissions) {
+  navigator.permissions.query({ name: "geolocation" }).then(function (result) {
+    if (result.state === "granted" || result.state === "prompt") {
+      map.locate({
+        watch: true,
+        enableHighAccuracy: true,
+      });
+    } else {
+      alert(
+        "Location access is denied. Please enable it in your app or device settings."
+      );
+    }
+  });
+} else {
+  // Fallback for older browsers or environments
+  map.locate({
+    watch: true,
+    enableHighAccuracy: true,
+  });
+}
 
 hospitals.forEach(function (hospital) {
   L.marker(hospital.coords, {
@@ -155,31 +171,33 @@ function fallbackLocation() {
 }
 
 map.on("locationfound", function (e) {
-  let targetCoords;
+  const inBounds = tanauanBounds.contains(e.latlng);
 
-  if (tanauanBounds.contains(e.latlng)) {
-    targetCoords = e.latlng;
-    outOfBoundsWarned = false;
-  } else {
-    if (!outOfBoundsWarned) {
-      outOfBoundsWarned = true;
-
-      const modalElement = document.getElementById("gpsWarningModal");
-      const gpsModal = new bootstrap.Modal(modalElement);
-      gpsModal.show();
-    }
-    targetCoords = fallbackCoords;
+  // Show warning ONCE if out of bounds
+  if (!inBounds && !outOfBoundsWarned) {
+    outOfBoundsWarned = true;
+    const modalElement = document.getElementById("gpsWarningModal");
+    const gpsModal = new bootstrap.Modal(modalElement, {
+      backdrop: "static",
+      keyboard: false,
+    });
+    gpsModal.show();
   }
 
+  const targetCoords = inBounds ? e.latlng : fallbackCoords;
+
+  // Set view on first location only
   if (!firstLocationFound) {
     map.setView(targetCoords, 17);
     firstLocationFound = true;
   }
 
+  // Remove existing marker and accuracy indicators
   if (currentMarker) map.removeLayer(currentMarker);
   if (accuracyCircle) map.removeLayer(accuracyCircle);
   if (accuracyOutline) map.removeLayer(accuracyOutline);
 
+  // Place the live marker
   currentMarker = L.marker(targetCoords, {
     icon: profileIcon,
   })
@@ -189,6 +207,7 @@ map.on("locationfound", function (e) {
       map.setView(currentMarker.getLatLng(), 19);
     });
 
+  // Accuracy visual
   accuracyOutline = L.circle(targetCoords, {
     radius: e.accuracy + 20,
     color: "#2ebcbc",

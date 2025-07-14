@@ -20,6 +20,9 @@
 
     <!-- Custom Styling -->
     <link rel="stylesheet" href="../assets/css/style.css">
+
+    <!-- Glass Styling -->
+    <!-- <link rel="stylesheet" href="../assets/css/glass.css"> -->
 </head>
 
 <body>
@@ -59,8 +62,8 @@
             </div>
 
             <!-- Profile Card -->
-            <div class="card rounded-4 shadow px-4 py-4 mb-4 start-50 translate-middle-x"
-                style="background-color: #2EBCBC; top: 55%; width: 90%; max-width: 500px;">
+            <div class="card rounded-4 glass shadow px-4 py-4 mb-4 start-50 translate-middle-x"
+                style="background-color: #2ebcbc!important;top: 55%; width: 90%; max-width: 500px;">
                 <div class="d-flex flex-row align-items-center justify-content-between profile-container" id="profile-details">
 
                     <!-- Profile Picture -->
@@ -97,8 +100,8 @@
 
             <!-- Button -->
             <div class="container-fluid my-4 align-items-center rounded-5 text-center">
-                <button class="arrive-button rounded-pill text-bold position-absolute start-50 translate-middle-x px-4 py-4"
-                    style="top: 75%; width: 90%; max-width: 200px;" id="arrive-button">
+                <button class="arrive-button glass rounded-pill text-bold position-absolute start-50 translate-middle-x px-4 py-4"
+                    style="background-color: rgb(46, 188, 188) !important; top: 75%; width: 90%; max-width: 200px;" id="arrive-button">
                     ARRIVED SAFELY
                 </button>
             </div>
