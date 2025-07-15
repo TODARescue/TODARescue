@@ -1,3 +1,53 @@
+<?php
+session_start();
+include("assets/php/connect.php");
+
+$error = "";
+
+$storedContact = isset($_COOKIE['contactNumber']) ? $_COOKIE['contactNumber'] : "";
+$storedPassword = isset($_COOKIE['password']) ? $_COOKIE['password'] : "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $contactNumber = $_POST['contactNumber'];
+    $password = $_POST['password'];
+
+    $contactNumber = mysqli_real_escape_string($conn, $contactNumber);
+    $password = mysqli_real_escape_string($conn, $password);
+
+    $query = "SELECT * FROM users WHERE contactNumber = '$contactNumber'";
+    $result = mysqli_query($conn, $query);
+
+    if ($result && mysqli_num_rows($result) === 1) {
+        $user = mysqli_fetch_assoc($result);
+
+        if ($user['password'] === $password) {
+            $_SESSION['userId'] = $user['userId'];
+            $_SESSION['role'] = $user['role'];
+
+            if (isset($_POST['rememberMe'])) {
+                setcookie('contactNumber', $contactNumber, time() + (30 * 24 * 60 * 60), "/");
+                setcookie('password', $password, time() + (30 * 24 * 60 * 60), "/");
+            }
+
+            // Redirect based on role
+            if ($user['role'] === 'passenger') {
+                header("Location: passenger/index.php");
+            } elseif ($user['role'] === 'driver') {
+                header("Location: driver/index.php");
+            } else {
+                $error = "Unknown role assigned.";
+            }
+            exit();
+        } else {
+            $error = "Invalid password.";
+        }
+    } else {
+        $error = "User not found.";
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,30 +76,43 @@
 
                     <div class="mx-auto" style="width: 100%; max-width: 350px;">
                         <h5 class="fw-bold mb-3 text-center">Login</h5>
+                        <form method="POST" action="">
+                            <?php if (!empty($error)) { ?>
+                                <div class="alert alert-danger text-center py-1 small"><?php echo $error; ?></div>
+                            <?php } ?>
 
-                        <form>
                             <div class="mb-3">
-                                <input type="text" class="form-control" placeholder="Contact Number" required
+                                <input type="text" name="contactNumber" class="form-control"
+                                    placeholder="Contact Number" required
+                                    value="<?php echo htmlspecialchars($storedContact); ?>"
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
                             <div class="mb-3">
-                                <input type="password" class="form-control" placeholder="Password" required
+                                <input type="password" name="password" class="form-control" placeholder="Password"
+                                    required value="<?php echo htmlspecialchars($storedPassword); ?>"
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
 
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" <?php if (!empty($storedContact))
+                                    echo "checked"; ?>>
                                 <label class="form-check-label small" for="rememberMe">Remember me</label>
                             </div>
 
-                            <div class="d-flex justify-content-center mt-4">
-                                <a href="passenger/index.php" class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill">
+                            <div class="d-flex justify-content-center my-4">
+                                <button type="submit"
+                                    class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill">
                                     Login
-                                </a>
+                                </button>
                             </div>
                         </form>
 
                     </div>
+                    <p class="text-center mb-1">
+                        Don't have an account?
+                        <a href="signUp.php" class="text-black text-decoration-underline fw-semibold">Sign Up to
+                            TODARescue App</a>
+                    </p>
                 </div>
             </div>
         </div>
