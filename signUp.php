@@ -19,12 +19,18 @@ if (isset($_POST['btnSignUp'])) {
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirmPassword'];
 
-    $signUpQuery = "SELECT * FROM users WHERE email = '$email'";
+    // Check if email or contact already exists
+    $signUpQuery = "SELECT * FROM users WHERE email = '$email' OR contactNumber = '$contact'";
     $signUpResult = mysqli_query($conn, $signUpQuery);
 
     if (mysqli_num_rows($signUpResult) > 0) {
-        $error = "EMAIL_EXISTS";
-    } elseif ($password == $confirmPassword) {
+        $existingUser = mysqli_fetch_assoc($signUpResult);
+        if ($existingUser['email'] === $email) {
+            $error = "EMAIL_EXISTS";
+        } elseif ($existingUser['contactNumber'] === $contact) {
+            $error = "CONTACT_EXISTS";
+        }
+    } elseif ($password === $confirmPassword) {
         $userInsertQuery = "INSERT INTO users (firstName, lastName, email, contactNumber, password, role, isRiding) 
                             VALUES ('$firstName', '$lastName', '$email', '$contact', '$password', 'passenger', 0)";
         mysqli_query($conn, $userInsertQuery);
@@ -75,9 +81,12 @@ if (isset($_POST['btnSignUp'])) {
 
                         <?php if ($error == "EMAIL_EXISTS") { ?>
                             <div class="alert alert-warning text-center mb-3">Email already exists.</div>
+                        <?php } elseif ($error == "CONTACT_EXISTS") { ?>
+                            <div class="alert alert-warning text-center mb-3">Contact number already exists.</div>
                         <?php } elseif ($error == "PASSWORD_MISMATCH") { ?>
                             <div class="alert alert-danger text-center mb-3">Passwords do not match.</div>
                         <?php } ?>
+
 
                         <form method="POST" action="signUp.php">
                             <div class="mb-3">
