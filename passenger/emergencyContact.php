@@ -43,7 +43,7 @@ if ($viewerId !== "") {
 }
 
 $emergencyHotline = [];
-$jsonPath = __DIR__ . '/../assets/data/emergencyHotline.json';
+$jsonPath = __DIR__ . '/../assets/data/EmergencyHotline.json';
 
 if (file_exists($jsonPath)) {
     $json     = file_get_contents($jsonPath);

@@ -13,8 +13,14 @@
   },
   {
     "name": "Janopol TODA Office",
-    "contactNumber": "09987654321",
+    "contactNumber": "099876543218",
     "permanentAddress": "Janopol East, Tanauan",
     "type": "toda"
+  },
+  {
+    "name": "TMO",
+    "contactNumber": "099876543218",
+    "permanentAddress": "Janopol East, Tanauan",
+    "type": "TMO"
   }
 ]
