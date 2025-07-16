@@ -1,3 +1,32 @@
+<?php
+session_start();
+require_once '../assets/php/connect.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['userId'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+$userId = $_SESSION['userId'];
+$circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
+
+// If no circleId is provided, try to get user's circle
+if (!$circleId) {
+    $query = "SELECT cm.circleId FROM circlemembers cm WHERE cm.userId = ? LIMIT 1";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$userId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($result) {
+        $circleId = $result['circleId'];
+    } else {
+        // No circle found, redirect to circle.php
+        header('Location: circle.php');
+        exit;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,16 +61,19 @@
                             Circle Details
                         </div>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
-                        </div>
+                        <a href="../passenger/editCircleName.php?circleId=<?php echo $circleId; ?>"
+                            style="text-decoration: none; color: inherit;">
+                            <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                                <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
+                            </div>
+                        </a>
 
                         <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Circle Management
                         </div>
 
-                        <a href="../passenger/changeAdminStatusPassenger.php"
+                        <a href="../passenger/changeAdminStatusPassenger.php?circleId=<?php echo $circleId; ?>"
                             style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
@@ -49,14 +81,14 @@
                             </div>
                         </a>
 
-                        <a href="../passenger/inviteMember.php" style="text-decoration: none; color: inherit;">
+                        <a href="../passenger/inviteMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
                                 Add Circle Members
                             </div>
                         </a>
 
-                        <a href="../passenger/removeCircleMember.php" style="text-decoration: none; color: inherit;">
+                        <a href="../passenger/removeCircleMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
                                 Remove Circle Members
@@ -89,7 +121,7 @@
                             style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
                             No
                         </button>
-                        <a href="../passenger/leaveCircleAction.php" class="btn rounded-pill px-4 text-white"
+                        <a href="../passenger/leaveCircleAction.php?circleId=<?php echo $circleId; ?>" class="btn rounded-pill px-4 text-white"
                             style="background-color: #1cc8c8; font-weight: 600;">
                             Yes
                         </a>
