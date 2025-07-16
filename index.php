@@ -34,6 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: passenger/index.php");
             } elseif ($user['role'] === 'driver') {
                 header("Location: driver/index.php");
+            } elseif ($user['role'] === 'admin') {
+                header("Location: admin/index.php");
             } else {
                 $error = "Unknown role assigned.";
             }
