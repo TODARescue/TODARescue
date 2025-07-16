@@ -1,0 +1,20 @@
+[
+  {
+    "name": "PNP (Philippine National Police)",
+    "contactNumber": "097843954267",
+    "permanentAddress": "Tanauan City, Batangas",
+    "type": "police"
+  },
+  {
+    "name": "Tanauan Medical Center",
+    "contactNumber": "09213456789",
+    "permanentAddress": "Tanauan City, Batangas",
+    "type": "medical"
+  },
+  {
+    "name": "Janopol TODA Office",
+    "contactNumber": "09987654321",
+    "permanentAddress": "Janopol East, Tanauan",
+    "type": "toda"
+  }
+]
