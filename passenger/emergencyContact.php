@@ -2,7 +2,7 @@
 include("../assets/php/connect.php");   
 session_start();
 
-$_SESSION['userId']    = 1;
+$_SESSION['userId']    = $_SESSION['userId'];
 $_SESSION['firstName'] = $_SESSION['firstName'] ?? "";
 $_SESSION['lastName']  = $_SESSION['lastName']  ?? "";
 $_SESSION['email']     = $_SESSION['email']     ?? "";
@@ -27,7 +27,6 @@ if ($viewerId !== "") {
         WHERE      viewerCM.userId = ? 
         AND      u.userId     <> ?
         ORDER BY   fullName;
-
     ";
 
     $stmt = mysqli_prepare($conn, $sql);
@@ -43,12 +42,12 @@ if ($viewerId !== "") {
     mysqli_stmt_close($stmt);
 }
 
-$hotlines = [];
-$jsonPath = __DIR__ . '/../assets/data/EmergencyHotline.json';
+$emergencyHotline = [];
+$jsonPath = __DIR__ . '/../assets/data/emergencyHotline.json';
 
 if (file_exists($jsonPath)) {
     $json     = file_get_contents($jsonPath);
-    $hotlines = json_decode($json, true) ?: [];
+    $emergencyHotline = json_decode($json, true) ?: [];
 }
 ?>
 
@@ -89,7 +88,7 @@ if (file_exists($jsonPath)) {
   <div class="row justify-content-center">
 
     <!-- EMERGENCY HOTLINES -->
-    <?php foreach ($hotlines as $h): ?>
+    <?php foreach ($emergencyHotline as $h): ?>
       <div class="card contact-card col-12 col-md-8 p-4 rounded-5 mb-3"
            data-type-filter="<?= htmlspecialchars($h['type']) ?>">
           <div class="d-flex justify-content-between align-items-center mb-3">
@@ -130,12 +129,9 @@ if (file_exists($jsonPath)) {
       </div>
     <?php endforeach; ?>
 
-    <?php if (empty($contacts) && empty($hotlines)): ?>
+    <?php if (empty($contacts) && empty($emergencyHotline)): ?>
         <p class="text-center text-muted">No contacts available.</p>
     <?php endif; ?>
-
-    
-
   </div>
 </div>
 
