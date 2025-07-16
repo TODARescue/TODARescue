@@ -1,8 +1,5 @@
 window.fallbackCoords = [14.08849, 121.0995];
-window.tanauanBounds = L.latLngBounds(
-  [14.04146, 121.06599], //SW
-  [14.10694, 121.15791] //NE
-);
+window.mapBounds = L.latLngBounds([13.7925, 120.9155], [14.2378, 121.252]);
 
 const policeStations = [
   {
@@ -44,11 +41,49 @@ const hospitals = [
 ];
 
 const map = L.map("map", {
-  maxBounds: tanauanBounds,
   maxBoundsViscosity: 1.0,
   minZoom: 15,
   maxZoom: 19,
 });
+
+const geoJsonKey = "tanauanGeoJSON_v1";
+const cachedData = localStorage.getItem(geoJsonKey);
+
+if (cachedData) {
+  const data = JSON.parse(cachedData);
+  console.log("Loaded GeoJSON from localStorage");
+  initMap(data);
+} else {
+  fetch("../assets/js/JSON/tanauan.geojson")
+    .then((res) => res.json())
+    .then((data) => {
+      localStorage.setItem(geoJsonKey, JSON.stringify(data));
+      console.log("Fetched GeoJSON from server and cached");
+      initMap(data);
+    })
+    .catch((err) => {
+      console.error("Failed to fetch geojson", err);
+    });
+}
+
+function initMap(data) {
+  window.tanauanGeoJSON = data;
+  window.tanauanPolygon = L.geoJSON(data, {
+    style: {
+      color: "#2ebcbc",
+      weight: 5,
+      fillOpacity: 0.05,
+    },
+  }).addTo(map);
+
+  map.setMaxBounds(mapBounds);
+  map.fitBounds(mapBounds);
+
+  map.locate({
+    watch: true,
+    enableHighAccuracy: true,
+  });
+}
 
 // Base layers
 const streetLayer = L.tileLayer(
@@ -58,28 +93,6 @@ const streetLayer = L.tileLayer(
     maxZoom: 19,
   }
 ).addTo(map);
-
-// Start locating
-if (navigator.permissions) {
-  navigator.permissions.query({ name: "geolocation" }).then(function (result) {
-    if (result.state === "granted" || result.state === "prompt") {
-      map.locate({
-        watch: true,
-        enableHighAccuracy: true,
-      });
-    } else {
-      alert(
-        "Location access is denied. Please enable it in your app or device settings."
-      );
-    }
-  });
-} else {
-  // Fallback for older browsers or environments
-  map.locate({
-    watch: true,
-    enableHighAccuracy: true,
-  });
-}
 
 hospitals.forEach(function (hospital) {
   L.marker(hospital.coords, {
@@ -169,12 +182,25 @@ function fallbackLocation() {
       map.setView(currentMarker.getLatLng(), 19);
     });
 }
+function goView() {
+  map.setView(fallbackCoords, 17);
+}
 
 map.on("locationfound", function (e) {
-  const inBounds = tanauanBounds.contains(e.latlng);
+  setInterval(() => {
+    const lat = e.latlng.lat;
+    const long = e.latlng.lng;
+    storeLocationToPHP(long, lat);
+  }, 5000);
+
+  const pt = turf.point([e.latlng.lng, e.latlng.lat]);
+  const poly = window.tanauanGeoJSON.features[0];
+
+  const inBounds = turf.booleanPointInPolygon(pt, poly);
+  window.poly = poly;
 
   // Show warning ONCE if out of bounds
-  if (!inBounds && !outOfBoundsWarned) {
+  if (!inBounds && !outOfBoundsWarned && window.hasArrived === "0") {
     outOfBoundsWarned = true;
     const modalElement = document.getElementById("gpsWarningModal");
     const gpsModal = new bootstrap.Modal(modalElement, {
@@ -185,7 +211,9 @@ map.on("locationfound", function (e) {
   }
 
   const targetCoords = inBounds ? e.latlng : fallbackCoords;
-
+  if (window.hasArrived) {
+    map.setView(targetCoords, 17);
+  }
   // Set view on first location only
   if (!firstLocationFound) {
     map.setView(targetCoords, 17);
@@ -209,7 +237,7 @@ map.on("locationfound", function (e) {
 
   // Accuracy visual
   accuracyOutline = L.circle(targetCoords, {
-    radius: e.accuracy + 20,
+    radius: e.accuracy + 2,
     color: "#2ebcbc",
     weight: 6,
     opacity: 0.1,
@@ -226,3 +254,50 @@ map.on("locationfound", function (e) {
 });
 
 map.on("locationerror", fallbackLocation);
+
+let hasStoredLocation = false;
+function storeLocationToPHP(longitude, latitude) {
+  const formData = new FormData();
+  formData.append("action", "store_location");
+  formData.append("userId", userId);
+  formData.append("longitude", longitude);
+  formData.append("latitude", latitude);
+
+  fetch("../assets/php/storeLocation.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success && !hasStoredLocation) {
+        console.log("Location stored in DB");
+        hasStoredLocation = true;
+      } else if (!data.success && !hasStoredLocation) {
+        console.error("Failed to store location");
+        hasStoredLocation = true;
+      }
+    })
+    .catch((err) => {
+      console.error("AJAX error:", err);
+    });
+
+  /* For debugging purposes
+  fetch("../assets/php/storeLocation.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.text())
+    .then((text) => {
+      console.log("RAW PHP Response:", text); 
+      const data = JSON.parse(text);
+      if (data.success) {
+        console.log("Location stored in DB");
+      } else {
+        console.error("Failed to store location");
+      }
+    })
+    .catch((err) => {
+      console.error("AJAX error:", err);
+    });
+    */
+}

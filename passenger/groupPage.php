@@ -181,6 +181,9 @@
     <!-- SCROLLING AND POPULATE-->
     <script src="../assets/js/groupPage/members.js"></script>
 
+    <!-- Turf js to handle polygons -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
 
 </body>
 
