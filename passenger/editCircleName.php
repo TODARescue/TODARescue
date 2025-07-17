@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
                                         <input type="text" class="form-control" id="newCircleName" name="newCircleName" 
                                                value="<?php echo htmlspecialchars($circleName); ?>" required>
                                     </div>
-                                    <div class="d-flex gap-3 mt-4">
+                                    <div class="d-flex gap-3 mt-4 justify-content-center">
                                         <a href="circleDetails.php" class="btn rounded-pill px-4"
                                            style="background-color: #dcdcdc; font-weight: 600;">
                                             Cancel
