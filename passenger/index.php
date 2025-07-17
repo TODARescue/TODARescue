@@ -166,8 +166,8 @@ if (isset($_POST['arrive-button'])) {
     <div class="modal fade" id="arrivalModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header text" style="color: #f4faff;background-color: #2ebcbc;">
-                    <h4 class="modal-title" id="infoModalLabel">Ride Completed 🎉</h4>
+                <div class="modal-header text d-flex justify-content-center" style="color: black; background-color: #2ebcbc;">
+                    <h4 class="modal-title fw-bold" id="infoModalLabel">Ride Completed!</h4>
                 </div>
                 <div class="modal-body p-4">
                     <p class="fs-5">You’ve successfully arrived at your destination. Thank you for riding with us!</p>
@@ -176,8 +176,8 @@ if (isset($_POST['arrive-button'])) {
                         <li><strong>Tricycle Plate:</strong> <?php echo htmlspecialchars($previousPlateNumber ?? 'N/A'); ?></li>
                     </ul>
                 </div>
-                <div class="modal-footer border-0 pb-4 px-4">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal" onclick="removeUrlParam()">Close</button>
+                <div class="modal-footer border-0 pb-4 px-4 d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4 me-3" data-bs-dismiss="modal" onclick="removeUrlParam()">Close</button>
                     <a href="rideHistory.php?historyId=<?php echo urlencode($historyId); ?>" class="btn rounded-pill px-4" style="color:#f4faff; background-color: #2ebcbc;">View History</a>
                 </div>
             </div>
