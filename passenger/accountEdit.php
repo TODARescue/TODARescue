@@ -94,7 +94,7 @@ $user = $result->fetch_assoc();
 
             <form method="POST" enctype="multipart/form-data">
                 <div class="text-center mb-3">
-                    <img id="preview" src="<?= !empty($user['photo']) ? '../assets/images/profile-default.png' . htmlspecialchars($user['photo']) : '../assets/images/default_profile.jpg' ?>"
+                    <img id="preview" src="<?= !empty($user['photo']) ? '../assets/uploads/' . htmlspecialchars($user['photo']) : '../assets/images/default_profile.jpg' ?>"
                         class="rounded-circle preview-img mb-2" alt="Profile Photo">
                     <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
                 </div>
