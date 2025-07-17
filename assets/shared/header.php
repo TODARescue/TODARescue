@@ -28,6 +28,7 @@
       "passenger/changeAdminStatusPassenger.php": "Change Admin Status",
       "passenger/circle.php": "Circle Management",
       "passenger/circleDetails.php": "Circle Management",
+      "passenger/editCircleName.php": "Circle Management",
       "passenger/createCircle.php": "Create Circle",
       "passenger/groupPage.php": "Account",
       "passenger/inviteMember.php": "Invite Code",
