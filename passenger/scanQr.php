@@ -20,24 +20,30 @@
         <video id="preview" autoplay playsinline class="w-100 h-100 object-fit-cover"></video>
         <canvas id="qr-canvas" style="display: none;"></canvas>
     </div>
+    <!-- NAVBAR -->
+    <?php include '../assets/shared/navbarPassenger.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <script>
-        const video = document.getElementById('preview');   
+        const video = document.getElementById('preview');
         const canvas = document.getElementById('qr-canvas');
         const ctx = canvas.getContext('2d');
         let scanning = true;
 
         function startScanner() {
             // Use rear camera on mobile devices
-            const constraints = { 
-                video: { 
+            const constraints = {
+                video: {
                     facingMode: 'environment',
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                } 
+                    width: {
+                        ideal: 1280
+                    },
+                    height: {
+                        ideal: 720
+                    }
+                }
             };
-            
+
             navigator.mediaDevices.getUserMedia(constraints)
                 .then((stream) => {
                     video.srcObject = stream;
@@ -54,19 +60,19 @@
 
         function tick() {
             if (!scanning) return;
-            
+
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 canvas.height = video.videoHeight;
                 canvas.width = video.videoWidth;
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
+
                 try {
                     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    
+
                     const code = jsQR(imageData.data, imageData.width, imageData.height, {
                         inversionAttempts: "dontInvert",
                     });
-                    
+
                     if (code) {
                         console.log("QR Code detected:", code.data);
                         scanning = false;
@@ -77,7 +83,7 @@
                     scanning = true;
                 }
             }
-            
+
             if (scanning) {
                 requestAnimationFrame(tick);
             }
@@ -85,37 +91,37 @@
 
         function processQRCode(qrData) {
             console.log("Processing QR data:", qrData);
-            
+
             fetch('../passenger/getDriver.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'qrData=' + encodeURIComponent(qrData)
-            })
-            .then(response => {
-                console.log("Response status:", response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log("Response data:", data);
-                
-                if (data.success) {
-                    window.location.href = 'verificationScreen.php?driverId=' + data.driverId;
-                } else {
-                    alert(data.message || 'Invalid QR code');
-                    setTimeout(() => {
-                        scanning = true;
-                        requestAnimationFrame(tick);
-                    }, 1500);
-                }
-            })
-            .catch(error => {
-                console.error('Error details:', error);
-                alert('Network or server error. Please try again.');
-                scanning = true;
-                requestAnimationFrame(tick);
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'qrData=' + encodeURIComponent(qrData)
+                })
+                .then(response => {
+                    console.log("Response status:", response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Response data:", data);
+
+                    if (data.success) {
+                        window.location.href = 'verificationScreen.php?driverId=' + data.driverId;
+                    } else {
+                        alert(data.message || 'Invalid QR code');
+                        setTimeout(() => {
+                            scanning = true;
+                            requestAnimationFrame(tick);
+                        }, 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error details:', error);
+                    alert('Network or server error. Please try again.');
+                    scanning = true;
+                    requestAnimationFrame(tick);
+                });
         }
 
         document.addEventListener('DOMContentLoaded', startScanner);

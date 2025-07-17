@@ -1,3 +1,11 @@
+<?php
+include('../assets/php/connect.php');
+
+session_start();
+
+$userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
+$isRiding = isset($_SESSION['isRiding']) ? $_SESSION['isRiding'] : false;
+?>
 <!DOCTYPE html>
 <html lang="en">
 

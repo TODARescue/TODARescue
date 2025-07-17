@@ -69,6 +69,8 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
     $setRidingResult = executeQuery($setRidingQuery);
     $isRiding = true;
 
+    $isRiding = $_SESSION['isRiding'] = true;
+
 
     $getDriverQuery = "SELECT * FROM drivers WHERE driverId = $driverId;";
     $getDriverResult = executeQuery($getDriverQuery);
@@ -102,6 +104,8 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
     $setIdleQuery = "UPDATE users SET isRiding=0 WHERE userId = 1;";
     $setIdleResult = executeQuery($setIdleQuery);
     $isRiding = false;
+
+    $isRiding = $_SESSION['isRiding'] = false;
 }
 
 
@@ -116,6 +120,7 @@ if (isset($_POST['arrive-button'])) {
     $setIdleQuery = "UPDATE users SET isRiding=0 WHERE userId = 1;";
     $setIdleResult = executeQuery($setIdleQuery);
 
+    $isRiding = $_SESSION['isRiding'] = false;
     // Prevent resubmission on refresh
     header("Location: " . $_SERVER['PHP_SELF'] . "?arrived=1");
     exit;
@@ -182,7 +187,7 @@ if (isset($_POST['arrive-button'])) {
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-2 border-teal">
                 <div class="modal-header bg-light border-0">
-                    <h5 class="modal-title" id="gpsWarningModalLabel">📌 Location Outside Map Bounds</h5>
+                    <h5 class="modal-title" id="gpsWarningModalLabel">Location Outside Map Bounds</h5>
                 </div>
                 <div class="modal-body text-center">
                     Showing default location on the map.
@@ -250,7 +255,7 @@ if (isset($_POST['arrive-button'])) {
                 </div>
                 <!-- Button -->
                 <form method="POST" class="container-fluid my-4 align-items-center rounded-5 text-center">
-                    <button type="submit" name="arrive-button" class="arrive-button glass rounded-pill text-bold position-absolute start-50 translate-middle-x px-4 py-4"
+                    <button type="submit" name="arrive-button" class="arrive-button glass rounded-pill text-bold position-absolute start-50 translate-middle-x px-4 py-3 fw-semibold"
                         style="background-color: rgb(46, 188, 188) !important; top: 75%; width: 90%; max-width: 200px;" id="arrive-button">
                         ARRIVED SAFELY
                     </button>
