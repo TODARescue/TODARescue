@@ -59,6 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>TODA Rescue - Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
@@ -89,10 +91,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     value="<?php echo htmlspecialchars($storedContact); ?>"
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
-                            <div class="mb-3">
-                                <input type="password" name="password" class="form-control" placeholder="Password"
+                            <div class="mb-3 position-relative">
+                                <input type="password" name="password" id="password" class="form-control" placeholder="Password"
                                     required value="<?php echo htmlspecialchars($storedPassword); ?>"
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
+                                <button type="button" id="togglePassword"
+                                    class="btn btn-sm position-absolute end-0 top-0 mt-1 me-3"
+                                    style="border: none; background: transparent;">
+                                    <i id="toggleIcon1" class="bi bi-eye-fill"></i>
+                                </button>
                             </div>
 
                             <div class="form-check mb-3">
@@ -119,6 +126,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
     </div>
+
+    <script>
+        // Toggle Password
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon1');
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            icon.classList.toggle('bi-eye-fill', isHidden);
+            icon.classList.toggle('bi-eye-slash-fill', !isHidden);
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
