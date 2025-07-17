@@ -14,12 +14,21 @@ $successMsg = '';
 $circleName = '';
 $circleId = '';
 
-// Check if user has a circle or is a member of a circle
-$query = "SELECT c.circleId, c.circleName, cm.role FROM circles c 
+
+$circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
+
+// If no circleId is provided, redirect to circle.php
+if (!$circleId) {
+    header('Location: circle.php');
+    exit;
+}
+
+// Check if user is a member of this circle and get their role and circle name
+$query = "SELECT c.circleName, cm.role FROM circles c 
           INNER JOIN circlemembers cm ON c.circleId = cm.circleId 
-          WHERE cm.userId = ?";
+          WHERE cm.userId = ? AND c.circleId = ?";
 $stmt = $pdo->prepare($query);
-$stmt->execute([$userId]);
+$stmt->execute([$userId, $circleId]);
 $circle = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$circle) {
@@ -27,13 +36,12 @@ if (!$circle) {
     exit;
 }
 
-$circleId = $circle['circleId'];
 $circleName = $circle['circleName'];
 $userRole = $circle['role'];
 
 // Check if the user is an admin or owner
 if ($userRole !== 'admin' && $userRole !== 'owner') {
-    header('Location: circleDetails.php');
+    header('Location: circleDetails.php?circleId=' . $circleId);
     exit;
 }
 

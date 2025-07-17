@@ -12,25 +12,32 @@ $userId = $_SESSION['userId'];
 $errorMsg = '';
 $successMsg = '';
 
-// Check if user has a circle and is admin/owner
-$query = "SELECT c.circleId, cm.role FROM circles c 
-          INNER JOIN circlemembers cm ON c.circleId = cm.circleId 
-          WHERE cm.userId = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$userId]);
-$userCircle = $stmt->fetch(PDO::FETCH_ASSOC);
+// Get circleId from URL parameter
+$circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
 
-if (!$userCircle) {
+// If no circleId is provided, redirect to circle.php
+if (!$circleId) {
     header('Location: circle.php');
     exit;
 }
 
-$circleId = $userCircle['circleId'];
-$userRole = $userCircle['role'];
+// Check if user is a member of this circle and get their role
+$query = "SELECT cm.role FROM circlemembers cm
+          WHERE cm.userId = ? AND cm.circleId = ?";
+$stmt = $pdo->prepare($query);
+$stmt->execute([$userId, $circleId]);
+$roleResult = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$roleResult) {
+    header('Location: circle.php');
+    exit;
+}
+
+$userRole = $roleResult['role'];
 
 // Only admins and owners can remove members
 if ($userRole !== 'admin' && $userRole !== 'owner') {
-    header('Location: circleDetails.php');
+    header('Location: circleDetails.php?circleId=' . $circleId);
     exit;
 }
 

@@ -14,46 +14,79 @@ $successMsg = '';
 $inviteCode = '';
 $circleName = '';
 
-// Check if user has a circle or is a member of a circle
-$query = "SELECT c.circleId, c.circleName, c.inviteCode, cm.role FROM circles c 
+$circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
+
+// If no circleId is provided, redirect to circle.php
+if (!$circleId) {
+    header('Location: circle.php');
+    exit;
+}
+
+// Check if user is a member of this circle and get their role
+$query = "SELECT c.circleId, c.circleName, c.inviteCode, cm.role 
+          FROM circles c 
           INNER JOIN circlemembers cm ON c.circleId = cm.circleId 
-          WHERE cm.userId = ?";
+          WHERE cm.userId = ? AND c.circleId = ?";
 $stmt = $pdo->prepare($query);
-$stmt->execute([$userId]);
+$stmt->execute([$userId, $circleId]);
 $circle = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// If user is not a member of this circle, redirect to circle.php
 if (!$circle) {
     header('Location: circle.php');
     exit;
 }
 
-$circleId = $circle['circleId'];
-$circleName = $circle['circleName'];
-$inviteCode = $circle['inviteCode'];
 $userRole = $circle['role'];
 
 // Check if the user is an admin or owner
 if ($userRole !== 'admin' && $userRole !== 'owner') {
-    header('Location: circleDetails.php');
+    header('Location: circleDetails.php?circleId=' . $circleId);
     exit;
 }
+$circleName = $circle['circleName'];
+$inviteCode = $circle['inviteCode'];
 
 // Generate new invite code if requested
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generateNewCode'])) {
-    // Generate a random 7-character code (3 numbers, dash, 3 letters)
-    $numbers = rand(100, 999);
-    $letters = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 3);
-    $newInviteCode = $numbers . ' - ' . $letters;
+        // Generate a random unique 6-character alphanumeric code
+    $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $maxAttempts = 10; // Prevent infinite loop
+    $attempts = 0;
+    $isUnique = false;
     
-    // Update the invite code in the database
-    $updateQuery = "UPDATE circles SET inviteCode = ? WHERE circleId = ?";
-    $updateStmt = $pdo->prepare($updateQuery);
+    while (!$isUnique && $attempts < $maxAttempts) {
+        $newInviteCode = '';
+        for ($i = 0; $i < 6; $i++) {
+            $newInviteCode .= $chars[rand(0, strlen($chars) - 1)];
+        }
+        
+        // Check if this code already exists
+        $checkQuery = "SELECT COUNT(*) FROM circles WHERE inviteCode = ?";
+        $checkStmt = $pdo->prepare($checkQuery);
+        $checkStmt->execute([$newInviteCode]);
+        $codeExists = ($checkStmt->fetchColumn() > 0);
+        
+        if (!$codeExists) {
+            $isUnique = true;
+        }
+        
+        $attempts++;
+    }
     
-    if ($updateStmt->execute([$newInviteCode, $circleId])) {
-        $inviteCode = $newInviteCode;
-        $successMsg = 'New invite code generated successfully!';
+    if ($isUnique) {
+        // Update the invite code in the database
+        $updateQuery = "UPDATE circles SET inviteCode = ? WHERE circleId = ?";
+        $updateStmt = $pdo->prepare($updateQuery);
+        
+        if ($updateStmt->execute([$newInviteCode, $circleId])) {
+            $inviteCode = $newInviteCode;
+            $successMsg = 'New invite code generated successfully!';
+        } else {
+            $errorMsg = 'Failed to generate new invite code. Please try again.';
+        }
     } else {
-        $errorMsg = 'Failed to generate new invite code. Please try again.';
+        $errorMsg = 'Failed to generate a unique invite code. Please try again.';
     }
 }
 ?>
@@ -106,7 +139,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generateNewCode'])) {
                 <div class="card border-0 rounded-4 mb-4" style="background-color: #D9D9D9">
                     <div class="card-body text-center py-5">
                         <h2 class="fw-bold mb-2 fs-2"><?php echo htmlspecialchars($inviteCode); ?></h2>
-                        <p class="text-muted mb-0">This code is active for 2 days</p>
                     </div>
                 </div>
 

@@ -26,6 +26,18 @@ if (!$circleId) {
         exit;
     }
 }
+
+// Get user's role in the circle
+$roleQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
+$roleStmt = $pdo->prepare($roleQuery);
+$roleStmt->execute([$userId, $circleId]);
+$userRole = $roleStmt->fetchColumn();
+
+// Get circle name
+$circleNameQuery = "SELECT circleName FROM circles WHERE circleId = ?";
+$circleNameStmt = $pdo->prepare($circleNameQuery);
+$circleNameStmt->execute([$circleId]);
+$circleName = $circleNameStmt->fetchColumn();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,26 +65,44 @@ if (!$circleId) {
                     <!-- HEADER -->
                     <?php include '../assets/shared/header.php'; ?>
 
+                    <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
+                    <!-- Banner for admins and owners -->
+                    <div class="alert alert-info mx-3 mt-5 mb-0" style="margin-top: 90px !important; background-color: #2ebcbc;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill me-2 mb-3"></i>
+                            <div>
+                                <strong>Circle: <?php echo htmlspecialchars($circleName); ?></strong>
+                                <p class="mb-0">You have admin privileges in this circle.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- Options List -->
-                    <div class="list-group list-group-flush w-100"  style="padding-top: 120px;">
+                    <div class="list-group list-group-flush w-100" style="padding-top: <?php echo ($userRole === 'owner' || $userRole === 'admin') ? '20px' : '120px'; ?>;">
 
                         <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Circle Details
                         </div>
 
+                        <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
+                        <!-- Edit Circle Name - Only for admins and owners -->
                         <a href="../passenger/editCircleName.php?circleId=<?php echo $circleId; ?>"
                             style="text-decoration: none; color: inherit;">
                             <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
                                 <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
                             </div>
                         </a>
+                        <?php endif; ?>
 
                         <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Circle Management
                         </div>
 
+                        <?php if ($userRole === 'owner'): ?>
+                        <!-- Change Admin Status - Only for owners -->
                         <a href="../passenger/changeAdminStatusPassenger.php?circleId=<?php echo $circleId; ?>"
                             style="text-decoration: none; color: inherit;">
                             <div
@@ -80,7 +110,10 @@ if (!$circleId) {
                                 Change Admin Status
                             </div>
                         </a>
+                        <?php endif; ?>
 
+                        <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
+                        <!-- Add Circle Members - Only for admins and owners -->
                         <a href="../passenger/inviteMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
@@ -88,14 +121,16 @@ if (!$circleId) {
                             </div>
                         </a>
 
+                        <!-- Remove Circle Members - Only for admins and owners -->
                         <a href="../passenger/removeCircleMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
                                 Remove Circle Members
                             </div>
                         </a>
+                        <?php endif; ?>
 
-                        <!-- Modal Trigger -->
+                        <!-- Modal Trigger - Available to all members -->
                         <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light"
                             data-bs-toggle="modal" data-bs-target="#leaveCircleModal">
                             Leave Circle
