@@ -1,5 +1,8 @@
 <?php
 session_start();
+header("Cache-Control: no-cache, no-store, must-revalidate"); // Disable caching
+header("Pragma: no-cache");
+header("Expires: 0");
 require_once '../assets/php/connect.php';
 
 if (!isset($_SESSION['userId'])) {
@@ -18,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $photo = $_FILES['photo'];
 
-    // Check if contact or email already exists (but not for this user)
     $checkStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ?");
     $checkStmt->bind_param("ssi", $email, $contactNumber, $userId);
     $checkStmt->execute();
@@ -27,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($checkResult->num_rows > 0) {
         $error = "Email or Contact Number already exists.";
     } else {
-        // Handle photo upload if a new one is selected
         $photoFileName = '';
         if (!empty($photo['name'])) {
             $photoFileName = time() . '_' . basename($photo['name']);
@@ -58,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch user data again for display
 $stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo FROM users WHERE userId = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
@@ -94,7 +94,7 @@ $user = $result->fetch_assoc();
 
             <form method="POST" enctype="multipart/form-data">
                 <div class="text-center mb-3">
-                    <img id="preview" src="<?= !empty($user['photo']) ? '../assets/uploads/' . htmlspecialchars($user['photo']) : '../assets/images/default_profile.jpg' ?>"
+                    <img id="preview" src="<?= !empty($user['photo']) ? '../assets/images/profile-default.png' . htmlspecialchars($user['photo']) : '../assets/images/default_profile.jpg' ?>"
                         class="rounded-circle preview-img mb-2" alt="Profile Photo">
                     <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
                 </div>
@@ -123,6 +123,10 @@ $user = $result->fetch_assoc();
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
             </form>
+
+            <div class="d-grid mt-3">
+                <a href="accountView.php" class="btn btn-secondary">Back to Profile</a>
+            </div>
         </div>
     </div>
 
@@ -136,4 +140,5 @@ $user = $result->fetch_assoc();
         }
     </script>
 </body>
+
 </html>

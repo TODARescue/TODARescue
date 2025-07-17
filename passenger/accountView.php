@@ -39,8 +39,7 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
 
           <?php include '../assets/shared/header.php'; ?>
 
-          <div class="list-group list-group-flush m-2 px-0 w-100 flex-grow-1 overflow-auto"
-            style="padding-top: 110px;">
+          <div class="list-group list-group-flush m-2 px-0 w-100 flex-grow-1 overflow-auto" style="padding-top: 110px;">
 
             <?php if ($success): ?>
               <div class="alert alert-success mx-3"><?= $success ?></div>
@@ -54,7 +53,7 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
               <div class="list-group-item list-group-item-action py-3 border-0 px-0">
                 <div class="d-flex align-items-center">
                   <?php
-                  $photoPath = !empty($user['photo']) ? '../assets/uploads/' . htmlspecialchars($user['photo']) : '../assets/images/default_profile.jpg';
+                  $photoPath = !empty($user['photo']) ? '../assets/uploads/' . htmlspecialchars($user['photo']) : '../assets/images/profile-default.png';
                   ?>
                   <img src="<?= $photoPath ?>" alt="Profile Photo"
                     class="rounded-circle me-3" style="width: 65px; height: 65px; object-fit: cover;">
