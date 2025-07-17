@@ -1,3 +1,44 @@
+<?php
+session_start();
+require_once '../assets/php/connect.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['userId'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+$userId = $_SESSION['userId'];
+$circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
+
+// If no circleId is provided, try to get user's circle
+if (!$circleId) {
+    $query = "SELECT cm.circleId FROM circlemembers cm WHERE cm.userId = ? LIMIT 1";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$userId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($result) {
+        $circleId = $result['circleId'];
+    } else {
+        // No circle found, redirect to circle.php
+        header('Location: circle.php');
+        exit;
+    }
+}
+
+// Get user's role in the circle
+$roleQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
+$roleStmt = $pdo->prepare($roleQuery);
+$roleStmt->execute([$userId, $circleId]);
+$userRole = $roleStmt->fetchColumn();
+
+// Get circle name
+$circleNameQuery = "SELECT circleName FROM circles WHERE circleId = ?";
+$circleNameStmt = $pdo->prepare($circleNameQuery);
+$circleNameStmt->execute([$circleId]);
+$circleName = $circleNameStmt->fetchColumn();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,46 +65,72 @@
                     <!-- HEADER -->
                     <?php include '../assets/shared/header.php'; ?>
 
+                    <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
+                    <!-- Banner for admins and owners -->
+                    <div class="alert alert-info mx-3 mt-5 mb-0" style="margin-top: 90px !important; background-color: #2ebcbc;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill me-2 mb-3"></i>
+                            <div>
+                                <strong>Circle: <?php echo htmlspecialchars($circleName); ?></strong>
+                                <p class="mb-0">You have admin privileges in this circle.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- Options List -->
-                    <div class="list-group list-group-flush w-100"  style="padding-top: 120px;">
+                    <div class="list-group list-group-flush w-100" style="padding-top: <?php echo ($userRole === 'owner' || $userRole === 'admin') ? '20px' : '120px'; ?>;">
 
                         <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Circle Details
                         </div>
 
-                        <div class="list-group-item py-3 text-black border-bottom border-secondary bg-light">
-                            <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
-                        </div>
+                        <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
+                        <!-- Edit Circle Name - Only for admins and owners -->
+                        <a href="../passenger/editCircleName.php?circleId=<?php echo $circleId; ?>"
+                            style="text-decoration: none; color: inherit;">
+                            <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                                <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
+                            </div>
+                        </a>
+                        <?php endif; ?>
 
                         <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Circle Management
                         </div>
 
-                        <a href="../passenger/changeAdminStatusPassenger.php"
+                        <?php if ($userRole === 'owner'): ?>
+                        <!-- Change Admin Status - Only for owners -->
+                        <a href="../passenger/changeAdminStatusPassenger.php?circleId=<?php echo $circleId; ?>"
                             style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
                                 Change Admin Status
                             </div>
                         </a>
+                        <?php endif; ?>
 
-                        <a href="../passenger/inviteMember.php" style="text-decoration: none; color: inherit;">
+                        <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
+                        <!-- Add Circle Members - Only for admins and owners -->
+                        <a href="../passenger/inviteMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
                                 Add Circle Members
                             </div>
                         </a>
 
-                        <a href="../passenger/removeCircleMember.php" style="text-decoration: none; color: inherit;">
+                        <!-- Remove Circle Members - Only for admins and owners -->
+                        <a href="../passenger/removeCircleMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
                                 Remove Circle Members
                             </div>
                         </a>
+                        <?php endif; ?>
 
-                        <!-- Modal Trigger -->
+                        <!-- Modal Trigger - Available to all members -->
                         <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light"
                             data-bs-toggle="modal" data-bs-target="#leaveCircleModal">
                             Leave Circle
@@ -89,7 +156,7 @@
                             style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
                             No
                         </button>
-                        <a href="../passenger/leaveCircleAction.php" class="btn rounded-pill px-4 text-white"
+                        <a href="../passenger/leaveCircleAction.php?circleId=<?php echo $circleId; ?>" class="btn rounded-pill px-4 text-white"
                             style="background-color: #1cc8c8; font-weight: 600;">
                             Yes
                         </a>

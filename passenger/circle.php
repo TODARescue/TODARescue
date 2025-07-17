@@ -1,3 +1,24 @@
+<?php
+session_start();
+require_once '../assets/php/connect.php';
+
+// For testing purposes - set a default user ID
+if (!isset($_SESSION['userId'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+$userId = $_SESSION['userId'];
+
+// Get circles the user is a member of
+$query = "SELECT c.circleId, c.circleName, cm.role 
+          FROM circles c 
+          INNER JOIN circlemembers cm ON c.circleId = cm.circleId 
+          WHERE cm.userId = ?";
+$stmt = $pdo->prepare($query);
+$stmt->execute([$userId]);
+$userCircles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,6 +30,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/css/style.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        .circle-link {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+        .circle-link:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 
 <body class="d-flex justify-content-center align-items-center vh-100"
@@ -28,30 +59,30 @@
                         <div class="p-4">
                             <h6 class="fw-bold mb-4">Circle List</h6>
 
-                            <!-- Group 1 -->
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
-                                    style="width: 48px; height: 48px; background-color: #1cc8c8;">
-                                    <i class="bi bi-people-fill text-white fs-5"></i>
-                                </div>
-                                <span class="fw-medium">Group 1 Name</span>
-                            </div>
-
-                            <!-- Group 2 -->
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
-                                    style="width: 48px; height: 48px; background-color: #1cc8c8;">
-                                    <i class="bi bi-people-fill text-white fs-5"></i>
-                                </div>
-                                <span class="fw-medium">Group 2 Name</span>
-                            </div>
+                            <?php if (count($userCircles) > 0): ?>
+                                <?php foreach ($userCircles as $circle): ?>
+                                    <!-- Circle item -->
+                                    <a href="circleDetails.php?circleId=<?php echo $circle['circleId']; ?>" class="circle-link">
+                                        <div class="d-flex align-items-center mb-3 p-2 rounded">
+                                            <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
+                                                style="width: 48px; height: 48px; background-color: #1cc8c8;">
+                                                <i class="bi bi-people-fill text-white fs-5"></i>
+                                            </div>
+                                            <span class="fw-medium"><?php echo htmlspecialchars($circle['circleName']); ?></span>
+                                            <span class="ms-auto badge <?php echo $circle['role'] == 'owner' ? 'bg-danger' : ($circle['role'] == 'admin' ? 'bg-primary' : 'bg-secondary'); ?>">
+                                                <?php echo ucfirst($circle['role']); ?>
+                                            </span>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="alert alert-info">You're not a member of any circles yet.</div>
+                            <?php endif; ?>
 
                             <!-- Buttons -->
-                            <div class="d-flex justify-content-center gap-3">
-                            <a href="../passenger/createCircle.php" ><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create
-                                    Circle</button></a>
-                                    <a href="../passenger/joinCircle.php" ><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join
-                                    Circle</button></a>
+                            <div class="d-flex justify-content-center gap-3 mt-4">
+                                <a href="../passenger/createCircle.php"><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create Circle</button></a>
+                                <a href="../passenger/joinCircle.php"><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join Circle</button></a>
                             </div>
                         </div>
                     </div>

@@ -42,7 +42,7 @@
                             Circle Settings
                         </div>
 
-                        <a href="../passenger/circleDetails.php" style="text-decoration: none; color: inherit;">
+                        <a href="../passenger/circle.php" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
                                 Circle Management

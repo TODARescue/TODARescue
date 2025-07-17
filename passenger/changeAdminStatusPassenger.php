@@ -1,10 +1,95 @@
+<?php
+session_start();
+require_once '../assets/php/connect.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['userId'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+$userId = $_SESSION['userId'];
+$errorMsg = '';
+$successMsg = '';
+
+// Get circleId from URL parameter
+$circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
+
+if (!$circleId) {
+    header('Location: circle.php');
+    exit;
+}
+
+// Check if user is a member of this circle and get their role
+$query = "SELECT cm.role FROM circlemembers cm
+          WHERE cm.userId = ? AND cm.circleId = ?";
+$stmt = $pdo->prepare($query);
+$stmt->execute([$userId, $circleId]);
+$roleResult = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$roleResult) {
+    header('Location: circle.php');
+    exit;
+}
+
+$userRole = $roleResult['role'];
+
+// Only owners can change admin status
+if ($userRole !== 'owner') {
+    header('Location: circleDetails.php?circleId=' . $circleId);
+    exit;
+}
+
+// Process AJAX request for toggling admin status
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggleAdmin') {
+    if (isset($_POST['memberId'], $_POST['isAdmin'])) {
+        $memberId = intval($_POST['memberId']);
+        $isAdmin = $_POST['isAdmin'] === 'true' ? 'admin' : 'member';
+        
+        // Wag ibahin status ni owner
+        $checkOwnerQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
+        $checkStmt = $pdo->prepare($checkOwnerQuery);
+        $checkStmt->execute([$memberId, $circleId]);
+        $currentRole = $checkStmt->fetchColumn();
+        
+        if ($currentRole === 'owner') {
+            echo json_encode(['success' => false, 'message' => 'Cannot change owner status']);
+            exit;
+        }
+        
+        // Update member role
+        $updateQuery = "UPDATE circlemembers SET role = ? WHERE userId = ? AND circleId = ?";
+        $updateStmt = $pdo->prepare($updateQuery);
+        
+        if ($updateStmt->execute([$isAdmin, $memberId, $circleId])) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update status']);
+        }
+        exit;
+    }
+    
+    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+    exit;
+}
+
+// Get all members of the circle
+$membersQuery = "SELECT cm.userId, u.firstName, u.lastName, cm.role 
+                FROM circlemembers cm 
+                INNER JOIN users u ON cm.userId = u.userId 
+                WHERE cm.circleId = ?";
+$membersStmt = $pdo->prepare($membersQuery);
+$membersStmt->execute([$circleId]);
+$members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TODA Rescue - Remove Circle Member</title>
+    <title>TODA Rescue - Change Admin Status</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -21,39 +106,54 @@
                     <!-- HEADER -->
                     <?php include '../assets/shared/header.php'; ?>
 
+                    <!-- Status Messages -->
+                    <div class="container-fluid mt-5 pt-4">
+                        <?php if ($errorMsg): ?>
+                            <div class="alert alert-danger alert-dismissible fade show mx-4" role="alert">
+                                <?php echo $errorMsg; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if ($successMsg): ?>
+                            <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
+                                <?php echo $successMsg; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
                     <!-- Member List -->
-                    <div class="container-fluid mt-5 pt-5">
+                    <div class="container-fluid mt-2 pt-2">
                         <div class="row">
                             <div class="col list-group list-group-flush px-0 w-100">
                                 <div class="mb-1">
-                                    <h4 class="fs-5 mt-5 px-4">Admin Status</h4>
+                                    <h4 class="fs-5 mt-3 px-4">Admin Status</h4>
+                                    <p class="text-muted small px-4">Toggle switches to change admin status</p>
                                 </div>
 
                                 <div class="container-fluid p-0">
                                     <div class="list-group">
-                                        <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-4 text-black bg-light w-100 border-0 border-bottom border-secondary">
-                                            <span class="fw-medium">John Doe</span>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="johnDoeToggle">
-                                                <label for="johnDoeToggle" class="form-check-label"></label>
+                                        <?php foreach ($members as $member): ?>
+                                            <?php
+                                            $fullName = $member['firstName'] . ' ' . $member['lastName'];
+                                            $isAdmin = $member['role'] === 'admin' || $member['role'] === 'owner';
+                                            $isDisabled = $member['role'] === 'owner' || $member['userId'] == $userId;
+                                            ?>
+                                            <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-4 text-black bg-light w-100 border-0 border-bottom border-secondary">
+                                                <span class="fw-medium"><?php echo htmlspecialchars($fullName); ?>
+                                                    <?php if ($member['role'] === 'owner'): ?>
+                                                        <span class="badge bg-primary ms-2">Owner</span>
+                                                    <?php endif; ?>
+                                                </span>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input admin-toggle" type="checkbox" 
+                                                           data-member-id="<?php echo $member['userId']; ?>"
+                                                           <?php echo $isAdmin ? 'checked' : ''; ?> 
+                                                           <?php echo $isDisabled ? 'disabled' : ''; ?>>
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-4 text-black bg-light w-100 border-0 border-bottom border-secondary">
-                                            <span class="fw-medium">Elon Musk</span>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="elonMuskToggle" checked>
-                                                <label for="elonMuskToggle" class="form-check-label"></label>
-                                            </div>
-                                        </div>
-
-                                        <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-4 text-black bg-light w-100 border-0 border-bottom border-secondary">
-                                            <span class="fw-medium">Bato Dela Rosa</span>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="batoToggle">
-                                                <label for="batoToggle" class="form-check-label"></label>
-                                            </div>
-                                        </div>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
                             </div>
@@ -68,9 +168,37 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.querySelectorAll(".form-check-input").forEach(toggle => {
+        document.querySelectorAll(".admin-toggle").forEach(toggle => {
             toggle.addEventListener("change", function() {
-                console.log(`${this.id} is now ${this.checked ? "enabled" : "disabled"}  `);
+                const memberId = this.getAttribute('data-member-id');
+                const isAdmin = this.checked;
+                
+                // Show loading indicator
+                this.disabled = true;
+                
+                // Send AJAX request to update admin status
+                fetch('changeAdminStatusPassenger.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=toggleAdmin&memberId=${memberId}&isAdmin=${isAdmin}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        // Revert toggle if request failed
+                        this.checked = !isAdmin;
+                        alert(data.message || 'Failed to update admin status');
+                    }
+                    this.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    this.checked = !isAdmin;
+                    this.disabled = false;
+                    alert('An error occurred while updating admin status');
+                });
             });
         });
     </script>

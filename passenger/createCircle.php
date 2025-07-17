@@ -16,10 +16,34 @@ function flashGet(){
     return $data;
 }
 
+// Generate a unique code with specified length
 function makeCode(int $len = 6): string {
+    global $conn;
     $set = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-    $out = '';
-    for ($i=0; $i<$len; $i++) $out .= $set[random_int(0,strlen($set)-1)];
+    $isUnique = false;
+    $maxAttempts = 10;
+    $attempts = 0;
+    
+    while (!$isUnique && $attempts < $maxAttempts) {
+        $out = '';
+        for ($i=0; $i<$len; $i++) {
+            $out .= $set[random_int(0, strlen($set)-1)];
+        }
+        
+        // Check if code already exists
+        $chk = $conn->prepare("SELECT COUNT(*) FROM circles WHERE inviteCode=?");
+        $chk->bind_param("s", $out);
+        $chk->execute();
+        $count = $chk->get_result()->fetch_row()[0];
+        $chk->close();
+        
+        if ($count == 0) {
+            $isUnique = true;
+        }
+        
+        $attempts++;
+    }
+    
     return $out;
 }
 
