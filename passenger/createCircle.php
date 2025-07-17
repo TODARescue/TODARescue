@@ -9,8 +9,8 @@ if (!isset($_SESSION['userId'])) {
 $creatorId = $_SESSION['userId']; 
 // $creatorId = 2;
 
-function flash_set(array $data){ $_SESSION['flash'] = $data; }
-function flash_get(){
+function flashSet(array $data){ $_SESSION['flash'] = $data; }
+function flashGet(){
     $data = $_SESSION['flash'] ?? null;
     unset($_SESSION['flash']);
     return $data;
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $mem->close();
 
-            flash_set(['name' => $circleName, 'code' => $inviteCode]);
+            flashSet(['name' => $circleName, 'code' => $inviteCode]);
             header("Location: " . $_SERVER['PHP_SELF']);
             exit;
         } else {
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$flash = flash_get();
+$flash = flashGet();
 if (!is_array($flash)) $flash = null;
 ?>
 
@@ -152,6 +152,16 @@ if (!is_array($flash)) $flash = null;
   </div>
 </div>
 
+<!-- Copied Modal -->
+<div id="copiedModal"
+     class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center d-none"
+     style="background:rgba(0,0,0,0.3); z-index:1055;">
+  <div class="bg-white p-3 rounded-4 shadow text-center" style="width:80%; max-width:280px;">
+    <p class="mb-0 fw-semibold" style="font-size:0.95rem;">Invite code copied to clipboard!</p>
+  </div>
+</div>
+
+
 <script>
 const nameInput=document.getElementById('circleName');
 const submitBtn=document.getElementById('submitBtn');
@@ -160,10 +170,18 @@ nameInput.addEventListener('input',()=>submitBtn.disabled=nameInput.value.trim()
 function closeInviteModal(){
    document.getElementById('inviteModalBackdrop').classList.add('d-none');
 }
-function copyInviteCode(){
-   navigator.clipboard.writeText(document.getElementById('inviteCodeText').textContent)
-       .then(()=>alert('Invite code copied!'));
+
+function copyInviteCode() {
+    const codeText = document.getElementById('inviteCodeText').textContent;
+    navigator.clipboard.writeText(codeText).then(() => {
+        const modal = document.getElementById('copiedModal');
+        modal.classList.remove('d-none');
+        setTimeout(() => {
+            modal.classList.add('d-none');
+        }, 2000);
+    });
 }
+
 
 function closeNameExistsModal(){
    document.getElementById('nameExistsModal').classList.add('d-none');

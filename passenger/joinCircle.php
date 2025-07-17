@@ -2,24 +2,28 @@
 include("../assets/php/connect.php");
 session_start();
 
+if (!isset($_SESSION['userId'])) {
+    header("Location: ../index.php");
+    exit;
+}
 $viewerId = $_SESSION['userId'];
 // $viewerId = 1;
 
-function flash_set($msg){ $_SESSION['flash'] = $msg; }
-function flash_pop(){ $m = $_SESSION['flash'] ?? null; unset($_SESSION['flash']); return $m; }
+function flashSet($msg){ $_SESSION['flash'] = $msg; }
+function flashPop(){ $m = $_SESSION['flash'] ?? null; unset($_SESSION['flash']); return $m; }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inviteCode = strtoupper(trim($_POST['inviteCode'] ?? ""));
 
     if (!preg_match('/^[A-Z0-9]{6}$/', $inviteCode)) {
-        flash_set("invalid-format");
+        flashSet("invalidFormat");
     } else {
         $stm = $conn->prepare("SELECT circleId,circleName FROM circles WHERE inviteCode=?");
         $stm->bind_param("s",$inviteCode); $stm->execute();
         $circle = $stm->get_result()->fetch_assoc(); $stm->close();
 
         if (!$circle) {
-            flash_set("not-found");
+            flashSet("notFound");
         } else {
             $circleId = $circle['circleId'];
             $circleName = $circle['circleName'];
@@ -31,14 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $chk->close();
 
             if ($isMember) {
-                flash_set("already-joined");
+                flashSet("alreadyJoined");
             } else {
                 $ins = $conn->prepare("INSERT INTO circlemembers (circleId,userId,role) VALUES (?,?,'member')");
                 $ins->bind_param("ii",$circleId,$viewerId);
                 $ins->execute(); 
                 $ins->close();
 
-                flash_set(['status' => 'joined-success', 'circleName' => $circleName]); 
+                flashSet(['status' => 'joinedSuccess', 'circleName' => $circleName]); 
                 header("Location: " . $_SERVER['PHP_SELF']);
                 exit;
             }
@@ -48,12 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$flash = flash_pop();
-$alreadyJoined = ($flash === "already-joined");
-$joinedSuccess = is_array($flash) && ($flash['status'] ?? '') === 'joined-success';
+$flash = flashPop();
+$alreadyJoined = ($flash === "alreadyJoined");
+$joinedSuccess = is_array($flash) && ($flash['status'] ?? '') === 'joinedSuccess';
 $joinedCircleName = $flash['circleName'] ?? '';
-$invalidFormat = ($flash === "invalid-format");
-$notFound = ($flash === "not-found");
+$invalidFormat = ($flash === "invalidFormat");
+$notFound = ($flash === "notFound");
 ?>
 
 <!doctype html>
@@ -123,7 +127,7 @@ $notFound = ($flash === "not-found");
 <?php endif; ?>
 
 <!-- MODAL INVALID CODE -->
-<?php if ($flash === "invalid-format" || $flash === "not-found"): ?>
+<?php if ($flash === "invalidFormat" || $flash === "notFound"): ?>
 <div id="invalidCodeModal"
      class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center z-1"
      style="background:rgba(0,0,0,0.3);">
