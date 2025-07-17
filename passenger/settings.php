@@ -113,7 +113,7 @@
                         style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <a href="../passenger/leaveCircleAction.php" class="btn rounded-pill px-4 text-white"
+                    <a href="../" class="btn rounded-pill px-4 text-white"
                         style="background-color: #1cc8c8; font-weight: 600;">
                         Yes
                     </a>

@@ -22,6 +22,9 @@
     <!-- Custom Styling -->
     <link rel="stylesheet" href="../assets/css/style.css">
 
+    <!-- Glass Styling -->
+    <!-- <link rel="stylesheet" href="../assets/css/glass.css"> -->
+
     <style>
         .group-selector {
             background-color: #009688;
@@ -111,13 +114,13 @@
     </div>
 
     <!-- Toggle button to show/hide the group container -->
-    <button id="toggle-button" class="btn btn-primary rounded-circle p-2 text-dark" style="width: 48px; height: 48px;">
+    <button id="toggle-button" class="btn btn-primary rounded-circle glass-toggle p-4 text-dark d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
         <i class="bi bi-people-fill"></i>
     </button>
 
-    <div class=" py-3 container-fluid position-fixed top-0 text-center start-0 end-0 bg-transparent" style="z-index: 4;" id="header-color">
-        <div class="d-inline-flex align-items-center px-5 py-1 rounded-pill"
-            style="background-color: #2EBCBC; cursor: pointer; user-select: none;"
+    <div class=" py-3 py-sm-1 container-fluid position-fixed top-0 text-center start-0 end-0 bg-transparent" style="z-index: 4;" id="header-color">
+        <div class="d-inline-flex align-items-center px-5 py-1 rounded-pill glass-selector"
+            style="background-color: #2ebcbc!important; cursor: pointer; user-select: none;"
             id="group-selector">
             <h4 class="m-0">
                 Group 1
@@ -127,7 +130,7 @@
     </div>
 
     <!-- Group container -->
-    <div class="pt-5 group-container shadow rounded-bottom-5 bg-white" id="group-container">
+    <div class="pt-2 pt-lg-5 group-container shadow rounded-bottom-5 bg-white" id="group-container">
         <button type="button" class="d-flex align-items-center my-4 p-0 border-0 bg-transparent">
             <img src="../assets/images/group-photo.png" alt="Group 1" class="group-image">
             <div class="ms-2">Group 1</div>
