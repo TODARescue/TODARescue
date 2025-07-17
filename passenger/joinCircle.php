@@ -132,7 +132,7 @@ $notFound = ($flash === "notFound");
      class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center z-1"
      style="background:rgba(0,0,0,0.3);">
   <div class="bg-white p-4 rounded-5 shadow text-center" style="width:85%;max-width:320px;">
-    <h5 class="fw-bold mb-3">Invalid Invite Code</h5>
+    <h5 class="fw-bold mb-3 text-danger">Invalid Invite Code!</h5>
     <p class="mb-4" style="font-size:.95rem;">
       <?= $flash === "Invalid code format." ? "Please enter a valid 6-character code." : "No circle found for this invite code." ?>
     </p>
