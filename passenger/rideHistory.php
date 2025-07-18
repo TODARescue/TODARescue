@@ -1,3 +1,29 @@
+<?php
+session_start();
+require_once '../assets/php/connect.php';
+
+if (!isset($_SESSION['userId'])) {
+  header('Location: ../login.php');
+  exit;
+}
+
+$userId = $_SESSION['userId'];
+
+$sql = "
+  SELECT h.historyId, h.pickupTime, h.dropoffTime, d.plateNumber, d.model, d.address, d.todaRegistration, u.firstName, u.lastName, u.contactNumber
+  FROM history h
+  JOIN drivers d ON h.driverId = d.driverId
+  JOIN users u ON d.userId = u.userId
+  WHERE h.userId = ?
+  ORDER BY h.pickupTime DESC
+";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +37,6 @@
 </head>
 
 <body style="font-family: 'Inter', sans-serif;">
-  <!-- HEADER -->
   <?php include '../assets/shared/header.php'; ?>
 
   <div class="container d-flex justify-content-center align-items-center mt-5 pt-5">
@@ -24,37 +49,31 @@
   <div class="container mb-5">
     <div class="row">
       <div class="col list-group list-group-flush px-0 w-100">
-        
-        <div class="list-group-item list-group-item-action py-3 px-4 text-black border-bottom border-secondary w-100 bg-light"
-          data-bs-toggle="collapse" data-bs-target="#rideDetails1">
-          April 06, 2025 20:12:36 : 20:16:29
-        </div>
-        <div id="rideDetails1" class="collapse">
-          <?php include '../passenger/rideDetailsCard.php'; ?>
-        </div>
 
-        <div class="list-group-item list-group-item-action py-3 px-4 text-black border-bottom border-secondary w-100 bg-light"
-          data-bs-toggle="collapse" data-bs-target="#rideDetails2">
-          April 05, 2025 18:45:10 : 18:52:55
-        </div>
-        <div id="rideDetails2" class="collapse">
-          <?php include '../passenger/rideDetailsCard.php'; ?>
-        </div>
-
-        <div class="list-group-item list-group-item-action py-3 px-4 text-black border-bottom border-secondary w-100 bg-light"
-          data-bs-toggle="collapse" data-bs-target="#rideDetails3">
-          April 04, 2025 17:20:05 : 17:30:45
-        </div>
-        <div id="rideDetails3" class="collapse">
-          <?php include '../passenger/rideDetailsCard.php'; ?>
-        </div>
+        <?php while ($row = $result->fetch_assoc()): ?>
+          <?php $detailsId = "rideDetails" . $row['historyId']; ?>
+          <div
+            class="list-group-item list-group-item-action py-3 px-4 text-black border-bottom border-secondary w-100 bg-light"
+            data-bs-toggle="collapse" data-bs-target="#<?= $detailsId ?>">
+            <?= date("F d, Y H:i:s", strtotime($row['pickupTime'])) ?> :
+            <?= date("H:i:s", strtotime($row['dropoffTime'])) ?>
+          </div>
+          <div id="<?= $detailsId ?>" class="collapse">
+            <div class="card p-3">
+              <h6>Driver: <?= htmlspecialchars($row['firstName'] . ' ' . $row['lastName']) ?></h6>
+              <p>Plate: <?= htmlspecialchars($row['plateNumber']) ?></p>
+              <p>Model: <?= htmlspecialchars($row['model']) ?></p>
+              <p>Contact: <?= htmlspecialchars($row['contactNumber']) ?></p>
+            </div>
+          </div>
+        <?php endwhile; ?>
 
       </div>
     </div>
   </div>
 
   <?php include '../assets/shared/navbarPassenger.php'; ?>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
