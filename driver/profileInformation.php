@@ -101,7 +101,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 
     <?php if (isset($driver)): ?>
     <div class="container-fluid">
-        <div class="d-flex justify-content-center" style="padding-top: 120px;">
+        <div class="d-flex justify-content-center">
             <div class="card border-0">
                 <div class="card-body p-4 text-center">
                     <!-- Driver Photo -->

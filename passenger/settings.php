@@ -42,7 +42,7 @@
                             Circle Settings
                         </div>
 
-                        <a href="../passenger/circleDetails.php" style="text-decoration: none; color: inherit;">
+                        <a href="../passenger/circle.php" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
                                 Circle Management
@@ -80,7 +80,7 @@
                             About
                         </div>
 
-                        <!-- Leave Circle / Log Out (with modal) -->
+                        <!-- Log Out (with modal) -->
                         <a href="#" data-bs-toggle="modal" data-bs-target="#leaveCircleModal"
                             style="text-decoration: none; color: inherit;">
                             <div
@@ -97,11 +97,10 @@
         </div>
     </div>
 
-    <!-- Modal Backdrop -->
+    <!-- Log Out Confirmation Modal -->
     <div id="leaveCircleModal" class="modal fade" tabindex="-1" aria-labelledby="leaveCircleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <!-- Modal Box -->
             <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
                 style="width: 85%; max-width: 320px; margin: auto;">
                 <h5 class="fw-bold mb-2" id="leaveCircleModalLabel">Confirm Log Out</h5>
@@ -113,7 +112,7 @@
                         style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <a href="../" class="btn rounded-pill px-4 text-white"
+                    <a href="../logout.php" class="btn rounded-pill px-4 text-white"
                         style="background-color: #1cc8c8; font-weight: 600;">
                         Yes
                     </a>
@@ -122,11 +121,8 @@
         </div>
     </div>
 
-
     <?php include '../assets/shared/navbarPassenger.php'; ?>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 
 </body>
 

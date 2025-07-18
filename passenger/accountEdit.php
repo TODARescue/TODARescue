@@ -1,77 +1,144 @@
+<?php
+session_start();
+header("Cache-Control: no-cache, no-store, must-revalidate"); // Disable caching
+header("Pragma: no-cache");
+header("Expires: 0");
+require_once '../assets/php/connect.php';
+
+if (!isset($_SESSION['userId'])) {
+    header('Location: ../login.php');
+    exit;
+}
+
+$userId = $_SESSION['userId'];
+$error = '';
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $firstName = trim($_POST['firstName']);
+    $lastName = trim($_POST['lastName']);
+    $contactNumber = trim($_POST['contactNumber']);
+    $email = trim($_POST['email']);
+    $photo = $_FILES['photo'];
+
+    $checkStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ?");
+    $checkStmt->bind_param("ssi", $email, $contactNumber, $userId);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+
+    if ($checkResult->num_rows > 0) {
+        $error = "Email or Contact Number already exists.";
+    } else {
+        $photoFileName = '';
+        if (!empty($photo['name'])) {
+            $photoFileName = time() . '_' . basename($photo['name']);
+            $targetDir = '../assets/uploads/';
+            $targetPath = $targetDir . $photoFileName;
+
+            if (!move_uploaded_file($photo['tmp_name'], $targetPath)) {
+                $error = "Failed to upload photo.";
+            }
+        }
+
+        if (!$error) {
+            if (!empty($photoFileName)) {
+                $stmt = $conn->prepare("UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=?, photo=? WHERE userId=?");
+                $stmt->bind_param("sssssi", $firstName, $lastName, $contactNumber, $email, $photoFileName, $userId);
+            } else {
+                $stmt = $conn->prepare("UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=? WHERE userId=?");
+                $stmt->bind_param("ssssi", $firstName, $lastName, $contactNumber, $email, $userId);
+            }
+
+            if ($stmt->execute()) {
+                header("Location: accountView.php?updated=1");
+                exit;
+            } else {
+                $error = "Update failed.";
+            }
+        }
+    }
+}
+
+$stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo FROM users WHERE userId = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TODA Rescue - accountView</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/style.css">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .preview-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+    </style>
 </head>
 
-<body class="d-flex justify-content-center align-items-center vh-100"
-  style="background-color: #2c2c2c; font-family: 'Inter', sans-serif; margin: 0;">
+<body class="bg-dark text-white d-flex justify-content-center align-items-center vh-100">
+    <div class="container">
+        <div class="card bg-white text-dark p-4 rounded-4 shadow-lg">
+            <h3 class="text-center mb-4">Edit Account</h3>
 
-  <div class="container-fluid p-0 m-0 vh-100">
-    <div class="row h-100 g-0">
-      <div class="col-12 d-flex justify-content-center align-items-start h-100">
+            <?php if ($error): ?>
+                <div class="alert alert-danger"><?= $error ?></div>
+            <?php endif; ?>
 
-        <!-- Main Card -->
-        <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
-          style="border-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="text-center mb-3">
+                    <img id="preview" src="<?= !empty($user['photo']) ? '../assets/uploads/' . htmlspecialchars($user['photo']) : '../assets/images/default_profile.jpg' ?>"
+                        class="rounded-circle preview-img mb-2" alt="Profile Photo">
+                    <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
+                </div>
 
-          <!-- HEADER -->
-             <?php include '../assets/shared/header.php'; ?>
+                <div class="mb-3">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="firstName" class="form-control" required value="<?= htmlspecialchars($user['firstName']) ?>">
+                </div>
 
-          <!-- Profile Content -->
-          <div class="d-flex flex-column align-items-center justify-content-start px-4 pb-5 overflow-auto" style="padding-top: 120px;">
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="lastName" class="form-control" required value="<?= htmlspecialchars($user['lastName']) ?>">
+                </div>
 
-            <!-- Profile Image -->
-            <div class="rounded-circle mb-4" style="width: 100px; height: 100px; background-color: #a59e9e;"></div>
+                <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" name="contactNumber" class="form-control" required value="<?= htmlspecialchars($user['contactNumber']) ?>">
+                </div>
 
-            <!-- Form -->
-            <form class="w-100">
-              <div class="d-flex flex-column align-items-start mb-3">
-                <label class="form-label text-muted small fw-bold ">First Name</label>
-                <input type="text" class="form-control border-0 border-bottom rounded-0 shadow-none p-0"
-                  style="border-bottom: 2px solid #000;" />
-              </div>
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-control" required value="<?= htmlspecialchars($user['email']) ?>">
+                </div>
 
-              <div class="mb-3">
-                <label class="form-label text-muted small fw-bold">Last Name</label>
-                <input type="text" class="form-control border-0 border-bottom rounded-0 shadow-none p-0" />
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label text-dark small fw-bold ">Phone Number</label>
-                <input type="text" class="form-control border-0 border-bottom rounded-0 shadow-none text-start p-0"
-                  value="09764028761" />
-              </div>
-
-              <div class="mb-4">
-                <label class="form-label text-dark small fw-bold">Email Address</label>
-                <input type="email" class="form-control border-0 border-bottom rounded-0 shadow-none text-start p-0"
-                  value="bryanreano@gmail.com" />
-              </div>
-
-              <!-- Save Button -->
-              <div class="d-flex justify-content-center">
-                <button type="submit" class="btn text-white px-5"
-                  style="background-color: #24b3a7; border-radius: 15px;">Save</button>
-              </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
             </form>
 
-          </div>
-
+            <div class="d-grid mt-3">
+                <a href="accountView.php" class="btn btn-secondary">Back to Profile</a>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <?php include '../assets/shared/navbarPassenger.php'; ?>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                document.getElementById('preview').src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
 </body>
 
 </html>
