@@ -1,8 +1,6 @@
-const fallbackCoords = [14.08849, 121.0995];
-const tanauanBounds = L.latLngBounds(
-  [14.04146, 121.06599], //SW
-  [14.10694, 121.15791] //NE
-);
+window.fallbackCoords = [14.08849, 121.0995];
+window.mapBounds = L.latLngBounds([13.7925, 120.9155], [14.2378, 121.252]);
+
 // Scroll member container
 const memberContainer = document.getElementById("member-container");
 const showButton = document.getElementById("toggle-button");
@@ -226,8 +224,10 @@ function showLocation(userID, userName, coords) {
     map.removeLayer(memberMarker);
   }
 
-  const latLng = L.latLng(coords);
-  if (!tanauanBounds.contains(latLng)) {
+  const pt = turf.point([coords[1], coords[0]]);
+  const inBounds = turf.booleanPointInPolygon(pt, window.poly);
+
+  if (!inBounds) {
     // Show modal
     const gpsModal = new bootstrap.Modal(
       document.getElementById("gpsWarningModal")

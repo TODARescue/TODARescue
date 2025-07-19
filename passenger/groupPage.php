@@ -1,3 +1,11 @@
+<?php
+include('../assets/php/connect.php');
+
+session_start();
+
+$userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
+$isRiding = isset($_SESSION['isRiding']) ? $_SESSION['isRiding'] : false;
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -180,6 +188,9 @@
 
     <!-- SCROLLING AND POPULATE-->
     <script src="../assets/js/groupPage/members.js"></script>
+
+    <!-- Turf js to handle polygons -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
 
 </body>

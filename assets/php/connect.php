@@ -4,7 +4,10 @@ $dbuser = "root";
 $dbpass = "";
 $db = "todarescue";
 
-$conn = new mysqli($dbhost, $dbuser, $dbpass, $db) or die("Connect failed: %s\n" . $conn->error);
+$conn = new mysqli($dbhost, $dbuser, $dbpass, $db);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 try {
     $pdo = new PDO("mysql:host=$dbhost;dbname=$db", $dbuser, $dbpass);
@@ -23,4 +26,3 @@ function executeQuery($query)
     $conn = $GLOBALS['conn'];
     return mysqli_query($conn, $query);
 }
-?>
