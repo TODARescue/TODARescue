@@ -12,7 +12,9 @@ if (!isset($_SESSION['userId'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Group Dropdown</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@600;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -84,18 +86,22 @@ if (!isset($_SESSION['userId'])) {
         <div id="map" class="w-100 h-100" style="pointer-events: auto;"></div>
     </div>
 
-    <button id="toggle-button" class="btn btn-primary rounded-circle glass-toggle p-4 text-dark d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+    <button id="toggle-button"
+        class="btn btn-primary rounded-circle glass-toggle p-4 text-dark d-flex align-items-center justify-content-center"
+        style="width: 48px; height: 48px;">
         <i class="bi bi-people-fill"></i>
     </button>
 
-    <div class="py-3 py-sm-1 container-fluid position-fixed top-0 text-center start-0 end-0 bg-transparent" style="z-index: 4;" id="header-color">
-        <div class="d-inline-flex align-items-center px-5 py-1 rounded-pill glass-selector" style="background-color: #2ebcbc!important; cursor: pointer; user-select: none;" id="group-selector">
-            <h4 class="m-0" id="selected-group-name">Group ▼</h4>
+    <div class="py-3 py-sm-1 container-fluid position-fixed top-0 text-center start-0 end-0 bg-transparent"
+        style="z-index: 4;" id="header-color">
+        <div class="d-inline-flex align-items-center px-5 py-1 rounded-pill glass-selector"
+            style="background-color: #2ebcbc!important; cursor: pointer; user-select: none;" id="group-selector">
+            <h4 class="m-0" id="selected-group-name">Select Group ▼</h4>
         </div>
     </div>
 
     <div class="pt-2 pt-lg-5 group-container shadow rounded-bottom-5 bg-white" id="group-container">
-        <div id="group-list"></div>
+        <div id="group-list" class="mb-3 text-center">Loading...</div>
         <div class="d-flex mt-3">
             <a href="./createCircle.php" class="text-decoration-none">
                 <button type="button" class="btn rounded-pill action-button mx-3" style="font-size: 16px;">
@@ -103,7 +109,8 @@ if (!isset($_SESSION['userId'])) {
                 </button>
             </a>
             <a href="./joinCircle.php" class="text-decoration-none">
-                <button type="button" class="btn rounded-pill action-button position-absolute end-3" style="font-size: 16px;">
+                <button type="button" class="btn rounded-pill action-button position-absolute end-3"
+                    style="font-size: 16px;">
                     Join Circle
                 </button>
             </a>
@@ -136,31 +143,50 @@ if (!isset($_SESSION['userId'])) {
 
         groupSelector.addEventListener('click', async () => {
             groupContainer.style.display = groupContainer.style.display === 'block' ? 'none' : 'block';
-            if (groupList.innerHTML.trim() === '') {
-                const res = await fetch('../assets/php/getUserCircles.php');
+            groupList.innerHTML = 'Loading...';
+            try {
+                const res = await fetch('./getUserCircles.php');
                 const data = await res.json();
-                data.forEach(circle => {
+                groupList.innerHTML = '';
+
+                if (!data.length) {
+                    groupList.innerHTML = '<div class="text-muted">You are not yet part of any circle. You may join or create one.</div>';
+                    return;
+                }
+
+                data.forEach((circle, index) => {
                     const btn = document.createElement('button');
                     btn.className = 'd-flex align-items-center my-2 p-0 border-0 bg-transparent';
                     btn.innerHTML = `
                         <img src="../assets/images/group-photo.png" class="group-image">
-                        <div class="ms-2">${circle.name}</div>
+                        <div class="ms-2">${circle.circleName}</div>
                     `;
                     btn.addEventListener('click', () => {
-                        selectedGroupName.textContent = circle.name + ' ▼';
+                        selectedGroupName.textContent = `${circle.circleName} ▼`;
                         groupContainer.style.display = 'none';
                         loadMembers(circle.circleId);
                     });
                     groupList.appendChild(btn);
+
+                    if (index === 0) {
+                        selectedGroupName.textContent = `${circle.circleName} ▼`;
+                        loadMembers(circle.circleId);
+                    }
                 });
+            } catch (error) {
+                groupList.innerHTML = '<div class="text-danger">Failed to fetch circles. Please try again later.</div>';
             }
         });
 
         async function loadMembers(circleId) {
-            const res = await fetch(`../assets/php/getCircleMembers.php?circleId=${circleId}`);
-            const html = await res.text();
-            memberContent.innerHTML = html;
-            memberContainer.style.top = '0';
+            try {
+                const res = await fetch(`./getCircleMembers.php?circleId=${circleId}`);
+                const html = await res.text();
+                memberContent.innerHTML = html;
+                memberContainer.style.top = '0';
+            } catch (error) {
+                memberContent.innerHTML = '<p class="text-danger">Unable to load members.</p>';
+            }
         }
     </script>
 </body>
