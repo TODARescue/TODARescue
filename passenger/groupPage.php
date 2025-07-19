@@ -1,10 +1,9 @@
 <?php
-include('../assets/php/connect.php');
-
 session_start();
-
-$userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
-$isRiding = isset($_SESSION['isRiding']) ? $_SESSION['isRiding'] : false;
+if (!isset($_SESSION['userId'])) {
+    header('Location: ../login.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,26 +12,11 @@ $isRiding = isset($_SESSION['isRiding']) ? $_SESSION['isRiding'] : false;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Group Dropdown</title>
-    <!-- FONTS -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@600;800&display=swap"
-        rel="stylesheet">
-    <!-- BOOTSTRAP CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@600;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- BOOTSTRAP ICONS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- LEAFLET CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-
-    <!-- Custom Styling -->
     <link rel="stylesheet" href="../assets/css/style.css">
-
-    <!-- Glass Styling -->
-    <!-- <link rel="stylesheet" href="../assets/css/glass.css"> -->
-
     <style>
         .group-selector {
             background-color: #009688;
@@ -64,7 +48,6 @@ $isRiding = isset($_SESSION['isRiding']) ? $_SESSION['isRiding'] : false;
             border: 1px solid #ddd;
             border-radius: 0.5rem;
             padding: 2.5rem;
-            margin-top: 0.5rem;
             margin-top: 3rem;
             z-index: 3;
             display: none;
@@ -97,57 +80,22 @@ $isRiding = isset($_SESSION['isRiding']) ? $_SESSION['isRiding'] : false;
 </head>
 
 <body>
-    <!-- MODAL BOOTSTRAP -->
-    <div class="modal fade" id="gpsWarningModal" tabindex="-1" aria-labelledby="gpsWarningModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-2 border-teal">
-                <div class="modal-header bg-light border-0">
-                    <h5 class="modal-title" id="gpsWarningModalLabel">📌 Location Outside Map Bounds</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    Showing default location on the map.
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-ok" data-bs-dismiss="modal">
-                        OK
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- MAP FULLSCREEN -->
     <div class="position-absolute top-0 start-0 w-100 h-100 z-1" id="map-container">
         <div id="map" class="w-100 h-100" style="pointer-events: auto;"></div>
     </div>
 
-    <!-- Toggle button to show/hide the group container -->
     <button id="toggle-button" class="btn btn-primary rounded-circle glass-toggle p-4 text-dark d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
         <i class="bi bi-people-fill"></i>
     </button>
 
-    <div class=" py-3 py-sm-1 container-fluid position-fixed top-0 text-center start-0 end-0 bg-transparent" style="z-index: 4;" id="header-color">
-        <div class="d-inline-flex align-items-center px-5 py-1 rounded-pill glass-selector"
-            style="background-color: #2ebcbc!important; cursor: pointer; user-select: none;"
-            id="group-selector">
-            <h4 class="m-0">
-                Group 1
-                </h2>
-                <i class="bi bi-caret-down-fill ms-2" id="caret-icon"></i>
+    <div class="py-3 py-sm-1 container-fluid position-fixed top-0 text-center start-0 end-0 bg-transparent" style="z-index: 4;" id="header-color">
+        <div class="d-inline-flex align-items-center px-5 py-1 rounded-pill glass-selector" style="background-color: #2ebcbc!important; cursor: pointer; user-select: none;" id="group-selector">
+            <h4 class="m-0" id="selected-group-name">Select Group ▼</h4>
         </div>
     </div>
 
-    <!-- Group container -->
     <div class="pt-2 pt-lg-5 group-container shadow rounded-bottom-5 bg-white" id="group-container">
-        <button type="button" class="d-flex align-items-center my-4 p-0 border-0 bg-transparent">
-            <img src="../assets/images/group-photo.png" alt="Group 1" class="group-image">
-            <div class="ms-2">Group 1</div>
-        </button>
-
-        <button type="button" class="d-flex align-items-center my-4 p-0 border-0 bg-transparent">
-            <img src="../assets/images/group-photo.png" alt="Group 2" class="group-image">
-            <div class="ms-2">Group 2</div>
-        </button>
+        <div id="group-list" class="mb-3 text-center">Loading...</div>
         <div class="d-flex mt-3">
             <a href="./createCircle.php" class="text-decoration-none">
                 <button type="button" class="btn rounded-pill action-button mx-3" style="font-size: 16px;">
@@ -163,36 +111,77 @@ $isRiding = isset($_SESSION['isRiding']) ? $_SESSION['isRiding'] : false;
     </div>
 
     <div class="container-fluid px-2" id="member-container">
-        <div id="member-content">
-            <!--Member (to be populated in DB) JSON example -->
-        </div>
+        <div id="member-content"></div>
     </div>
 
-
-    <!-- NAVBAR -->
     <div class="position-relative" style="z-index: 5">
         <?php include '../assets/shared/navbarPassenger.php'; ?>
     </div>
 
-    <!-- BOOTSTRAP JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- LEAFLET JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <!-- MAP JS -->
     <script src="../assets/js/sharedMap.js"></script>
+    <script>
+        const groupContainer = document.getElementById('group-container');
+        const toggleButton = document.getElementById('toggle-button');
+        const groupSelector = document.getElementById('group-selector');
+        const groupList = document.getElementById('group-list');
+        const selectedGroupName = document.getElementById('selected-group-name');
+        const memberContainer = document.getElementById('member-container');
+        const memberContent = document.getElementById('member-content');
 
-    <!-- NAVBAR DROPDOWN -->
-    <script src="../assets/js/groupPage/navbar.js"></script>
+        toggleButton.addEventListener('click', () => {
+            memberContainer.style.top = memberContainer.style.top === '0px' ? '100vh' : '0px';
+        });
 
-    <!-- SCROLLING AND POPULATE-->
-    <script src="../assets/js/groupPage/members.js"></script>
+        groupSelector.addEventListener('click', async () => {
+            groupContainer.style.display = groupContainer.style.display === 'block' ? 'none' : 'block';
+            groupList.innerHTML = 'Loading...';
+            try {
+                const res = await fetch('./getUserCircles.php');
+                const data = await res.json();
+                groupList.innerHTML = '';
 
-    <!-- Turf js to handle polygons -->
-    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+                if (!data.length) {
+                    groupList.innerHTML = '<div class="text-muted">You are not yet part of any circle. You may join or create one.</div>';
+                    return;
+                }
 
+                data.forEach((circle, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'd-flex align-items-center my-2 p-0 border-0 bg-transparent';
+                    btn.innerHTML = `
+                        <img src="../assets/images/group-photo.png" class="group-image">
+                        <div class="ms-2">${circle.circleName}</div>
+                    `;
+                    btn.addEventListener('click', () => {
+                        selectedGroupName.textContent = `${circle.circleName} ▼`;
+                        groupContainer.style.display = 'none';
+                        loadMembers(circle.circleId);
+                    });
+                    groupList.appendChild(btn);
 
+                    if (index === 0) {
+                        selectedGroupName.textContent = `${circle.circleName} ▼`;
+                        loadMembers(circle.circleId);
+                    }
+                });
+            } catch (error) {
+                groupList.innerHTML = '<div class="text-danger">Failed to fetch circles. Please try again later.</div>';
+            }
+        });
+
+        async function loadMembers(circleId) {
+            try {
+                const res = await fetch(`./getCircleMembers.php?circleId=${circleId}`);
+                const html = await res.text();
+                memberContent.innerHTML = html;
+                memberContainer.style.top = '0';
+            } catch (error) {
+                memberContent.innerHTML = '<p class="text-danger">Unable to load members.</p>';
+            }
+        }
+    </script>
 </body>
 
 </html>
