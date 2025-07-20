@@ -21,7 +21,7 @@ $search = $_GET['search'] ?? '';
 
 <body class="bg-white d-flex justify-content-center align-items-start min-vh-100 pt-5">
 
-    <div class="container px-4" style="max-width: 400px;">
+    <div class="container px-4 pb-4" style="max-width: 400px;">
         <h3 class="fw-bold text-center mb-3">TODA Rescue</h3>
         <h5 class="mb-3">Passengers</h5>
 
@@ -118,6 +118,8 @@ $search = $_GET['search'] ?? '';
             </div>
         </div>
     </div>
+
+    
 
     <?php include '../assets/shared/navbarAdmin.php'; ?>
 

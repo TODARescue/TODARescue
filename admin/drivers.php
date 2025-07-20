@@ -23,7 +23,7 @@ $search = $_GET['search'] ?? '';
 
 <body class="bg-white d-flex justify-content-center align-items-start min-vh-100 pt-5">
 
-    <div class="container px-4" style="max-width: 500px;">
+    <div class="container px-4 pb-5" style="max-width: 500px;">
         <h3 class="fw-bold text-center mb-3">TODA Rescue</h3>
         <div class="d-flex align-items-center justify-content-between">
             <h5 class="mb-3">Drivers</h5>
@@ -49,7 +49,7 @@ $search = $_GET['search'] ?? '';
         </form>
 
 
-        <div class="mt-4 d-flex flex-column gap-3">
+        <div class="mt-4 d-flex flex-column gap-3 mb-4">
             <?php
             $sql = "SELECT * FROM users WHERE role = 'driver' AND isDeleted = 0";
             if (!empty($search)) {
