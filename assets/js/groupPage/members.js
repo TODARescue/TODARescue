@@ -1,268 +1,97 @@
 window.fallbackCoords = [14.08849, 121.0995];
 window.mapBounds = L.latLngBounds([13.7925, 120.9155], [14.2378, 121.252]);
 
-// Scroll member container
-const memberContainer = document.getElementById("member-container");
-const showButton = document.getElementById("toggle-button");
-const headerColor = document.getElementById("header-color");
-const memberContent = document.getElementById("member-content");
-const mapContainer = document.getElementById("map-container");
-
-const members = [
-  {
-    userID: 1,
-    userName: "Alison Jackson",
-    profilePic: "../assets/images/profile-default.png",
-    coords: [14.087825, 121.098003],
-    driverInfo: {
-      name: "Pedro Santos",
-      plateNo: "ABC-123",
-      model: "Bajaj RE",
-      todaReg: "TODA-001",
-      contactNo: "09171234567",
-      profilePic: "../assets/images/profile-default.png",
-    },
-    status: "Riding",
-  },
-  {
-    userID: 2,
-    userName: "Antok na",
-    profilePic: "../assets/images/profile-default.png",
-    coords: [14.083091, 121.093293],
-    driverInfo: {
-      name: "Carlos Agassi",
-      plateNo: "XYZ-456",
-      model: "Yamaha Tricity",
-      todaReg: "TODA-002",
-      contactNo: "09179876543",
-      profilePic: "../assets/images/profile-default.png",
-    },
-    status: "Offline",
-  },
-  {
-    userID: 3,
-    userName: "Mak Mak",
-    profilePic: "../assets/images/profile-default.png",
-    coords: [14.5764, 121.0851],
-    driverInfo: {
-      name: "Jose Dela Cruz",
-      plateNo: "LMN-789",
-      model: "Honda TMX",
-      todaReg: "TODA-003",
-      contactNo: "09171239876",
-      profilePic: "../assets/images/profile-default.png",
-    },
-    status: "Riding",
-  },
-];
-
-let isOpen = false;
-let isViewed = false; // true = driver view, false = list view
-
-showButton.addEventListener("click", function () {
-  if (!isOpen) {
-    openMemberContainer();
-  } else {
-    closeMemberContainer();
-  }
-  isOpen = !isOpen;
-});
-
-function openMemberContainer() {
-  memberContainer.style.top = "0px";
-  if (!isViewed) {
-    resetStyling();
-    generateMemberButtons();
-  }
-}
-
-function closeMemberContainer() {
-  memberContainer.style.top = "100vh";
-  mapContainer.classList.add("h-100");
-  mapContainer.classList.add("w-100");
-  mapContainer.classList.remove("h-50");
-  isViewed = false;
-}
-
-function generateMemberButtons() {
-  memberContent.innerHTML = "";
-
-  members.forEach((member) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className =
-      "d-flex align-items-center py-3 border-bottom border-dark w-100 bg-transparent border-0 text-start";
-
-    let statusIcon = "";
-    switch (member.status) {
-      case "Riding":
-        statusIcon = "bi bi-truck";
-        break;
-      case "Offline":
-        statusIcon = "bi bi-slash-circle";
-        break;
-      case "Available":
-        statusIcon = "bi bi-check-circle";
-        break;
-      default:
-        statusIcon = "bi bi-question-circle";
-    }
-
-    btn.onclick = () => {
-      showLocation(member.userID, member.userName, member.coords);
-      showDriverContainer(
-        member.userID,
-        member.userName,
-        member.driverInfo,
-        member.status,
-        member.profilePic
-      );
-    };
-    btn.innerHTML = `
-            <img src="${member.profilePic}" alt="${member.userName}" class="rounded-circle me-3" style="width: 50px; height: 50px; border: 2px solid #2EBCBC;">
-            <div>
-                <div class="fw-bold">${member.userName}</div>
-                <div class="d-flex align-items-center">
-                    <i class="${statusIcon}"></i>
-                    <span class="ms-1">${member.status}</span>
-                </div>
-            </div>
-        `;
-    memberContent.appendChild(btn);
-  });
-
-  const addPersonDiv = document.createElement("a");
-  addPersonDiv.href = "./joinCircle.php";
-  addPersonDiv.className =
-    "d-flex align-items-center py-3 border-bottom border-dark w-100 text-decoration-none text-dark text-start";
-  addPersonDiv.innerHTML = `
-        <img src="../assets/images/group-photo.png" alt="Add a Person" class="rounded-circle ms-1 me-3" style="width: 50px; height: 50px;">
-        <div class="fw-bold">Add a Person</div>
-    `;
-  memberContent.appendChild(addPersonDiv);
-}
-
-function resetStyling() {
-  memberContainer.style.top = "0";
-  memberContainer.style.paddingTop = "70px";
-  memberContainer.style.maxHeight = "100vh";
-  memberContainer.style.overflowY = "scroll";
-}
-
-function showDriverContainer(userID, userName, driverInfo, status, profilePic) {
-  let ridingDetails = "";
-  switch (status) {
-    case "Riding":
-      ridingDetails = "Riding with";
-      break;
-    case "Offline":
-      ridingDetails = "Last Rode With";
-      break;
-    case "Available":
-      ridingDetails = "Last Rode With";
-      break;
-    default:
-      ridingDetails = "New to Application";
-  }
-  isViewed = true;
-  mapContainer.classList.add("h-50");
-  mapContainer.classList.add("w-100");
-  mapContainer.classList.remove("h-100");
-  memberContainer.style.top = "50vh";
-  memberContainer.style.paddingTop = "5px";
-  memberContainer.style.maxHeight = "55vh";
-  memberContainer.style.overflowY = "scroll";
-  memberContent.innerHTML = `
-                                    <div class="d-flex align-items-center py-3 mx-2 border-bottom border-dark">
-                                        <img src="${profilePic}" alt="${userName}" class="rounded-circle me-3" style="width: 50px; height: 50px;">
-                                        <div class="flex-grow-1">
-                                            <div class="fw-bold">${userName}</div>
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-truck"></i>
-                                                <span class="ms-1">${status}</span>
-                                            </div>
-                                        </div>
-                                        <div class="fw-bold">Group 1</div>
-                                    </div>
-                                    <div class="my-3 mx-2 fw-bold">${ridingDetails}</div>
-                                    <div class="card rounded-4 glass shadow px-4 py-4 mb-5 start-50 translate-middle-x"
-                                        style="top: 55%; width: 90%; max-width: 500px;">
-                                        <div class="d-flex flex-row align-items-center justify-content-between profile-container" id="profile-details">
-                                            <div class="me-3 profile-pic">
-                                                <img src="${driverInfo.profilePic}" alt="Driver" class="rounded-circle" width="50" height="50">
-                                            </div>
-                                            <div class="flex-grow-1 me-2">
-                                                <div class="d-flex align-items-center">
-                                                    <h5 class="mb-0 me-2">${driverInfo.name}</h5>
-                                                    <img src="../assets/images/verified.png" alt="Verified" style="width: 12px;">
-                                                </div>
-                                                <div class="align-items-center">
-                                                    <small>Plate No:</small>
-                                                    <b>${driverInfo.plateNo}</b>
-                                                </div>
-                                                <div class="collapse mt-3" id="driver-details">
-                                                    <div class="border-top border-dark pt-2">
-                                                        <p class="mb-1"><b>Tricycle Model:</b> ${driverInfo.model}</p>
-                                                        <p class="mb-1"><b>Toda Registration:</b> ${driverInfo.todaReg}</p>
-                                                        <p class="mb-1"><b>Contact:</b> ${driverInfo.contactNo}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button class="btn p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#driver-details" aria-expanded="false">
-                                                <img src="../assets/images/drop-down.png" alt="Dropdown" width="13" class="drop-arrow text-center" id="arrow-icon">
-                                            </button>
-                                        </div>
-                                    </div>
-                                `;
-}
-// Track the dynamic member marker separately
 let memberMarker = null;
+let outOfBoundsMember = false;
+let memberCoords = null;
+let hasPanned = false;
+let lastCoords = null;
+let nameRevealed = false;
 
-function showLocation(userID, userName, coords) {
+function showLocation(userID, userName, coords, profilePicture) {
+  window.isViewingMember = true;
   // Remove existing member marker if any
   if (memberMarker) {
     map.removeLayer(memberMarker);
   }
 
-  const pt = turf.point([coords[1], coords[0]]);
+  const pt = turf.point([coords[0], coords[1]]);
   const inBounds = turf.booleanPointInPolygon(pt, window.poly);
 
-  if (!inBounds) {
+  if (!inBounds && !outOfBoundsMember) {
+    outOfBoundsMember = true;
     // Show modal
     const gpsModal = new bootstrap.Modal(
       document.getElementById("gpsWarningModal")
     );
     gpsModal.show();
+    memberCoords = inBounds ? coords : fallbackCoords;
+    lastCoords = memberCoords;
 
-    map.setView(fallbackCoords, 15, { animate: true });
-    return;
+    if (!hasPanned) {
+      hasPanned = true;
+      map.once("moveend", () => {
+        const panY = window.innerHeight * 0.25;
+        console.log("Panning map for member view: " + panY);
+        map.panBy([0, panY], { animate: true });
+      });
+
+      goViewMember();
+    }
+  } else {
+    memberCoords = inBounds ? coords : fallbackCoords;
+    if (!hasPanned) {
+      hasPanned = true;
+      map.once("moveend", () => {
+        const panY = window.innerHeight * 0.25;
+        console.log("Panning map for member view: " + panY);
+        map.panBy([0, panY], { animate: true });
+      });
+
+      goViewMember();
+    }
   }
 
-  const profileIcon = L.icon({
-    iconUrl: "../assets/images/profile-default.png",
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -20],
-    className: "rounded-icon",
+  const profileIcon = L.divIcon({
+    className: "custom-profile-icon",
+    html: `<img src="${profilePicture}" class="profile-icon-image">`,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [2, -20],
   });
 
   // Add new member marker
-  memberMarker = L.marker(coords, {
+  memberMarker = L.marker(memberCoords, {
     icon: profileIcon,
   })
     .addTo(map)
     .bindPopup(
       `
                 <div class="profile-popup" style="position: relative; text-align: center;">
-                    <div class="name-overlay" style="position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); color: white; font-weight: bold; font-size: 12px; text-shadow: 0 0 3px black;">
+                    <div class="name-overlay" style="position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); color: white; font-weight: bold; font-size: 10px; text-shadow: 0 0 3px black;">
                         ${userName}
                     </div>
-                    <img src="../assets/images/profile-default.png" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white;" />
+                    <img src="${profilePicture}" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white;" />
                     <div style="margin-top: 4px; font-size: 12px; color: #333;">Driver:</div>
                 </div>
                 `
-    )
-    .openPopup();
+    );
+}
 
-  map.setView(coords, 17, { animate: true });
+function goViewMember() {
+  map.setView(memberCoords, 17, (animate = true));
+}
+
+function panMap() {
+  map.once("moveend", () => {
+    const panY = window.innerHeight * 0.25;
+    console.log("Panning map for member view: " + panY);
+    map.panBy([0, panY], { animate: true });
+  });
+}
+function resetWarning() {
+  outOfBoundsMember = false;
+  memberCoords = null;
+  hasPanned = false;
+  nameRevealed = false;
 }

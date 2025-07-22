@@ -12,6 +12,23 @@ $historyId = null;
 // Set flag for my sharedMap.js to show modal
 $hasArrived = isset($_GET['arrived']) && $_GET['arrived'] == '1';
 
+$getPhotoQuery = "SELECT photo, role FROM users WHERE userId = $userId;";
+$getPhotoResult = executeQuery($getPhotoQuery);
+
+if (mysqli_num_rows($getPhotoResult) > 0) {
+    $row = mysqli_fetch_assoc($getPhotoResult);
+    $userRole = !empty($row['role']) ? $row['role'] : 'passenger';
+    if ($userRole === 'passenger') {
+        $profilePicture = !empty($row['photo'])
+            ? '../assets/images/passengers/' . $row['photo']
+            : '../assets/images/profile-default.png';
+    } else {
+        $profilePicture = !empty($row['photo'])
+            ? '../assets/images/drivers/' . $row['photo']
+            : '../assets/images/profile-default.png';
+    }
+}
+
 $checkRidingQuery = "SELECT driverId, historyId
 FROM history
 WHERE userId = $userId
@@ -65,14 +82,14 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
     $row = mysqli_fetch_assoc($checkRidingResult);
     $driverId = $row['driverId'];
     $historyId = $row['historyId'];
-    $setRidingQuery = "UPDATE users SET isRiding=1 WHERE userId = 1;";
+    $setRidingQuery = "UPDATE users SET isRiding=1 WHERE userId = $userId;";
     $setRidingResult = executeQuery($setRidingQuery);
     $isRiding = true;
 
     $isRiding = $_SESSION['isRiding'] = true;
 
 
-    $getDriverQuery = "SELECT * FROM drivers WHERE driverId = $driverId;";
+    $getDriverQuery = "SELECT d.plateNumber, d.todaRegistration, d.model, u.photo FROM drivers d JOIN users u ON d.userId = u.userId WHERE driverId = $driverId;";
     $getDriverResult = executeQuery($getDriverQuery);
 
     $getDriverProfileQuery = "SELECT 
@@ -101,7 +118,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
         $photo = $row['photo'];
     }
 } else {
-    $setIdleQuery = "UPDATE users SET isRiding=0 WHERE userId = 1;";
+    $setIdleQuery = "UPDATE users SET isRiding=2 WHERE userId = $userId;";
     $setIdleResult = executeQuery($setIdleQuery);
     $isRiding = false;
 
@@ -187,7 +204,7 @@ if (isset($_POST['arrive-button'])) {
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-2 border-teal">
                 <div class="modal-header bg-light border-0">
-                    <h5 class="modal-title" id="gpsWarningModalLabel">Location Outside Map Bounds</h5>
+                    <h5 class="modal-title" id="gpsWarningModalLabel"> <i class="bi bi-exclamation-triangle-fill me-2"></i>Location Outside Map Bounds</h5>
                 </div>
                 <div class="modal-body text-center">
                     Showing default location on the map.
@@ -223,8 +240,8 @@ if (isset($_POST['arrive-button'])) {
                     <div class="d-flex flex-row align-items-center justify-content-between profile-container" id="profile-details">
 
                         <!-- Profile Picture -->
-                        <div class="me-3 profile-pic">
-                            <img src="../assets/images/<?php echo $photo ?>" onerror="this.onerror=null; this.src='../assets/images/profile-default.png';" onclick="goView()" alt="Profile" class="rounded-circle" width="50" height="50">
+                        <div class="me-3 custom-profile-icon">
+                            <img src="../assets/images/drivers/<?php echo $photo ?>" onerror="this.onerror=null; this.src='../assets/images/profile-default.png';" onclick="goView()" alt="Profile" class="rounded-circle profile-icon-details" style="width: 50px!important; height: 50px!important;">
                         </div>
 
                         <!-- User Info -->
@@ -285,6 +302,7 @@ if (isset($_POST['arrive-button'])) {
     <!-- Transfering of my hasArrived variable -->
     <script>
         window.hasArrived = <?php echo isset($hasArrived) && $hasArrived ? 'true' : 'false'; ?>;
+        window.profilePicture = '<?php echo $profilePicture; ?>';
     </script>
 
     <!-- Turf js to handle polygons -->

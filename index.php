@@ -1,11 +1,14 @@
 <?php
-session_start();
 include("assets/php/connect.php");
+session_start();
+session_destroy();
+session_start();
 
 $error = "";
 
 $storedContact = isset($_COOKIE['contactNumber']) ? $_COOKIE['contactNumber'] : "";
 $storedPassword = isset($_COOKIE['password']) ? $_COOKIE['password'] : "";
+$status = 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $contactNumber = $_POST['contactNumber'];
@@ -29,6 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 setcookie('password', $password, time() + (30 * 24 * 60 * 60), "/");
             }
 
+            $updateStatusQuery = "UPDATE users SET isRiding = 2 WHERE userId = {$user['userId']}";
+            executeQuery($updateStatusQuery);
             // Redirect based on role
             if ($user['role'] === 'passenger') {
                 header("Location: passenger/index.php");
@@ -59,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>TODA Rescue - Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -104,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" <?php if (!empty($storedContact))
-                                    echo "checked"; ?>>
+                                                                                                                        echo "checked"; ?>>
                                 <label class="form-check-label small" for="rememberMe">Remember me</label>
                             </div>
 
@@ -129,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <script>
         // Toggle Password
-        document.getElementById('togglePassword').addEventListener('click', function () {
+        document.getElementById('togglePassword').addEventListener('click', function() {
             const input = document.getElementById('password');
             const icon = document.getElementById('toggleIcon1');
             const isHidden = input.type === 'password';
