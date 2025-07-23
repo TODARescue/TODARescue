@@ -49,15 +49,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             $driver = $result->fetch_assoc();
             
-            // Check if driver is verified
-            if (!$driver['isVerified']) {
-                echo json_encode(['success' => false, 'message' => 'Driver is not verified']);
-                exit();
-            }
+            // Include verification status in response
+            $driverName = $driver['firstName'] . ' ' . $driver['lastName'];
             
             echo json_encode([
                 'success' => true,
                 'driverId' => $driver['driverId'],
+                'isVerified' => (bool)$driver['isVerified'],
+                'driverName' => $driverName,
+                'plateNumber' => $driver['plateNumber'],
+                'model' => $driver['model'],
+                'address' => $driver['address'],
+                'todaRegistration' => $driver['todaRegistration'],
+                'photo' => $driver['photo'],
                 'message' => 'Driver found successfully'
             ]);
         } else {
@@ -75,4 +79,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if (isset($conn) && $conn) {
     $conn->close();
 }
-?>
+?> 

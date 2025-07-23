@@ -94,11 +94,14 @@ try {
     // Rollback the transaction on error
     $pdo->rollBack();
     
+    // Log the error
+    error_log("Error leaving circle: " . $e->getMessage());
+    
     // Set error message
     $_SESSION['circleErrorMsg'] = 'An error occurred while trying to leave the circle. Please try again.';
     
     // Redirect back to circle details
-    header('Location: circleDetails.php');
+    header('Location: circleDetails.php?circleId=' . $circleId);
     exit;
 }
 ?>
