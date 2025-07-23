@@ -96,16 +96,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?php } ?>
 
                             <div class="mb-3">
-<input type="text" name="contactNumber" class="form-control"
-    placeholder="Contact Number" required
-    value="<?php echo htmlspecialchars($storedContact); ?>" pattern="[0-9]*" inputmode="numeric"
-    style="border-radius: 25px; background-color: #D9D9D9; border: none;"
-    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <input type="text" name="contactNumber" class="form-control"
+                                    placeholder="Contact Number" required
+                                    value="<?php echo htmlspecialchars($storedContact); ?>" pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    style="border-radius: 25px; background-color: #D9D9D9; border: none;"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 
                             </div>
                             <div class="mb-3 position-relative">
-                                <input type="password" name="password" id="password" class="form-control" placeholder="Password"
-                                    required value="<?php echo htmlspecialchars($storedPassword); ?>"
+                                <input type="password" name="password" id="password" class="form-control"
+                                    placeholder="Password" required
+                                    value="<?php echo htmlspecialchars($storedPassword); ?>"
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                                 <button type="button" id="togglePassword"
                                     class="btn btn-sm position-absolute end-0 top-0 mt-1 me-3"
@@ -116,7 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" <?php if (!empty($storedContact))
-                                                                                                                        echo "checked"; ?>>
+                                    echo "checked"; ?>>
                                 <label class="form-check-label small" for="rememberMe">Remember me</label>
                             </div>
 
@@ -141,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <script>
         // Toggle Password
-        document.getElementById('togglePassword').addEventListener('click', function() {
+        document.getElementById('togglePassword').addEventListener('click', function () {
             const input = document.getElementById('password');
             const icon = document.getElementById('toggleIcon1');
             const isHidden = input.type === 'password';
