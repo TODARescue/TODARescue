@@ -23,7 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result && mysqli_num_rows($result) === 1) {
         $user = mysqli_fetch_assoc($result);
 
-        if ($user['password'] === $password) {
+        // 🔒 Restriction Check: Account is marked as deleted
+        if ($user['isDeleted'] == 1) {
+            $error = "Account is restricted.";
+        } elseif ($user['password'] === $password) {
             $_SESSION['userId'] = $user['userId'];
             $_SESSION['role'] = $user['role'];
 
@@ -34,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $updateStatusQuery = "UPDATE users SET isRiding = 2 WHERE userId = {$user['userId']}";
             executeQuery($updateStatusQuery);
+
             // Redirect based on role
             if ($user['role'] === 'passenger') {
                 header("Location: passenger/index.php");
@@ -52,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "User not found.";
     }
 }
+
 ?>
 
 
@@ -91,10 +96,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <?php } ?>
 
                             <div class="mb-3">
-                                <input type="text" name="contactNumber" class="form-control"
-                                    placeholder="Contact Number" required
-                                    value="<?php echo htmlspecialchars($storedContact); ?>"
-                                    style="border-radius: 25px; background-color: #D9D9D9; border: none;">
+<input type="text" name="contactNumber" class="form-control"
+    placeholder="Contact Number" required
+    value="<?php echo htmlspecialchars($storedContact); ?>" pattern="[0-9]*" inputmode="numeric"
+    style="border-radius: 25px; background-color: #D9D9D9; border: none;"
+    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
                             </div>
                             <div class="mb-3 position-relative">
                                 <input type="password" name="password" id="password" class="form-control" placeholder="Password"
