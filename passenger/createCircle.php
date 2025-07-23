@@ -193,6 +193,7 @@ nameInput.addEventListener('input',()=>submitBtn.disabled=nameInput.value.trim()
 
 function closeInviteModal(){
    document.getElementById('inviteModalBackdrop').classList.add('d-none');
+    window.location.href = 'groupPage.php';
 }
 
 function copyInviteCode() {
