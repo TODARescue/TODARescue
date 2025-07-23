@@ -127,7 +127,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Passengeer | Group Page</title>
+    <title>Passenger | Group Page</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@600;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -234,14 +234,14 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
 
     <div class="pt-4 pt-lg-5 group-container shadow rounded-bottom-5 bg-white" id="group-container">
         <div id="group-list" class="mb-3 text-center">Loading...</div>
-        <div class="d-flex mt-3">
+        <div class="mt-3 d-flex flex-align-center justify-content-center text-start">
             <a href="./createCircle.php" class="text-decoration-none">
                 <button type="button" class="btn rounded-pill action-button mx-3" style="font-size: 16px;">
                     Create Circle
                 </button>
             </a>
             <a href="./joinCircle.php" class="text-decoration-none">
-                <button type="button" class="btn rounded-pill action-button position-absolute end-3" style="font-size: 16px;">
+                <button type="button" class="btn rounded-pill action-button" style="font-size: 16px;">
                     Join Circle
                 </button>
             </a>
@@ -435,7 +435,13 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
 
                 memberContent.innerHTML = '';
 
-                if (!data.length) {
+                const {
+                    members,
+                    role
+                } = data;
+
+                console.log("Role:", role);
+                if (!members || !members.length) {
                     memberContent.innerHTML = '<p class="text-muted">No members found in this circle.</p>';
                     return;
                 }
@@ -445,12 +451,14 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
                     return;
                 }
 
-                data.forEach(member => {
+
+                members.forEach(member => {
                     const {
                         profilePic,
                         userName,
                         status,
-                        userId
+                        userId,
+                        role
                     } = member;
 
                     const displayName = userId === sessionUserId ?
@@ -502,31 +510,39 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
                             circleName
                         );
                     };
+
                     memberBtn.className = "d-flex align-items-center py-3 px-2 border-bottom border-dark w-100 bg-transparent border-0 text-start custom-profile-icon";
                     memberBtn.innerHTML = `
-                <img src="${profilePic}" alt="${userName}" onerror="this.onerror=null; this.src='../assets/images/profile-default.png';" class="rounded-circle me-3 profile-icon-image" style="width: 50px; height: 50px;">
-                <div class="flex-grow-1">
-                    <div class="fw-bold">${displayName}</div>
-                    <div class="d-flex align-items-center">
-                        ${statusIcon}
-                        <span class="mx-1">${statusActive}</span>
-                    </div>
-                </div>
-                <div class="fw-bold">${circleName}</div>
-            `;
+                        <img src="${profilePic}" alt="${userName}" onerror="this.onerror=null; this.src='../assets/images/profile-default.png';" class="rounded-circle me-3 profile-icon-image" style="width: 50px; height: 50px;">
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">${displayName}</div>
+                            <div class="d-flex align-items-center">
+                                ${statusIcon}
+                                <span class="mx-1">${statusActive}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-end">
+                            <div class="fw-bold">${circleName}</div>
+                            <div class="text-muted small">${role.charAt(0).toUpperCase() + role.slice(1)}</div>
+                        </div>
+                    `;
 
                     memberContent.appendChild(memberBtn);
                 });
-                const addPersonDiv = document.createElement("a");
-                addPersonDiv.href = "./inviteMember.php?circleId=" + circleId;
-                addPersonDiv.className =
-                    "d-flex align-items-center py-3 px-2 border-bottom border-dark w-100 text-decoration-none text-dark text-start";
-                addPersonDiv.innerHTML = `
-            <img src="../assets/images/group-photo.png" alt="Add a Person" class="rounded-circle me-3" style="width: 50px; height: 50px;">
-            <div class="fw-bold">Add a Person</div>
-        `;
-                memberContent.appendChild(addPersonDiv);
+                console.log("Member Role:", role);
 
+                if (role === 'admin' || role === 'owner') {
+                    const addPersonDiv = document.createElement("a");
+                    addPersonDiv.href = "./inviteMember.php?circleId=" + circleId;
+                    addPersonDiv.className =
+                        "d-flex align-items-center py-3 px-2 border-bottom border-dark w-100 text-decoration-none text-dark text-start";
+                    addPersonDiv.innerHTML = `
+                            <img src="../assets/images/group-photo.png" alt="Add a Person" class="rounded-circle me-3" style="width: 50px; height: 50px;">
+                            <div class="fw-bold">Add a Person</div>
+                        `;
+                    memberContent.appendChild(addPersonDiv);
+                }
             } catch (error) {
                 console.error("Load members error:", error);
                 memberContent.innerHTML = '<p class="text-danger">Unable to load members.</p>';
