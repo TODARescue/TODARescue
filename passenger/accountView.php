@@ -54,7 +54,7 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
                             <div class="list-group-item list-group-item-action py-3 border-0 px-0">
                                 <div class="d-flex align-items-center">
                                     <?php
-                                    $photoPath = !empty($user['photo']) ? '../assets/uploads/' . htmlspecialchars($user['photo']) : '';
+                                    $photoPath = !empty($user['photo']) ? '../assets/images/passengers/' . htmlspecialchars($user['photo']) : '';
                                     ?>
                                     <img src="<?= $photoPath ?>"
                                         onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"

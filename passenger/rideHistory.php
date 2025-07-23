@@ -9,12 +9,13 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 
+// ✅ Only show ride history from the past 7 days
 $sql = "
   SELECT h.historyId, h.pickupTime, h.dropoffTime, d.plateNumber, d.model, d.address, d.todaRegistration, u.firstName, u.lastName, u.contactNumber
   FROM history h
   JOIN drivers d ON h.driverId = d.driverId
   JOIN users u ON d.userId = u.userId
-  WHERE h.userId = ?
+  WHERE h.userId = ? AND h.pickupTime >= NOW() - INTERVAL 7 DAY
   ORDER BY h.pickupTime DESC
 ";
 
@@ -49,6 +50,10 @@ $result = $stmt->get_result();
   <div class="container mb-5">
     <div class="row">
       <div class="col list-group list-group-flush px-0 w-100">
+
+        <?php if ($result->num_rows === 0): ?>
+          <div class="text-muted text-center mt-4">No ride history in the last 7 days.</div>
+        <?php endif; ?>
 
         <?php while ($row = $result->fetch_assoc()): ?>
           <?php $detailsId = "rideDetails" . $row['historyId']; ?>

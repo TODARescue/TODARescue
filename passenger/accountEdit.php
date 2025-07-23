@@ -1,6 +1,6 @@
 <?php
 session_start();
-header("Cache-Control: no-cache, no-store, must-revalidate"); // Disable caching
+header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 require_once '../assets/php/connect.php';
@@ -21,10 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $email = trim($_POST['email']);
   $photo = $_FILES['photo'];
 
-  $checkStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ?");
+  $checkStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ? AND role = 'passenger'");
   $checkStmt->bind_param("ssi", $email, $contactNumber, $userId);
   $checkStmt->execute();
   $checkResult = $checkStmt->get_result();
+  $driverStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ? AND role = 'driver'");
+  $driverStmt ->bind_param("ssi", $email, $contactNumber, $userId);
+  $driverStmt ->execute();
+  $driverResult = $driverStmt ->get_result();
 
   if ($checkResult->num_rows > 0) {
     $error = "Email or Contact Number already exists.";
@@ -32,11 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $photoFileName = '';
     if (!empty($photo['name'])) {
       $photoFileName = time() . '_' . basename($photo['name']);
-      $targetDir = '../assets/uploads/';
+      $targetDir = '../assets/images/passengers/';
       $targetPath = $targetDir . $photoFileName;
 
+      if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0755, true);
+      }
+
       if (!move_uploaded_file($photo['tmp_name'], $targetPath)) {
-        $error = "Failed to upload photo.";
+        $error = "Failed to upload photo. Please check file permissions.";
       }
     }
 
@@ -58,6 +66,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 }
+  if ($driverResult->num_rows > 0) {
+    $error = "Email or Contact Number already exists.";
+  } else {
+    $photoFileName = '';
+    if (!empty($photo['name'])) {
+      $photoFileName = time() . '_' . basename($photo['name']);
+      $targetDir = '../assets/images/driver/';
+      $targetPath = $targetDir . $photoFileName;
+
+      if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0755, true);
+      }
+
+      if (!move_uploaded_file($photo['tmp_name'], $targetPath)) {
+        $error = "Failed to upload photo. Please check file permissions.";
+      }
+    }
+
+    if (!$error) {
+      if (!empty($photoFileName)) {
+        $stmt = $conn->prepare("UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=?, photo=? WHERE userId=?");
+        $stmt->bind_param("sssssi", $firstName, $lastName, $contactNumber, $email, $photoFileName, $userId);
+      } else {
+        $stmt = $conn->prepare("UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=? WHERE userId=?");
+        $stmt->bind_param("ssssi", $firstName, $lastName, $contactNumber, $email, $userId);
+      }
+
+      if ($stmt->execute()) {
+        header("Location: accountView.php?updated=1");
+        exit;
+      } else {
+        $error = "Update failed.";
+      }
+    }
+  }
+
 
 $stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo FROM users WHERE userId = ?");
 $stmt->bind_param("i", $userId);
@@ -89,7 +133,7 @@ $user = $result->fetch_assoc();
       <h3 class="text-center mb-4">Edit Account</h3>
 
       <?php if ($error): ?>
-        <div class="alert alert-danger"><?= $error ?></div>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
       <?php endif; ?>
 
       <form method="POST" enctype="multipart/form-data">
@@ -101,7 +145,6 @@ $user = $result->fetch_assoc();
 
           <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
         </div>
-
 
         <div class="mb-3">
           <label class="form-label">First Name</label>
