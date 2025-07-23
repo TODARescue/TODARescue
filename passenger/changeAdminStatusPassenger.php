@@ -46,30 +46,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $memberId = intval($_POST['memberId']);
         $isAdmin = $_POST['isAdmin'] === 'true' ? 'admin' : 'member';
         
-        // Wag ibahin status ni owner
+        // Debug info
+        error_log("Toggle admin request: memberId=$memberId, isAdmin=$isAdmin, circleId=$circleId");
+        
+        // Check if member exists in circle
+        $checkMemberQuery = "SELECT COUNT(*) FROM circlemembers WHERE userId = ? AND circleId = ?";
+        $checkMemberStmt = $pdo->prepare($checkMemberQuery);
+        $checkMemberStmt->execute([$memberId, $circleId]);
+        $memberExists = (int)$checkMemberStmt->fetchColumn();
+        
+        if ($memberExists === 0) {
+            echo json_encode(['success' => false, 'message' => 'This user is not a member of the circle.']);
+            exit;
+        }
+        
+        // Check if trying to change owner status
         $checkOwnerQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
         $checkStmt = $pdo->prepare($checkOwnerQuery);
         $checkStmt->execute([$memberId, $circleId]);
         $currentRole = $checkStmt->fetchColumn();
+        
+        error_log("Current role: $currentRole");
         
         if ($currentRole === 'owner') {
             echo json_encode(['success' => false, 'message' => 'Cannot change owner status']);
             exit;
         }
         
-        // Update member role
-        $updateQuery = "UPDATE circlemembers SET role = ? WHERE userId = ? AND circleId = ?";
-        $updateStmt = $pdo->prepare($updateQuery);
-        
-        if ($updateStmt->execute([$isAdmin, $memberId, $circleId])) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to update status']);
+        try {
+            // Begin transaction
+            $pdo->beginTransaction();
+            
+            // Update member role
+            $updateQuery = "UPDATE circlemembers SET role = ? WHERE userId = ? AND circleId = ?";
+            $updateStmt = $pdo->prepare($updateQuery);
+            $updateResult = $updateStmt->execute([$isAdmin, $memberId, $circleId]);
+            
+            error_log("Update query executed. Result: " . ($updateResult ? "Success" : "Failed"));
+            error_log("Affected rows: " . $updateStmt->rowCount());
+            
+            if ($updateResult && $updateStmt->rowCount() > 0) {
+                $pdo->commit();
+                echo json_encode(['success' => true, 'message' => 'Admin status updated successfully']);
+            } else {
+                $pdo->rollBack();
+                echo json_encode(['success' => false, 'message' => 'Failed to update status. No changes made.']);
+            }
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            error_log("Exception: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
         }
         exit;
     }
     
-    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+    echo json_encode(['success' => false, 'message' => 'Invalid request: Missing required parameters']);
     exit;
 }
 
@@ -103,6 +134,44 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
                     style="border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
+                    <!-- Error Modal -->
+                    <div id="errorModal" class="modal fade" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                                style="width: 85%; max-width: 320px; margin: auto;">
+                                <h5 class="fw-bold mb-2" id="errorModalLabel">Error</h5>
+                                <p class="mb-4" id="errorModalMessage" style="font-size: 0.95rem;">
+                                    An error occurred.
+                                </p>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn rounded-pill px-4 text-white"
+                                        style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                                        OK
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Success Modal -->
+                    <div id="successModal" class="modal fade" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                                style="width: 85%; max-width: 320px; margin: auto;">
+                                <h5 class="fw-bold mb-2" id="successModalLabel">Success</h5>
+                                <p class="mb-4" id="successModalMessage" style="font-size: 0.95rem;">
+                                    Operation completed successfully.
+                                </p>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn rounded-pill px-4 text-white"
+                                        style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                                        OK
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- HEADER -->
                     <?php include '../assets/shared/header.php'; ?>
 
@@ -168,36 +237,73 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Function to show error modal
+        function showErrorModal(message) {
+            document.getElementById('errorModalMessage').textContent = message;
+            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+        }
+        
+        // Function to show success modal
+        function showSuccessModal(message) {
+            document.getElementById('successModalMessage').textContent = message;
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        }
+        
         document.querySelectorAll(".admin-toggle").forEach(toggle => {
             toggle.addEventListener("change", function() {
                 const memberId = this.getAttribute('data-member-id');
                 const isAdmin = this.checked;
+                const circleId = <?php echo $circleId; ?>;
+                const toggleElement = this;
                 
                 // Show loading indicator
                 this.disabled = true;
+                console.log(`Attempting to change admin status for member ${memberId} to ${isAdmin ? 'admin' : 'member'}`);
                 
                 // Send AJAX request to update admin status
-                fetch('changeAdminStatusPassenger.php', {
+                fetch('changeAdminStatusPassenger.php?circleId=' + circleId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: `action=toggleAdmin&memberId=${memberId}&isAdmin=${isAdmin}`
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Response:', data);
                     if (!data.success) {
                         // Revert toggle if request failed
-                        this.checked = !isAdmin;
-                        alert(data.message || 'Failed to update admin status');
+                        toggleElement.checked = !isAdmin;
+                        showErrorModal(data.message || 'Failed to update admin status');
+                    } else {
+                        // Success feedback
+                        const statusBadge = document.createElement('span');
+                        statusBadge.className = 'badge bg-success ms-2 status-update';
+                        statusBadge.textContent = 'Updated';
+                        toggleElement.parentNode.appendChild(statusBadge);
+                        
+                        // Show success modal and redirect to circle details after closing
+                        showSuccessModal('Admin status updated successfully');
+                        
+                        // Redirect to circle details page after a brief delay to show the success badge
+                        setTimeout(() => {
+                            window.location.href = 'circleDetails.php?circleId=' + circleId;
+                        }, 1500);
                     }
-                    this.disabled = false;
+                    toggleElement.disabled = false;
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    this.checked = !isAdmin;
-                    this.disabled = false;
-                    alert('An error occurred while updating admin status');
+                    toggleElement.checked = !isAdmin;
+                    toggleElement.disabled = false;
+                    showErrorModal('An error occurred while updating admin status: ' + error.message);
                 });
             });
         });

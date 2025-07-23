@@ -50,6 +50,9 @@ $userCircles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="row h-100 g-0">
             <div class="col-12 d-flex justify-content-center align-items-start h-100">
 
+            <!-- HEADER -->
+            <?php include '../assets/shared/header.php'; ?>
+
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
                     style="border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 

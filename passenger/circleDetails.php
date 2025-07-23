@@ -156,10 +156,48 @@ $circleName = $circleNameStmt->fetchColumn();
                             style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
                             No
                         </button>
-                        <a href="../passenger/leaveCircleAction.php?circleId=<?php echo $circleId; ?>" class="btn rounded-pill px-4 text-white"
+                        <a href="../passenger/leaveCircleAction.php?circleId=<?php echo $circleId; ?>" id="leaveCircleBtn" class="btn rounded-pill px-4 text-white"
                             style="background-color: #1cc8c8; font-weight: 600;">
                             Yes
                         </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Error Modal -->
+        <div id="errorModal" class="modal fade" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                    style="width: 85%; max-width: 320px; margin: auto;">
+                    <h5 class="fw-bold mb-2" id="errorModalLabel">Error</h5>
+                    <p class="mb-4" id="errorModalMessage" style="font-size: 0.95rem;">
+                        An error occurred.
+                    </p>
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn rounded-pill px-4 text-white"
+                            style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Success Modal -->
+        <div id="successModal" class="modal fade" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                    style="width: 85%; max-width: 320px; margin: auto;">
+                    <h5 class="fw-bold mb-2" id="successModalLabel">Success</h5>
+                    <p class="mb-4" id="successModalMessage" style="font-size: 0.95rem;">
+                        Operation completed successfully.
+                    </p>
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn rounded-pill px-4 text-white"
+                            style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                            OK
+                        </button>
                     </div>
                 </div>
             </div>
@@ -171,6 +209,37 @@ $circleName = $circleNameStmt->fetchColumn();
         <!-- Scripts -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <script>
+            // Function to show error modal
+            function showErrorModal(message) {
+                document.getElementById('errorModalMessage').textContent = message;
+                const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                errorModal.show();
+            }
+            
+            // Function to show success modal
+            function showSuccessModal(message) {
+                document.getElementById('successModalMessage').textContent = message;
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            }
+            
+            // Check for session messages
+            <?php if (isset($_SESSION['circleErrorMsg'])): ?>
+                document.addEventListener('DOMContentLoaded', function() {
+                    showErrorModal('<?php echo addslashes($_SESSION['circleErrorMsg']); ?>');
+                    <?php unset($_SESSION['circleErrorMsg']); ?>
+                });
+            <?php endif; ?>
+            
+            <?php if (isset($_SESSION['circleSuccessMsg'])): ?>
+                document.addEventListener('DOMContentLoaded', function() {
+                    showSuccessModal('<?php echo addslashes($_SESSION['circleSuccessMsg']); ?>');
+                    <?php unset($_SESSION['circleSuccessMsg']); ?>
+                });
+            <?php endif; ?>
+        </script>
     </div>
 
 </body>

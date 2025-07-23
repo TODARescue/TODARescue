@@ -12,7 +12,8 @@ if (isset($_GET['testUser'])) {
 }
 
 if (!isset($_SESSION['userId'])) {
-    $_SESSION['userId'] = 1;
+    header('Location: ../index.php');
+    exit;
 }
 
 $userId = $_SESSION['userId'];
@@ -22,6 +23,9 @@ $stmt = $conn->prepare("SELECT d.driverId, d.plateNumber, d.model, d.address, d.
                         FROM drivers d
                         JOIN users u ON d.userId = u.userId
                         WHERE d.userId = ?");
+
+// Debug query
+error_log("Fetching driver info for userId: " . $userId);
 
 if (!$stmt) {
     die("Query preparation failed: " . $conn->error);
@@ -35,6 +39,8 @@ if ($result->num_rows === 0) {
     $error = "You are not registered as a driver. Please contact support.";
 } else {
     $driver = $result->fetch_assoc();
+    // Debug driver info
+    error_log("Driver data: " . print_r($driver, true));
 }
 
 $stmt->close();
@@ -53,6 +59,15 @@ if (isset($_POST['generateQR']) && isset($driver)) {
 
     $success = "QR Code has been generated successfully!";
 }
+
+// We'll handle QR code generation via JavaScript to ensure it's always displayed
+// Even if database update fails, we'll display a QR code for the user
+$plateNumber = isset($driver['plateNumber']) ? $driver['plateNumber'] : '';
+$driverId = isset($driver['driverId']) ? $driver['driverId'] : 0;
+
+// Make these values accessible to JavaScript
+$jsPlateNumber = json_encode($plateNumber);
+$jsDriverId = json_encode($driverId);
 
 $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 ?>
@@ -165,32 +180,34 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     <!-- QR Code -->
                     <div class="row">
                         <div class="col mb-3">
-                            <?php if (!empty($driver['qrCode'])): ?>
-                                <img src="<?php echo htmlspecialchars($driver['qrCode']); ?>" alt="QR Code" class="img-fluid" id="qr-code">
-                            <?php else: ?>
-                                <div class="alert alert-info">
-                                    No QR code generated yet. Click the button below to generate your QR code.
+                            <div id="qr-container" class="text-center">
+                                <img id="qr-code" alt="QR Code" class="img-fluid mb-3" style="max-width: 100px;">
+                            </div>
+                            <!-- Loading spinner while QR code is generating -->
+                            <div id="qr-loading" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
                                 </div>
-                            <?php endif; ?>
+                                <p>Generating QR Code...</p>
+                            </div>
+                            <!-- Error message if QR fails to load -->
+                            <div id="qr-error" class="alert alert-danger d-none">
+                                Failed to generate QR code. Please try again.
+                            </div>
                         </div>
                     </div>
 
                     <!-- QR Code Actions -->
                     <div class="row justify-content-center">
-                        <?php if (empty($driver['qrCode'])): ?>
-                            <div class="col-auto mb-3">
-                                <form method="post">
-                                    <button type="submit" name="generateQR" class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill"
-                                        style="background-color: #2DAAA7;">Generate QR Code</button>
-                                </form>
-                            </div>
-                        <?php else: ?>
-                            <div class="col-auto mb-3">
-                                <a href="<?php echo htmlspecialchars($driver['qrCode']); ?>" download="qr-code.png" 
-                                   class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill"
-                                   style="background-color: #2DAAA7;">Download QR Code</a>
-                            </div>
-                        <?php endif; ?>
+                        <div class="col-auto mb-3">
+                            <button id="download-qr-btn" 
+                                class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill"
+                                style="background-color: #2DAAA7;">Download QR Code</button>
+                        </div>
+                        <div id="direct-download-container" class="d-none">
+                            <!-- This is a fallback direct download link that will be set by JavaScript -->
+                            <a id="direct-download-link" download="TODA_QRCode.png"></a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -203,14 +220,158 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 
 
     <script>
-        // Generate QR
-        function generateQr() {
-            const tricycleNumber = document.getElementById("tricycle-number").textContent;
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(tricycleNumber)}`;
-            document.getElementById("qr-code").src = qrUrl;
-            console.log("QR Code generated for tricycle number", tricycleNumber);
+        // Replace the existing JavaScript section in your PHP file with this improved version
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Get plate number and driver ID from PHP
+    const plateNumber = <?php echo $jsPlateNumber; ?>;
+    const driverId = <?php echo $jsDriverId; ?>;
+    
+    // Elements
+    const qrContainer = document.getElementById('qr-container');
+    const qrLoading = document.getElementById('qr-loading');
+    const qrError = document.getElementById('qr-error');
+    const qrCodeImg = document.getElementById('qr-code');
+    const downloadBtn = document.getElementById('download-qr-btn');
+    
+    // Initially hide the QR code and show loading
+    qrContainer.style.display = 'none';
+    qrLoading.style.display = 'block';
+    qrError.style.display = 'none';
+    
+    let qrCodeDataUrl = null; // Store the QR code as data URL for reliable download
+    
+    // Function to convert image URL to data URL (for reliable mobile download)
+    function imageUrlToDataUrl(url, callback) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        // Enable CORS for external images
+        img.crossOrigin = 'anonymous';
+        
+        img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            
+            try {
+                const dataUrl = canvas.toDataURL('image/png');
+                callback(dataUrl);
+            } catch (error) {
+                console.error('Failed to convert image to data URL:', error);
+                callback(null);
+            }
+        };
+        
+        img.onerror = function() {
+            callback(null);
+        };
+        
+        img.src = url;
+    }
+    
+    // Function to download file from data URL (works reliably on mobile)
+    function downloadFromDataUrl(dataUrl, filename) {
+        if (!dataUrl) {
+            alert('Failed to prepare download. Please try again.');
+            return;
         }
-        window.addEventListener('DOMContentLoaded', generateQr);
+        
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        
+        // Append to body, click, and remove (required for some mobile browsers)
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+    // Function to generate QR code
+    function generateQrCode() {
+        if (!plateNumber) {
+            qrLoading.style.display = 'none';
+            qrError.classList.remove('d-none');
+            qrError.textContent = 'No plate number found. Please update your profile.';
+            downloadBtn.style.display = 'none';
+            return;
+        }
+        
+        // Generate QR code using API
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(plateNumber)}`;
+        
+        // Set the image source
+        qrCodeImg.src = qrUrl;
+        
+        // When the image loads
+        qrCodeImg.onload = function() {
+            // Hide loading, show QR code
+            qrLoading.style.display = 'none';
+            qrContainer.style.display = 'block';
+            
+            // Convert to data URL for reliable download
+            imageUrlToDataUrl(qrUrl, function(dataUrl) {
+                qrCodeDataUrl = dataUrl;
+                console.log('QR code converted to data URL for download');
+            });
+            
+            // Update backend database with this QR code URL (optional)
+            updateQrCodeInDatabase(qrUrl);
+        };
+        
+        // Handle image loading error
+        qrCodeImg.onerror = function() {
+            qrLoading.style.display = 'none';
+            qrError.classList.remove('d-none');
+            qrError.textContent = 'Failed to generate QR code. Please check your internet connection.';
+            downloadBtn.style.display = 'none';
+        };
+    }
+    
+    // Function to update QR code in database
+    function updateQrCodeInDatabase(qrUrl) {
+        fetch('updateQrCode.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `driverId=${driverId}&qrUrl=${encodeURIComponent(qrUrl)}`
+        }).then(response => {
+            console.log('QR code updated in database');
+        }).catch(error => {
+            console.error('Failed to update QR code in database:', error);
+        });
+    }
+    
+    // Handle download button click
+    downloadBtn.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent default link behavior
+        
+        if (qrCodeDataUrl) {
+            // Use data URL download (most reliable for mobile)
+            downloadFromDataUrl(qrCodeDataUrl, `TODA_QRCode_${plateNumber}.png`);
+        } else {
+            // Fallback: try to convert current image and download
+            const currentSrc = qrCodeImg.src;
+            if (currentSrc) {
+                imageUrlToDataUrl(currentSrc, function(dataUrl) {
+                    if (dataUrl) {
+                        downloadFromDataUrl(dataUrl, `TODA_QRCode_${plateNumber}.png`);
+                    } else {
+                        // Last resort: open image in new tab (user can save manually)
+                        window.open(currentSrc, '_blank');
+                        alert('Please save the QR code image from the new tab that opened.');
+                    }
+                });
+            }
+        }
+    });
+    
+    // Start generating QR code
+    generateQrCode();
+});
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
