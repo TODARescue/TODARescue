@@ -13,6 +13,7 @@ if (!isset($_SESSION['userId'])) {
 $userId = $_SESSION['userId'];
 $error = '';
 $success = '';
+$photoFileName = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $firstName = trim($_POST['firstName']);
@@ -21,22 +22,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $email = trim($_POST['email']);
   $photo = $_FILES['photo'];
 
-  $checkStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ? AND role = 'passenger'");
+  // Check for duplicate email or contact across ALL users except self
+  $checkStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ?");
   $checkStmt->bind_param("ssi", $email, $contactNumber, $userId);
   $checkStmt->execute();
   $checkResult = $checkStmt->get_result();
-  $driverStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ? AND role = 'driver'");
-  $driverStmt ->bind_param("ssi", $email, $contactNumber, $userId);
-  $driverStmt ->execute();
-  $driverResult = $driverStmt ->get_result();
 
   if ($checkResult->num_rows > 0) {
     $error = "Email or Contact Number already exists.";
   } else {
-    $photoFileName = '';
+    // Determine upload directory based on role
+    $roleStmt = $conn->prepare("SELECT role FROM users WHERE userId = ?");
+    $roleStmt->bind_param("i", $userId);
+    $roleStmt->execute();
+    $roleResult = $roleStmt->get_result();
+    $roleRow = $roleResult->fetch_assoc();
+    $role = $roleRow['role'] ?? 'passenger'; // default to passenger
+
     if (!empty($photo['name'])) {
       $photoFileName = time() . '_' . basename($photo['name']);
-      $targetDir = '../assets/images/passengers/';
+      $targetDir = ($role === 'driver') ? '../assets/images/driver/' : '../assets/images/passengers/';
       $targetPath = $targetDir . $photoFileName;
 
       if (!is_dir($targetDir)) {
@@ -48,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
     }
 
+    // Proceed with update if no error
     if (!$error) {
       if (!empty($photoFileName)) {
         $stmt = $conn->prepare("UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=?, photo=? WHERE userId=?");
@@ -66,48 +72,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 }
-  if ($driverResult->num_rows > 0) {
-    $error = "Email or Contact Number already exists.";
-  } else {
-    $photoFileName = '';
-    if (!empty($photo['name'])) {
-      $photoFileName = time() . '_' . basename($photo['name']);
-      $targetDir = '../assets/images/driver/';
-      $targetPath = $targetDir . $photoFileName;
 
-      if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0755, true);
-      }
-
-      if (!move_uploaded_file($photo['tmp_name'], $targetPath)) {
-        $error = "Failed to upload photo. Please check file permissions.";
-      }
-    }
-
-    if (!$error) {
-      if (!empty($photoFileName)) {
-        $stmt = $conn->prepare("UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=?, photo=? WHERE userId=?");
-        $stmt->bind_param("sssssi", $firstName, $lastName, $contactNumber, $email, $photoFileName, $userId);
-      } else {
-        $stmt = $conn->prepare("UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=? WHERE userId=?");
-        $stmt->bind_param("ssssi", $firstName, $lastName, $contactNumber, $email, $userId);
-      }
-
-      if ($stmt->execute()) {
-        header("Location: accountView.php?updated=1");
-        exit;
-      } else {
-        $error = "Update failed.";
-      }
-    }
-  }
-
-
-$stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo FROM users WHERE userId = ?");
+// Load user data for display
+$stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo, role FROM users WHERE userId = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+
+// Determine image path
+$imageFolder = ($user['role'] === 'driver') ? 'driver' : 'passengers';
+$photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspecialchars($user['photo']) : '';
 ?>
 
 <!DOCTYPE html>
