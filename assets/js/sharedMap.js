@@ -1,5 +1,6 @@
 window.fallbackCoords = [14.08849, 121.0995];
 window.mapBounds = L.latLngBounds([13.7925, 120.9155], [14.2378, 121.252]);
+window.isViewingMember = false;
 
 const policeStations = [
   {
@@ -51,7 +52,6 @@ const cachedData = localStorage.getItem(geoJsonKey);
 
 if (cachedData) {
   const data = JSON.parse(cachedData);
-  console.log("Loaded GeoJSON from localStorage");
   initMap(data);
 } else {
   fetch("../assets/js/JSON/tanauan.geojson")
@@ -141,12 +141,12 @@ policeStations.forEach(function (station) {
 });
 
 // Custom marker icon
-const profileIcon = L.icon({
-  iconUrl: "../assets/images/profile-default.png",
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
+const profileIcon = L.divIcon({
+  className: "custom-profile-icon",
+  html: `<img src="${profilePicture}" class="profile-icon-image">`,
+  iconSize: [40, 40],
+  iconAnchor: [20, 20],
   popupAnchor: [0, -20],
-  className: "rounded-icon",
 });
 
 // HTML popup content
@@ -155,7 +155,7 @@ const popupContent = `
         <div class="name-overlay" style="position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); color: white; font-weight: bold; font-size: 12px; text-shadow: 0 0 3px black;">
             You 
         </div>
-        <img src="../assets/images/profile-default.png" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white;" />
+        <img src="${profilePicture}" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white;" />
     </div>
 `;
 
@@ -165,10 +165,13 @@ let accuracyCircle = null;
 let accuracyOutline = null;
 let firstLocationFound = false;
 let outOfBoundsWarned = false;
+let latestLatLng = null;
+let locationIntervalSingle = null;
 
 function fallbackLocation() {
-  map.setView(fallbackCoords, 17);
-
+  if (isViewingMember) {
+    map.setView(fallbackCoords, 17);
+  }
   if (currentMarker) map.removeLayer(currentMarker);
   if (accuracyCircle) map.removeLayer(accuracyCircle);
   if (accuracyOutline) map.removeLayer(accuracyOutline);
@@ -187,20 +190,20 @@ function goView() {
 }
 
 map.on("locationfound", function (e) {
-  setInterval(() => {
-    const lat = e.latlng.lat;
-    const long = e.latlng.lng;
-    storeLocationToPHP(long, lat);
-  }, 5000);
+  latestLatLng = e.latlng;
 
   const pt = turf.point([e.latlng.lng, e.latlng.lat]);
   const poly = window.tanauanGeoJSON.features[0];
 
   const inBounds = turf.booleanPointInPolygon(pt, poly);
+  // const inBounds = window.mapBounds.contains(e.latlng);
   window.poly = poly;
 
+  // console.log("Window has arrived:", window.hasArrived);
+  // console.log("In bounds:", inBounds);
+  // console.log("Out of bounds warned:", outOfBoundsWarned);
   // Show warning ONCE if out of bounds
-  if (!inBounds && !outOfBoundsWarned && window.hasArrived === "0") {
+  if (!inBounds && !outOfBoundsWarned && window.hasArrived === false) {
     outOfBoundsWarned = true;
     const modalElement = document.getElementById("gpsWarningModal");
     const gpsModal = new bootstrap.Modal(modalElement, {
@@ -253,6 +256,21 @@ map.on("locationfound", function (e) {
   }).addTo(map);
 });
 
+function startLocationUpdates() {
+  if (locationIntervalSingle) {
+    clearInterval(locationIntervalSingle);
+  }
+
+  locationIntervalSingle = setInterval(() => {
+    if (latestLatLng) {
+      const lat = latestLatLng.lat;
+      const long = latestLatLng.lng;
+      storeLocationToPHP(long, lat);
+    }
+  }, 3000);
+}
+
+startLocationUpdates();
 map.on("locationerror", fallbackLocation);
 
 let hasStoredLocation = false;

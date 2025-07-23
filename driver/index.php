@@ -86,7 +86,7 @@ if (isset($_POST['arrive-button']) && $historyId !== null) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODARescue | Home Page</title>
+    <title>Driver | Home Page</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"

@@ -36,6 +36,7 @@ $userCircles = $stmt->fetchAll(PDO::FETCH_ASSOC);
             color: inherit;
             cursor: pointer;
         }
+
         .circle-link:hover {
             background-color: #f8f9fa;
         }
@@ -51,9 +52,6 @@ $userCircles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
                     style="border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
-
-                    <!-- HEADER -->
-                    <?php include '../assets/shared/header.php'; ?>
 
                     <div style="padding-top: 100px;">
                         <div class="p-4">
@@ -95,6 +93,7 @@ $userCircles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <?php include '../assets/shared/navbarPassenger.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/groupPage/navbar.js"></script>
 </body>
 
 </html>
