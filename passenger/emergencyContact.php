@@ -14,20 +14,24 @@ $contacts = [];
 if ($viewerId !== "") {
 
     $sql = "
-       SELECT DISTINCT
+    SELECT DISTINCT
             u.userId,
             CONCAT(u.firstName, ' ', u.lastName) AS fullName,
             u.contactNumber,
+            c.circleName AS circleName,
             'personal' AS contactType
         FROM       circlemembers viewerCM
         JOIN       circlemembers otherCM
                 ON otherCM.circleId = viewerCM.circleId
         JOIN       users u
                 ON u.userId = otherCM.userId
+        JOIN       circles c
+                ON c.circleId = otherCM.circleId
         WHERE      viewerCM.userId = ? 
-        AND      u.userId     <> ?
+        AND        u.userId <> ?
         ORDER BY   fullName;
     ";
+
 
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "ii", $viewerId, $viewerId);
@@ -41,6 +45,27 @@ if ($viewerId !== "") {
     mysqli_free_result($result);
     mysqli_stmt_close($stmt);
 }
+
+$circles = [];
+
+$circleSql = "
+    SELECT c.circleId, c.circleName
+    FROM circlemembers cm
+    JOIN circles c ON cm.circleId = c.circleId
+    WHERE cm.userId = ?
+";
+$circleStmt = mysqli_prepare($conn, $circleSql);
+mysqli_stmt_bind_param($circleStmt, "i", $viewerId);
+mysqli_stmt_execute($circleStmt);
+
+$circleResult = mysqli_stmt_get_result($circleStmt);
+while ($row = mysqli_fetch_assoc($circleResult)) {
+    $circles[] = $row;
+}
+
+mysqli_free_result($circleResult);
+mysqli_stmt_close($circleStmt);
+
 
 $emergencyHotline = [];
 $jsonPath = __DIR__ . '/../assets/data/EmergencyHotline.json';
@@ -79,7 +104,14 @@ if (file_exists($jsonPath)) {
       <li><a class="dropdown-item" href="#" data-type-filter="toda">TODA Office</a></li>
       <li><a class="dropdown-item" href="#" data-type-filter="police">Police</a></li>
       <li><a class="dropdown-item" href="#" data-type-filter="medical">Medical Services</a></li>
-      <li><a class="dropdown-item" href="#" data-type-filter="personal">Personal Contacts</a></li>
+      <?php foreach ($circles as $circle): ?>
+        <li>
+        <a class="dropdown-item" href="#" data-type-filter="<?= htmlspecialchars($circle['circleName']) ?>">
+            <?= htmlspecialchars($circle['circleName']) ?>
+        </a>
+        </li>
+        <?php endforeach; ?>
+
   </ul>
 </div>
 
@@ -109,25 +141,30 @@ if (file_exists($jsonPath)) {
     <?php endforeach; ?>
 
     <!-- PERSONAL CONTACTS -->
-    <?php foreach ($contacts as $c): ?>
-      <div class="card contact-card col-12 col-md-8 p-4 rounded-5 mb-3"
-           data-type-filter="<?= htmlspecialchars($c['contactType']) ?>">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold mb-0 m-1"><?= htmlspecialchars($c['fullName']) ?></h3>
-            <a href="tel:<?= htmlspecialchars($c['contactNumber']) ?>" onclick="changePhoneIcon(this)">
-                <img src="../assets/images/phone-white.svg" class="img-fluid" style="max-width:60px;" alt="Call Button"/>
-            </a>
+        <?php foreach ($contacts as $c): ?>
+        <div class="card contact-card col-12 col-md-8 p-4 rounded-5 mb-3"
+            data-type-filter="<?= htmlspecialchars($c['circleName']) ?>">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0 m-1"><?= htmlspecialchars($c['fullName']) ?></h3>
+                <a href="tel:<?= htmlspecialchars($c['contactNumber']) ?>" onclick="changePhoneIcon(this)">
+                    <img src="../assets/images/phone-white.svg" class="img-fluid" style="max-width:60px;" alt="Call Button"/>
+                </a>
+            </div>
+            <div class="mb-2">
+                <h5 class="fw-semibold mb-1">Contact Number:</h5>
+                <p class="mb-2"><?= htmlspecialchars($c['contactNumber']) ?></p>
+            </div>
+            <div class="mb-2">
+                <h5 class="fw-semibold mb-1">Circle Name:</h5>
+                <p class="mb-2"><?= htmlspecialchars($c['circleName']) ?></p>
+            </div>
+            <div>
+                <h5 class="fw-semibold mb-1">Permanent Address:</h5>
+                <p>Janopol Occidental, Tanauan City, Batangas</p>
+            </div>
         </div>
-        <div class="mb-2">
-            <h5 class="fw-semibold mb-1">Contact Number:</h5>
-            <p class="mb-2"><?= htmlspecialchars($c['contactNumber']) ?></p>
-        </div>
-        <div>
-            <h5 class="fw-semibold mb-1">Permanent Address:</h5>
-            <p>Janopol Occidental, Tanauan City, Batangas</p>
-        </div>
-      </div>
-    <?php endforeach; ?>
+        <?php endforeach; ?>
+
 
     <?php if (empty($contacts) && empty($emergencyHotline)): ?>
         <p class="text-center text-muted">No contacts available.</p>

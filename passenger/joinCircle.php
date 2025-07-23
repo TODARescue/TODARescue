@@ -1,6 +1,7 @@
 <?php
 include("../assets/php/connect.php");
 session_start();
+date_default_timezone_set('Asia/Manila');
 
 if (!isset($_SESSION['userId'])) {
     header("Location: ../index.php");
@@ -19,8 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flashSet("invalidFormat");
     } else {
         $stm = $conn->prepare("SELECT circleId,circleName FROM circles WHERE inviteCode=?");
-        $stm->bind_param("s",$inviteCode); $stm->execute();
-        $circle = $stm->get_result()->fetch_assoc(); $stm->close();
+        $stm->bind_param("s", $inviteCode);
+        $stm->execute();
+        $circle = $stm->get_result()->fetch_assoc();
+        $stm->close();
 
         if (!$circle) {
             flashSet("notFound");
@@ -28,18 +31,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $circleId = $circle['circleId'];
             $circleName = $circle['circleName'];
 
-            $chk = $conn->prepare("SELECT 1 FROM circlemembers WHERE circleId=? AND userId=?");
-            $chk->bind_param("ii",$circleId,$viewerId); 
-            $chk->execute();
-            $isMember = (bool)$chk->get_result()->fetch_row(); 
-            $chk->close();
+            // 🔍 Check if already a member
+            $check = $conn->prepare("SELECT * FROM circlemembers WHERE circleId=? AND userId=?");
+            $check->bind_param("ii", $circleId, $viewerId);
+            $check->execute();
+            $result = $check->get_result();
+            $isMember = $result->num_rows > 0;
+            $check->close();
 
             if ($isMember) {
                 flashSet("alreadyJoined");
             } else {
-                $ins = $conn->prepare("INSERT INTO circlemembers (circleId,userId,role) VALUES (?,?,'member')");
-                $ins->bind_param("ii",$circleId,$viewerId);
-                $ins->execute(); 
+                $joinedAt = date('Y-m-d H:i:s');
+                $ins = $conn->prepare("INSERT INTO circlemembers (circleId, userId, role, joinedAt) VALUES (?, ?, 'member', ?)");
+                $ins->bind_param("iis", $circleId, $viewerId, $joinedAt);
+                $ins->execute();
                 $ins->close();
 
                 flashSet(['status' => 'joinedSuccess', 'circleName' => $circleName]); 
@@ -48,9 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    header("Location: ".$_SERVER['PHP_SELF']);
+
+    header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
+
 
 $flash = flashPop();
 $alreadyJoined = ($flash === "alreadyJoined");
@@ -164,6 +172,7 @@ const inputs=[...document.querySelectorAll('.code-input')];
   function closeJoinedSuccessModal() {
       const modal = document.getElementById('joinedSuccessModal');
       if(modal) modal.remove();
+      window.location.href = 'groupPage.php';
   }
 </script>
 
