@@ -30,7 +30,14 @@ if (isset($_POST['btnSignUp'])) {
         } elseif ($existingUser['contactNumber'] === $contact) {
             $error = "CONTACT_EXISTS";
         }
-    } elseif ($password === $confirmPassword) {
+    } elseif (!ctype_digit($contact)) {
+        $error = "CONTACT_NOT_INTEGER";
+    } elseif (strlen($password) < 8) {
+        $error = "PASSWORD_TOO_SHORT";
+    } elseif ($password !== $confirmPassword) {
+        $error = "PASSWORD_MISMATCH";
+    } else {
+        // All validations passed — insert user
         $userInsertQuery = "INSERT INTO users (firstName, lastName, email, contactNumber, password, role, isRiding) 
                             VALUES ('$firstName', '$lastName', '$email', '$contact', '$password', 'passenger', 0)";
         mysqli_query($conn, $userInsertQuery);
@@ -42,11 +49,10 @@ if (isset($_POST['btnSignUp'])) {
 
         header("Location: index.php");
         exit();
-    } else {
-        $error = "PASSWORD_MISMATCH";
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -78,11 +84,14 @@ if (isset($_POST['btnSignUp'])) {
 
                     <div class="mx-auto" style="width: 100%; max-width: 350px;">
                         <h5 class="fw-bold mb-3">Sign Up</h5>
-
                         <?php if ($error == "EMAIL_EXISTS") { ?>
                             <div class="alert alert-warning text-center mb-3">Email already exists.</div>
                         <?php } elseif ($error == "CONTACT_EXISTS") { ?>
                             <div class="alert alert-warning text-center mb-3">Contact number already exists.</div>
+                        <?php } elseif ($error == "CONTACT_NOT_INTEGER") { ?>
+                            <div class="alert alert-warning text-center mb-3">Contact number must be digits only.</div>
+                        <?php } elseif ($error == "PASSWORD_TOO_SHORT") { ?>
+                            <div class="alert alert-danger text-center mb-3">Password must be at least 8 characters.</div>
                         <?php } elseif ($error == "PASSWORD_MISMATCH") { ?>
                             <div class="alert alert-danger text-center mb-3">Passwords do not match.</div>
                         <?php } ?>
@@ -103,12 +112,15 @@ if (isset($_POST['btnSignUp'])) {
                             </div>
                             <div class="mb-3">
                                 <input type="text" class="form-control" placeholder="09123456781" name="contact"
-                                    required style="border-radius: 25px; background-color: #D9D9D9; border: none;">
+                                    pattern="[0-9]*" inputmode="numeric"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" required
+                                    style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
                             <div class="mb-3 position-relative">
                                 <input type="password" id="password" class="form-control" placeholder="Password"
-                                    name="password" required
+                                    name="password" required minlength="8"
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none; padding-right: 40px;">
+
                                 <button type="button" id="togglePassword"
                                     class="btn btn-sm position-absolute end-0 top-0 mt-1 me-3"
                                     style="border: none; background: transparent;">
@@ -118,8 +130,9 @@ if (isset($_POST['btnSignUp'])) {
 
                             <div class="mb-3 position-relative">
                                 <input type="password" id="confirmPassword" class="form-control"
-                                    placeholder="Confirm Password" name="confirmPassword" required
+                                    placeholder="Confirm Password" name="confirmPassword" required minlength="8"
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none; padding-right: 40px;">
+
                                 <button type="button" id="toggleConfirmPassword"
                                     class="btn btn-sm position-absolute end-0 top-0 mt-1 me-3"
                                     style="border: none; background: transparent;">
