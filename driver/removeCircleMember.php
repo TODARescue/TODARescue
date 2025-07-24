@@ -2,7 +2,7 @@
 session_start();
 require_once '../assets/php/connect.php';
 
-// Check if user is logged in
+// For testing purposes - set a default user ID
 if (!isset($_SESSION['userId'])) {
     header('Location: ../index.php');
     exit;
@@ -15,6 +15,7 @@ $successMsg = '';
 // Get circleId from URL parameter
 $circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
 
+// If no circleId is provided, redirect to circle.php
 if (!$circleId) {
     header('Location: circle.php');
     exit;
@@ -34,20 +35,25 @@ if (!$roleResult) {
 
 $userRole = $roleResult['role'];
 
-// Only owners can change admin status
-if ($userRole !== 'owner') {
+// Only admins and owners can remove members
+if ($userRole !== 'admin' && $userRole !== 'owner') {
     header('Location: circleDetails.php?circleId=' . $circleId);
     exit;
 }
 
-// Process AJAX request for toggling admin status
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggleAdmin') {
-    if (isset($_POST['memberId'], $_POST['isAdmin'])) {
+// Handle member removal
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'removeMember') {
+    if (isset($_POST['memberId'])) {
         $memberId = intval($_POST['memberId']);
-        $isAdmin = $_POST['isAdmin'] === 'true' ? 'admin' : 'member';
         
         // Debug info
-        error_log("Toggle admin request: memberId=$memberId, isAdmin=$isAdmin, circleId=$circleId");
+        error_log("Remove member request: memberId=$memberId, circleId=$circleId, userRole=$userRole");
+        
+        // Check if trying to remove self
+        if ($memberId === $userId) {
+            echo json_encode(['success' => false, 'message' => 'You cannot remove yourself from the circle. Use the Leave Circle option instead.']);
+            exit;
+        }
         
         // Check if member exists in circle
         $checkMemberQuery = "SELECT COUNT(*) FROM circlemembers WHERE userId = ? AND circleId = ?";
@@ -60,16 +66,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             exit;
         }
         
-        // Check if trying to change owner status
-        $checkOwnerQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
-        $checkStmt = $pdo->prepare($checkOwnerQuery);
-        $checkStmt->execute([$memberId, $circleId]);
-        $currentRole = $checkStmt->fetchColumn();
+        // Check if trying to remove the owner
+        $checkRoleQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
+        $checkRoleStmt = $pdo->prepare($checkRoleQuery);
+        $checkRoleStmt->execute([$memberId, $circleId]);
+        $memberRole = $checkRoleStmt->fetchColumn();
         
-        error_log("Current role: $currentRole");
+        error_log("Member role: $memberRole");
         
-        if ($currentRole === 'owner') {
-            echo json_encode(['success' => false, 'message' => 'Cannot change owner status']);
+        if ($memberRole === 'owner') {
+            echo json_encode(['success' => false, 'message' => 'You cannot remove the owner of the circle.']);
+            exit;
+        }
+        
+        // Check if admin is trying to remove another admin (only owner can do this)
+        if ($userRole === 'admin' && $memberRole === 'admin') {
+            echo json_encode(['success' => false, 'message' => 'You need to be the circle owner to remove other admins.']);
             exit;
         }
         
@@ -77,20 +89,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             // Begin transaction
             $pdo->beginTransaction();
             
-            // Update member role
-            $updateQuery = "UPDATE circlemembers SET role = ? WHERE userId = ? AND circleId = ?";
-            $updateStmt = $pdo->prepare($updateQuery);
-            $updateResult = $updateStmt->execute([$isAdmin, $memberId, $circleId]);
+            // Remove member
+            $removeQuery = "DELETE FROM circlemembers WHERE userId = ? AND circleId = ?";
+            $removeStmt = $pdo->prepare($removeQuery);
+            $removeResult = $removeStmt->execute([$memberId, $circleId]);
             
-            error_log("Update query executed. Result: " . ($updateResult ? "Success" : "Failed"));
-            error_log("Affected rows: " . $updateStmt->rowCount());
+            error_log("Remove query executed. Result: " . ($removeResult ? "Success" : "Failed"));
+            error_log("Affected rows: " . $removeStmt->rowCount());
             
-            if ($updateResult && $updateStmt->rowCount() > 0) {
+            if ($removeResult && $removeStmt->rowCount() > 0) {
                 $pdo->commit();
-                echo json_encode(['success' => true, 'message' => 'Admin status updated successfully']);
+                echo json_encode(['success' => true, 'message' => 'Member removed successfully']);
             } else {
                 $pdo->rollBack();
-                echo json_encode(['success' => false, 'message' => 'Failed to update status. No changes made.']);
+                echo json_encode(['success' => false, 'message' => 'Failed to remove member. No rows affected.']);
             }
         } catch (Exception $e) {
             $pdo->rollBack();
@@ -100,17 +112,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         exit;
     }
     
-    echo json_encode(['success' => false, 'message' => 'Invalid request: Missing required parameters']);
+    echo json_encode(['success' => false, 'message' => 'Invalid request: Missing member ID']);
     exit;
 }
 
-// Get all members of the circle
+// Get all members of the circle except the current user
 $membersQuery = "SELECT cm.userId, u.firstName, u.lastName, cm.role 
                 FROM circlemembers cm 
                 INNER JOIN users u ON cm.userId = u.userId 
-                WHERE cm.circleId = ?";
+                WHERE cm.circleId = ? AND cm.userId != ?";
 $membersStmt = $pdo->prepare($membersQuery);
-$membersStmt->execute([$circleId]);
+$membersStmt->execute([$circleId, $userId]);
 $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -120,7 +132,7 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TODA Rescue - Change Admin Status</title>
+    <title>TODA Rescue - Remove Circle Member</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -128,6 +140,7 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body class="d-flex justify-content-center align-items-center vh-100"
     style="background-color: #2c2c2c; font-family: 'Inter', sans-serif; margin: 0;">
+
     <div class="container-fluid p-0 m-0 h-100">
         <div class="row h-100 g-0">
             <div class="col-12 d-flex justify-content-center align-items-start h-100">
@@ -163,7 +176,7 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
                                     Operation completed successfully.
                                 </p>
                                 <div class="d-flex justify-content-center">
-                                    <button type="button" class="btn rounded-pill px-4 text-white"
+                                    <button type="button" id="successBtn" class="btn rounded-pill px-4 text-white"
                                         style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
                                         OK
                                     </button>
@@ -193,38 +206,64 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
 
                     <!-- Member List -->
-                    <div class="container-fluid mt-2 pt-2">
+                    <div class="container-fluid" style="padding-top: 30px;">
                         <div class="row">
                             <div class="col list-group list-group-flush px-0 w-100">
                                 <div class="mb-1">
-                                    <h4 class="fs-5 mt-3 px-4">Admin Status</h4>
-                                    <p class="text-muted small px-4">Toggle switches to change admin status</p>
+                                    <h4 class="fs-5 mt-3 px-4">Remove Members</h4>
                                 </div>
 
                                 <div class="container-fluid p-0">
                                     <div class="list-group">
-                                        <?php foreach ($members as $member): ?>
-                                            <?php
-                                            $fullName = $member['firstName'] . ' ' . $member['lastName'];
-                                            $isAdmin = $member['role'] === 'admin' || $member['role'] === 'owner';
-                                            $isDisabled = $member['role'] === 'owner' || $member['userId'] == $userId;
-                                            ?>
-                                            <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-4 text-black bg-light w-100 border-0 border-bottom border-secondary">
-                                                <span class="fw-medium"><?php echo htmlspecialchars($fullName); ?>
-                                                    <?php if ($member['role'] === 'owner'): ?>
-                                                        <span class="badge bg-primary ms-2">Owner</span>
-                                                    <?php endif; ?>
-                                                </span>
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input admin-toggle" type="checkbox" 
-                                                           data-member-id="<?php echo $member['userId']; ?>"
-                                                           <?php echo $isAdmin ? 'checked' : ''; ?> 
-                                                           <?php echo $isDisabled ? 'disabled' : ''; ?>>
-                                                </div>
+                                        <?php if (count($members) === 0): ?>
+                                            <div class="list-group-item py-4 px-4 text-center text-muted">
+                                                No other members in this circle
                                             </div>
-                                        <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <?php foreach ($members as $member): ?>
+                                                <?php
+                                                $fullName = $member['firstName'] . ' ' . $member['lastName'];
+                                                $canRemove = $userRole === 'owner' || ($userRole === 'admin' && $member['role'] === 'member');
+                                                ?>
+                                                <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-4 text-black bg-light w-100 border-0 border-bottom border-secondary"
+                                                    <?php if ($canRemove): ?>onclick="openRemoveModal('<?php echo htmlspecialchars($fullName); ?>', <?php echo $member['userId']; ?>)"<?php endif; ?>>
+                                                    <span class="fw-medium">
+                                                        <?php echo htmlspecialchars($fullName); ?>
+                                                        <?php if ($member['role'] === 'owner'): ?>
+                                                            <span class="badge bg-primary ms-2">Owner</span>
+                                                        <?php elseif ($member['role'] === 'admin'): ?>
+                                                            <span class="badge bg-secondary ms-2">Admin</span>
+                                                        <?php endif; ?>
+                                                    </span>
+                                                    <?php if ($canRemove): ?>
+                                                        <img src="../assets/images/remove-member.svg" alt="Remove" style="max-width: 30px;" />
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Backdrop -->
+                    <div id="modalBackdrop"
+                        class="position-fixed top-0 start-0 w-100 h-100 d-none justify-content-center align-items-center z-1"
+                        style="background-color: rgba(255, 255, 255, 0.4);">
+                        <!-- Modal Box -->
+                        <div class="bg-white p-4 rounded-5 shadow text-center" style="width: 85%; max-width: 320px;">
+                            <h5 class="fw-bold mb-2">Remove Member</h5>
+                            <p class="mb-4" style="font-size: 0.95rem;">
+                                Are you sure you want to remove <b id="modalMemberName">[Name]</b> from this circle?
+                            </p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <button class="btn rounded-pill px-4" style="background-color: #dcdcdc; font-weight: 600;"
+                                    onclick="closeModal()">No</button>
+                                <button id="confirmRemoveBtn" class="btn rounded-pill px-4 text-white" 
+                                    style="background-color: #1cc8c8; font-weight: 600;">
+                                    Yes
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -233,10 +272,12 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <?php include '../assets/shared/navbarDriver.php'; ?>
+    <?php include '../assets/shared/navbarPassenger.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        let currentMemberId = null;
+
         // Function to show error modal
         function showErrorModal(message) {
             document.getElementById('errorModalMessage').textContent = message;
@@ -250,25 +291,37 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
             const successModal = new bootstrap.Modal(document.getElementById('successModal'));
             successModal.show();
         }
-        
-        document.querySelectorAll(".admin-toggle").forEach(toggle => {
-            toggle.addEventListener("change", function() {
-                const memberId = this.getAttribute('data-member-id');
-                const isAdmin = this.checked;
-                const circleId = <?php echo $circleId; ?>;
-                const toggleElement = this;
-                
-                // Show loading indicator
+
+        function openRemoveModal(name, memberId) {
+            document.getElementById('modalMemberName').innerText = name;
+            currentMemberId = memberId;
+            document.getElementById('modalBackdrop').classList.remove('d-none');
+            document.getElementById('modalBackdrop').classList.add('d-flex');
+        }
+
+        function closeModal() {
+            document.getElementById('modalBackdrop').classList.remove('d-flex');
+            document.getElementById('modalBackdrop').classList.add('d-none');
+            currentMemberId = null;
+        }
+
+        document.getElementById('confirmRemoveBtn').addEventListener('click', function() {
+            if (currentMemberId) {
+                // Show loading state
                 this.disabled = true;
-                console.log(`Attempting to change admin status for member ${memberId} to ${isAdmin ? 'admin' : 'member'}`);
+                this.innerText = 'Removing...';
+                const confirmBtn = this;
                 
-                // Send AJAX request to update admin status
-                fetch('changeAdminStatusDriver.php?circleId=' + circleId, {
+                const circleId = <?php echo $circleId; ?>;
+                console.log(`Attempting to remove member ${currentMemberId} from circle ${circleId}`);
+                
+                // Send AJAX request to remove member
+                fetch('removeCircleMember.php?circleId=' + circleId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `action=toggleAdmin&memberId=${memberId}&isAdmin=${isAdmin}`
+                    body: `action=removeMember&memberId=${currentMemberId}`
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -278,34 +331,30 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
                 })
                 .then(data => {
                     console.log('Response:', data);
-                    if (!data.success) {
-                        // Revert toggle if request failed
-                        toggleElement.checked = !isAdmin;
-                        showErrorModal(data.message || 'Failed to update admin status');
-                    } else {
-                        // Success feedback
-                        const statusBadge = document.createElement('span');
-                        statusBadge.className = 'badge bg-success ms-2 status-update';
-                        statusBadge.textContent = 'Updated';
-                        toggleElement.parentNode.appendChild(statusBadge);
+                    closeModal();
+                    
+                    if (data.success) {
+                        // Show success modal and redirect to circle details page
+                        showSuccessModal('Member removed successfully');
                         
-                        // Show success modal and redirect to circle details after closing
-                        showSuccessModal('Admin status updated successfully');
-                        
-                        // Redirect to circle details page after a brief delay to show the success badge
+                        // Redirect to circle details page
                         setTimeout(() => {
                             window.location.href = 'circleDetails.php?circleId=' + circleId;
                         }, 1500);
+                    } else {
+                        showErrorModal(data.message || 'Failed to remove member');
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerText = 'Yes';
                     }
-                    toggleElement.disabled = false;
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    toggleElement.checked = !isAdmin;
-                    toggleElement.disabled = false;
-                    showErrorModal('An error occurred while updating admin status: ' + error.message);
+                    closeModal();
+                    showErrorModal('An error occurred while removing the member: ' + error.message);
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerText = 'Yes';
                 });
-            });
+            }
         });
     </script>
 </body>
