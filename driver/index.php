@@ -15,8 +15,21 @@ $passengerCount = 0;
 
 $hasArrived = isset($_GET['arrived']) && $_GET['arrived'] == '1';
 
-if (!$userId) {
-    die("User not logged in.");
+$getPhotoQuery = "SELECT photo, role FROM users WHERE userId = $userId;";
+$getPhotoResult = executeQuery($getPhotoQuery);
+
+if (mysqli_num_rows($getPhotoResult) > 0) {
+    $row = mysqli_fetch_assoc($getPhotoResult);
+    $userRole = !empty($row['role']) ? $row['role'] : 'passenger';
+    if ($userRole === 'passenger') {
+        $profilePicture = !empty($row['photo'])
+            ? '../assets/images/passengers/' . $row['photo']
+            : '../assets/images/profile-default.png';
+    } else {
+        $profilePicture = !empty($row['photo'])
+            ? '../assets/images/drivers/' . $row['photo']
+            : '../assets/images/profile-default.png';
+    }
 }
 
 // Check if the user is currently riding
@@ -220,6 +233,7 @@ if (isset($_POST['arrive-button']) && $historyId !== null) {
     <script>
         const userId = <?php echo $_SESSION['userId'] ?? 1; ?>;
         const driverId = <?php echo $_SESSION['driverId'] ?? 1; ?>;
+        window.profilePicture = '<?php echo $profilePicture; ?>';
     </script>
 
     <!-- Turf js to handle polygons -->
