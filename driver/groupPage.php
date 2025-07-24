@@ -23,10 +23,6 @@ if (mysqli_num_rows($getPhotoResult) > 0) {
     }
 }
 
-if ($userRole === 'driver') {
-    header("Location: ../driver/groupPage.php");
-}
-
 $checkRidingQuery = "SELECT driverId, historyId
 FROM history
 WHERE userId = $userId
@@ -260,7 +256,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
     </div>
 
     <div class="position-relative" style="z-index: 5">
-        <?php include '../assets/shared/navbarPassenger.php'; ?>
+        <?php include '../assets/shared/navbarDriver.php'; ?>
     </div>
 
     <!-- Bootstrap JS -->

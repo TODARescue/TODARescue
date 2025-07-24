@@ -8,7 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $longitude = $_POST['longitude'];
     $latitude = $_POST['latitude'];
 
-    // === PUT YOUR QUERY LOGIC HERE ===
     $checkRidingQuery = "SELECT locationID FROM locations WHERE userId = $userId";
     $checkRidingResult = executeQuery($checkRidingQuery);
 

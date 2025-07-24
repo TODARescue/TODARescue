@@ -29,6 +29,10 @@ if (mysqli_num_rows($getPhotoResult) > 0) {
     }
 }
 
+if ($userRole === 'driver') {
+    header("Location: ../driver/index.php");
+}
+
 $checkRidingQuery = "SELECT driverId, historyId
 FROM history
 WHERE userId = $userId
