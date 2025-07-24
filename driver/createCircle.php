@@ -111,7 +111,7 @@ if (!is_array($flash)) $flash = null;
 </head>
 <body>
 <?php include '../assets/shared/header.php'; ?>
-<?php include '../assets/shared/navbarPassenger.php'; ?>
+<?php include '../assets/shared/navbarDriver.php'; ?>
 
 <div class="container-fluid py-5 mt-5 d-flex flex-column">
   <div class="flex-grow-1 px-3 pt-4">

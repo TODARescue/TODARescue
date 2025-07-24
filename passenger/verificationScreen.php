@@ -28,7 +28,7 @@ try {
                          d.isVerified, d.photo, CONCAT(u.firstName, ' ', u.lastName) as fullName, u.userId
                          FROM drivers d
                          JOIN users u ON d.userId = u.userId
-                         WHERE d.driverId = ? AND d.isVerified = 1");
+                         WHERE d.driverId = ?");
 
     if (!$stmt) {
         die("Query preparation failed: " . $conn->error);

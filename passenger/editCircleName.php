@@ -67,6 +67,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
             if ($updateStmt->execute([$newCircleName, $circleId])) {
                 $circleName = $newCircleName;
                 $successMsg = 'Circle name updated successfully!';
+                // Show success modal and redirect
+                echo '<script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        const successModal = new bootstrap.Modal(document.getElementById("successModal"));
+                        successModal.show();
+                        
+                        // Redirect after modal is closed
+                        document.getElementById("successModal").addEventListener("hidden.bs.modal", function () {
+                            window.location.href = "circleDetails.php?circleId=' . $circleId . '";
+                        });
+                    });
+                </script>';
             } else {
                 $errorMsg = 'Failed to update circle name. Please try again.';
             }
@@ -138,6 +150,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal fade" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                style="width: 85%; max-width: 320px; margin: auto;">
+                <h5 class="fw-bold mb-2" id="successModalLabel">Success</h5>
+                <p class="mb-4" id="successModalMessage" style="font-size: 0.95rem;">
+                    Circle name updated successfully!
+                </p>
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn rounded-pill px-4 text-white"
+                        style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                        OK
+                    </button>
                 </div>
             </div>
         </div>

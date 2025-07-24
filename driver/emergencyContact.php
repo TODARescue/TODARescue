@@ -91,7 +91,7 @@ if (file_exists($jsonPath)) {
 
 <body>
 <?php include '../assets/shared/header.php'; ?>
-<?php include '../assets/shared/navbarPassenger.php'; ?>
+<?php include '../assets/shared/navbarDriver.php'; ?>
 
 <!-- FILTER DROPDOWN -->
 <div class="dropdown" style="padding-top:60px;">

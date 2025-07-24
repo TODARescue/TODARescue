@@ -15,11 +15,90 @@
     <!-- HEADER -->
     <?php include '../assets/shared/header.php'; ?>
 
-    <!-- Camera -->
+    <!-- Camera with scanning frame -->
     <div class="position-fixed top-0 start-0 w-100 vh-100" style="z-index: 1;">
         <video id="preview" autoplay playsinline class="w-100 h-100 object-fit-cover"></video>
         <canvas id="qr-canvas" style="display: none;"></canvas>
+        
+        <!-- QR scanning frame -->
+        <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 2; pointer-events: none;">
+            <div class="d-flex align-items-center justify-content-center">
+                <div style="width: 250px; height: 250px; border: 3px solid transparent; border-radius: 20px; position: relative;">
+                    <!-- Corner markers -->
+                    <div style="position: absolute; top: -3px; left: -3px; width: 30px; height: 30px; border-top: 6px solid white; border-left: 6px solid white; border-top-left-radius: 10px;"></div>
+                    <div style="position: absolute; top: -3px; right: -3px; width: 30px; height: 30px; border-top: 6px solid white; border-right: 6px solid white; border-top-right-radius: 10px;"></div>
+                    <div style="position: absolute; bottom: -3px; left: -3px; width: 30px; height: 30px; border-bottom: 6px solid white; border-left: 6px solid white; border-bottom-left-radius: 10px;"></div>
+                    <div style="position: absolute; bottom: -3px; right: -3px; width: 30px; height: 30px; border-bottom: 6px solid white; border-right: 6px solid white; border-bottom-right-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
     </div>
+    
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal fade" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                style="width: 85%; max-width: 320px; margin: auto;">
+                <h5 class="fw-bold mb-2" id="errorModalLabel">Error</h5>
+                <p class="mb-4" id="errorModalMessage" style="font-size: 0.95rem;">
+                    An error occurred.
+                </p>
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn rounded-pill px-4 text-white"
+                        style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Non-Verified Driver Confirmation Modal -->
+    <div id="nonVerifiedDriverModal" class="modal fade" tabindex="-1" aria-labelledby="nonVerifiedDriverModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                style="width: 95%; max-width: 360px; margin: auto;">
+                <h5 class="fw-bold mb-2 text-danger" id="nonVerifiedDriverModalLabel">Warning: Non-Verified Driver</h5>
+                
+                <!-- Driver Profile Info -->
+                <div class="driver-profile mb-3 border rounded p-3">
+                    <div class="row">
+                        <div class="col-4">
+                            <img id="driverPhoto" src="../assets/img/profile.jpg" alt="Driver Photo" 
+                                 class="img-fluid rounded-circle border" style="width: 80px; height: 80px; object-fit: cover;">
+                        </div>
+                        <div class="col-8 text-start">
+                            <h6 id="driverName" class="fw-bold mb-1">Unknown Driver</h6>
+                            <p id="driverPlate" class="mb-1 small"><strong>Plate:</strong> <span>-</span></p>
+                            <p id="driverModel" class="mb-1 small"><strong>Vehicle:</strong> <span>-</span></p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 text-start">
+                            <p id="driverAddress" class="mb-1 small"><strong>Address:</strong> <span>-</span></p>
+                            <p id="driverTodaReg" class="mb-1 small"><strong>TODA Registration:</strong> <span>-</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="mb-3 text-danger" style="font-size: 0.95rem;">
+                    This driver has not been verified. Are you sure you want to ride with this driver?
+                </p>
+                
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" id="cancelRideBtn" class="btn rounded-pill px-4"
+                        style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" id="confirmRideBtn" class="btn rounded-pill px-4 text-white"
+                        style="background-color: #dc3545; font-weight: 600;">
+                        Yes, Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- NAVBAR -->
     <?php include '../assets/shared/navbarPassenger.php'; ?>
 
@@ -30,6 +109,13 @@
         const ctx = canvas.getContext('2d');
         let scanning = true;
 
+        // Function to show error modal
+        function showErrorModal(message) {
+            document.getElementById('errorModalMessage').textContent = message;
+            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+        }
+        
         function startScanner() {
             // Use rear camera on mobile devices
             const constraints = {
@@ -54,7 +140,7 @@
                 })
                 .catch((err) => {
                     console.error("Camera access error:", err);
-                    alert('Camera access denied. Please allow camera access and reload.');
+                    showErrorModal('Camera access denied. Please allow camera access and reload.');
                 });
         }
 
@@ -107,21 +193,80 @@
                     console.log("Response data:", data);
 
                     if (data.success) {
-                        window.location.href = 'verificationScreen.php?driverId=' + data.driverId;
+                        // Check if driver is verified
+                        if (data.isVerified === false) {
+                            // Show confirmation modal for non-verified driver with all driver data
+                            showNonVerifiedDriverModal(data.driverId, data);
+                        } else {
+                            // Driver is verified, proceed to verification screen
+                            window.location.href = 'verificationScreen.php?driverId=' + data.driverId;
+                        }
                     } else {
-                        alert(data.message || 'Invalid QR code');
-                        setTimeout(() => {
+                        showErrorModal(data.message || 'Invalid QR code');
+                        
+                        // Resume scanning after modal is closed
+                        document.getElementById('errorModal').addEventListener('hidden.bs.modal', function () {
                             scanning = true;
                             requestAnimationFrame(tick);
-                        }, 1500);
+                        }, { once: true });
                     }
                 })
                 .catch(error => {
                     console.error('Error details:', error);
-                    alert('Network or server error. Please try again.');
-                    scanning = true;
-                    requestAnimationFrame(tick);
+                    showErrorModal('Network or server error. Please try again.');
+                    
+                    // Resume scanning after modal is closed
+                    document.getElementById('errorModal').addEventListener('hidden.bs.modal', function () {
+                        scanning = true;
+                        requestAnimationFrame(tick);
+                    }, { once: true });
                 });
+        }
+        
+        // Function to show non-verified driver confirmation modal
+        function showNonVerifiedDriverModal(driverId, driverData) {
+            const modal = document.getElementById('nonVerifiedDriverModal');
+            
+            // Set driver details
+            document.getElementById('driverName').textContent = driverData.driverName || 'Unknown Driver';
+            
+            // Set driver plate number
+            const plateElement = document.getElementById('driverPlate').querySelector('span');
+            plateElement.textContent = driverData.plateNumber || '-';
+            
+            // Set vehicle model
+            const modelElement = document.getElementById('driverModel').querySelector('span');
+            modelElement.textContent = driverData.model || '-';
+            
+            // Set address
+            const addressElement = document.getElementById('driverAddress').querySelector('span');
+            addressElement.textContent = driverData.address || '-';
+            
+            // Set TODA registration
+            const todaElement = document.getElementById('driverTodaReg').querySelector('span');
+            todaElement.textContent = driverData.todaRegistration || '-';
+            
+            // Set photo if available
+            if (driverData.photo) {
+                document.getElementById('driverPhoto').src = '../assets/img/drivers/' + driverData.photo;
+            } else {
+                document.getElementById('driverPhoto').src = '../assets/img/profile.jpg';
+            }
+            
+            // Handle confirm button click
+            document.getElementById('confirmRideBtn').onclick = function() {
+                window.location.href = 'verificationScreen.php?driverId=' + driverId;
+            };
+            
+            // Resume scanning when modal is dismissed
+            document.getElementById('cancelRideBtn').addEventListener('click', function() {
+                scanning = true;
+                requestAnimationFrame(tick);
+            });
+            
+            // Show the modal
+            const nonVerifiedModal = new bootstrap.Modal(modal);
+            nonVerifiedModal.show();
         }
 
         document.addEventListener('DOMContentLoaded', startScanner);

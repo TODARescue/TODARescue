@@ -46,9 +46,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (isset($_POST['memberId'])) {
         $memberId = intval($_POST['memberId']);
         
+        // Debug info
+        error_log("Remove member request: memberId=$memberId, circleId=$circleId, userRole=$userRole");
+        
         // Check if trying to remove self
         if ($memberId === $userId) {
             echo json_encode(['success' => false, 'message' => 'You cannot remove yourself from the circle. Use the Leave Circle option instead.']);
+            exit;
+        }
+        
+        // Check if member exists in circle
+        $checkMemberQuery = "SELECT COUNT(*) FROM circlemembers WHERE userId = ? AND circleId = ?";
+        $checkMemberStmt = $pdo->prepare($checkMemberQuery);
+        $checkMemberStmt->execute([$memberId, $circleId]);
+        $memberExists = (int)$checkMemberStmt->fetchColumn();
+        
+        if ($memberExists === 0) {
+            echo json_encode(['success' => false, 'message' => 'This user is not a member of the circle.']);
             exit;
         }
         
@@ -57,6 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $checkRoleStmt = $pdo->prepare($checkRoleQuery);
         $checkRoleStmt->execute([$memberId, $circleId]);
         $memberRole = $checkRoleStmt->fetchColumn();
+        
+        error_log("Member role: $memberRole");
         
         if ($memberRole === 'owner') {
             echo json_encode(['success' => false, 'message' => 'You cannot remove the owner of the circle.']);
@@ -69,19 +85,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             exit;
         }
         
-        // Remove member
-        $removeQuery = "DELETE FROM circlemembers WHERE userId = ? AND circleId = ?";
-        $removeStmt = $pdo->prepare($removeQuery);
-        
-        if ($removeStmt->execute([$memberId, $circleId])) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to remove member. Please try again.']);
+        try {
+            // Begin transaction
+            $pdo->beginTransaction();
+            
+            // Remove member
+            $removeQuery = "DELETE FROM circlemembers WHERE userId = ? AND circleId = ?";
+            $removeStmt = $pdo->prepare($removeQuery);
+            $removeResult = $removeStmt->execute([$memberId, $circleId]);
+            
+            error_log("Remove query executed. Result: " . ($removeResult ? "Success" : "Failed"));
+            error_log("Affected rows: " . $removeStmt->rowCount());
+            
+            if ($removeResult && $removeStmt->rowCount() > 0) {
+                $pdo->commit();
+                echo json_encode(['success' => true, 'message' => 'Member removed successfully']);
+            } else {
+                $pdo->rollBack();
+                echo json_encode(['success' => false, 'message' => 'Failed to remove member. No rows affected.']);
+            }
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            error_log("Exception: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
         }
         exit;
     }
     
-    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+    echo json_encode(['success' => false, 'message' => 'Invalid request: Missing member ID']);
     exit;
 }
 
@@ -116,6 +147,44 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
                     style="border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
+                    <!-- Error Modal -->
+                    <div id="errorModal" class="modal fade" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                                style="width: 85%; max-width: 320px; margin: auto;">
+                                <h5 class="fw-bold mb-2" id="errorModalLabel">Error</h5>
+                                <p class="mb-4" id="errorModalMessage" style="font-size: 0.95rem;">
+                                    An error occurred.
+                                </p>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn rounded-pill px-4 text-white"
+                                        style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                                        OK
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Success Modal -->
+                    <div id="successModal" class="modal fade" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                                style="width: 85%; max-width: 320px; margin: auto;">
+                                <h5 class="fw-bold mb-2" id="successModalLabel">Success</h5>
+                                <p class="mb-4" id="successModalMessage" style="font-size: 0.95rem;">
+                                    Operation completed successfully.
+                                </p>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" id="successBtn" class="btn rounded-pill px-4 text-white"
+                                        style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                                        OK
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- HEADER -->
                     <?php include '../assets/shared/header.php'; ?>
 
@@ -209,6 +278,20 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
     <script>
         let currentMemberId = null;
 
+        // Function to show error modal
+        function showErrorModal(message) {
+            document.getElementById('errorModalMessage').textContent = message;
+            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+        }
+        
+        // Function to show success modal
+        function showSuccessModal(message) {
+            document.getElementById('successModalMessage').textContent = message;
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        }
+
         function openRemoveModal(name, memberId) {
             document.getElementById('modalMemberName').innerText = name;
             currentMemberId = memberId;
@@ -227,33 +310,49 @@ $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
                 // Show loading state
                 this.disabled = true;
                 this.innerText = 'Removing...';
+                const confirmBtn = this;
+                
+                const circleId = <?php echo $circleId; ?>;
+                console.log(`Attempting to remove member ${currentMemberId} from circle ${circleId}`);
                 
                 // Send AJAX request to remove member
-                fetch('removeCircleMember.php', {
+                fetch('removeCircleMember.php?circleId=' + circleId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: `action=removeMember&memberId=${currentMemberId}`
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Response:', data);
+                    closeModal();
+                    
                     if (data.success) {
-                        // Refresh page to show updated member list
-                        window.location.reload();
+                        // Show success modal and redirect to circle details page
+                        showSuccessModal('Member removed successfully');
+                        
+                        // Redirect to circle details page
+                        setTimeout(() => {
+                            window.location.href = 'circleDetails.php?circleId=' + circleId;
+                        }, 1500);
                     } else {
-                        alert(data.message || 'Failed to remove member');
-                        closeModal();
-                        this.disabled = false;
-                        this.innerText = 'Yes';
+                        showErrorModal(data.message || 'Failed to remove member');
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerText = 'Yes';
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while removing the member');
                     closeModal();
-                    this.disabled = false;
-                    this.innerText = 'Yes';
+                    showErrorModal('An error occurred while removing the member: ' + error.message);
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerText = 'Yes';
                 });
             }
         });

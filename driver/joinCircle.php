@@ -78,7 +78,7 @@ $notFound = ($flash === "notFound");
 </head>
 <body>
 <?php include '../assets/shared/header.php'; ?>
-<?php include '../assets/shared/navbarPassenger.php'; ?>
+<?php include '../assets/shared/navbarDriver.php'; ?>
 
 <div class="container-fluid py-5 mt-5 d-flex justify-content-center">
   <div class="flex-grow-1 px-3 pt-5" style="max-width:420px">
