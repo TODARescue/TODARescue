@@ -9,8 +9,13 @@
             </a>
         </div>
         <div class="col col-navbar text-center" data-icon="users">
-            <a href="../driver/circle.php" class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
+            <a href="../driver/groupPage.php" class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
                 <img src="../assets/shared/navbar-icons/users.svg" alt="Users" class="img-fluid" style="height: 24px;" />
+            </a>
+        </div>
+        <div class="col col-navbar text-center" data-icon="phone">
+            <a href="../driver/emergencyContact.php" class="d-flex flex-column justify-content-center align-items-center py-1 w-100 h-100">
+                <img src="../assets/shared/navbar-icons/phone.svg" alt="Phone" class="img-fluid" style="height: 24px;" />
             </a>
         </div>
         <div class="col col-navbar text-center" data-icon="settings">
