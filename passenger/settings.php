@@ -1,28 +1,19 @@
 <?php
-require_once '../assets/php/connect.php';
 session_start();
-if (!isset($_SESSION['userId'])) {
-    header("Location: ../login.php");
-    exit;
-}
+require_once '../assets/php/connect.php';
 
-$userId = $_SESSION['userId'];
+$userId = $_SESSION['userId'] ?? null;
+$isSharing = 0; // default
 
-// Default to not sharing
-$isSharing = 0;
+// Fetch user's sharing status from circlemembers table
+$circleQuery = "SELECT isSharing FROM circlemembers WHERE userId = $userId LIMIT 1";
+$result = executeQuery($circleQuery);
 
-// Check if user is part of any circle
-$stmt = $conn->prepare("SELECT isSharing FROM circlemembers WHERE userId = ? LIMIT 1");
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($row = $result->fetch_assoc()) {
-    $isSharing = (int) $row['isSharing'];
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $isSharing = (int)$row['isSharing'];
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -79,8 +70,8 @@ if ($row = $result->fetch_assoc()) {
                             class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom border-secondary w-100 bg-light">
                             <span>Location Sharing</span>
                             <div class="form-check form-switch m-0">
-                                <input class="form-check-input" type="checkbox" role="switch" id="toggle-sharing"
-                                    <?= $isSharing === 1 ? 'checked' : '' ?>>
+                                <input class="form-check-input" type="checkbox" role="switch" id="sharing-toggle"
+                                    <?= $isSharing == 1 ? 'checked' : '' ?>>
                             </div>
                         </div>
 
@@ -149,31 +140,30 @@ if ($row = $result->fetch_assoc()) {
     </div>
 
     <?php include '../assets/shared/navbarPassenger.php'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const sharingToggle = document.getElementById('toggle-sharing');
 
-            sharingToggle.addEventListener('change', async () => {
-                const isSharing = sharingToggle.checked ? 1 : 0;
-                try {
-                    const res = await fetch('../assets/php/updateSharingStatus.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ isSharing })
-                    });
-                    const data = await res.json();
-                    if (!data.success) {
-                        alert("Failed to update sharing status.");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("An error occurred while updating sharing status.");
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('sharing-toggle').addEventListener('change', function () {
+            const isChecked = this.checked ? 1 : 0;
+
+            fetch('../assets/php/updateSharingStatus.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'isSharing=' + isChecked
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Failed to update sharing status.');
                 }
+            })
+            .catch(error => {
+                console.error("Error updating sharing status:", error);
+                alert("Something went wrong while updating.");
             });
         });
     </script>
-
 
 </body>
 
