@@ -39,7 +39,23 @@
       "passenger/verificationScreen.php": "TodaRescue",
 
       "driver/changeAdminStatus.php": "Change Admin Status",
-      "driver/profileInformation.php": "Profile Information"
+      "driver/profileInformation.php": "Profile Information",
+      "driver/settings.php": "Settings",
+      "driver/emergencyContact.php": "Emergency Contact",
+      "driver/profile.php": "Profile",
+      "driver/accountEdit.php": "Account",
+      "driver/accountView.php": "Account",
+      "driver/circle.php": "Circle Management",
+      "driver/circleDetails.php": "Circle Management",
+      "driver/editCircleName.php": "Circle Management",
+      "driver/createCircle.php": "Create Circle",
+      "driver/groupPage.php": "Account",
+      "driver/inviteMember.php": "Invite Code",
+      "driver/joinCircle.php": "Join Circle",
+      "driver/removeCircleMember.php": "Remove Circle Member",
+      "driver/rideHistory.php": "Ride History",
+      "driver/scanQr.php": "TodaRescue",
+      "driver/verificationScreen.php": "TodaRescue"
     };
 
     pageTitle.textContent = titles[pageKey] || "Page";
