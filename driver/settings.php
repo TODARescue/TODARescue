@@ -59,7 +59,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             Circle Settings
                         </div>
 
-                        <a href="../passenger/circle.php" style="text-decoration: none; color: inherit;">
+                        <a href="../driver/circle.php" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
                                 Circle Management
@@ -81,7 +81,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             Universal Settings
                         </div>
 
-                        <a href="../passenger/accountView.php" style="text-decoration: none; color: inherit;">
+                        <a href="../driver/accountView.php" style="text-decoration: none; color: inherit;">
                             <div
                                 class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
                                 Account
@@ -139,7 +139,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         </div>
     </div>
 
-    <?php include '../assets/shared/navbarPassenger.php'; ?>
+    <?php include '../assets/shared/navbarDriver.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

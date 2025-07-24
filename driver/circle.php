@@ -2,7 +2,6 @@
 session_start();
 require_once '../assets/php/connect.php';
 
-// For testing purposes - set a default user ID
 if (!isset($_SESSION['userId'])) {
     header('Location: ../index.php');
     exit;
@@ -10,7 +9,6 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 
-// Get circles the user is a member of
 $query = "SELECT c.circleId, c.circleName, cm.role 
           FROM circles c 
           INNER JOIN circlemembers cm ON c.circleId = cm.circleId 

@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
         </div>
     </div>
 
-    <?php include '../assets/shared/navbarDriver.php'; ?>
+    <?php include '../assets/shared/navbarPassenger.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
