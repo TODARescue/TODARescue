@@ -26,7 +26,7 @@
             </div>
             <div class="col col-navbar text-center" data-icon="settings">
                 <div class="nav-button w-100 h-100 py-0 d-flex justify-content-center align-items-center">
-                    <a href="#">
+                    <a href="settings.php">
                         <img src="../assets/shared/navbar-icons/settings.svg" alt="Settings" class="img-fluid" style="height: 24px;" />
                     </a>
                 </div>

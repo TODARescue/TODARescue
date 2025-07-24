@@ -56,6 +56,9 @@
       "driver/rideHistory.php": "Ride History",
       "driver/scanQr.php": "TodaRescue",
       "driver/verificationScreen.php": "TodaRescue"
+      "driver/profileInformation.php": "Profile Information",
+
+      "admin/settings.php": "Settings"
     };
 
     pageTitle.textContent = titles[pageKey] || "Page";
