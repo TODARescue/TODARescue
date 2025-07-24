@@ -39,7 +39,9 @@
       "passenger/verificationScreen.php": "TodaRescue",
 
       "driver/changeAdminStatus.php": "Change Admin Status",
-      "driver/profileInformation.php": "Profile Information"
+      "driver/profileInformation.php": "Profile Information",
+
+      "admin/settings.php": "Settings"
     };
 
     pageTitle.textContent = titles[pageKey] || "Page";
