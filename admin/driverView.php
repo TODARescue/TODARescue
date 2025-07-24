@@ -1,11 +1,19 @@
 <?php
-
 include '../assets/shared/connect.php';
 
 $userId = $_GET['userId'] ?? null;
 
 if (!$userId) {
     echo "No user ID provided.";
+    exit;
+}
+
+// Recover logic
+if (isset($_POST['recover'])) {
+    $recoverStmt = $conn->prepare("UPDATE users SET isDeleted = 0 WHERE userId = ?");
+    $recoverStmt->bind_param("i", $userId);
+    $recoverStmt->execute();
+    header("Location: driverView.php?userId=" . $userId);
     exit;
 }
 
@@ -21,7 +29,6 @@ if (!$userData || !$driverData) {
     echo "Driver not found.";
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -53,23 +60,34 @@ if (!$userData || !$driverData) {
                 </a>
                 <h5 class="fw-semibold m-0">Drivers</h5>
             </div>
-            <div class="d-flex gap-2">
-                <a href="editProfileDriver.php?userId=<?php echo $userId; ?>"
-                    class="btn btn-info btn-sm rounded-circle text-white">
-                    <i class="bi bi-pencil-square"></i>
-                </a>
-                <button class="btn btn-danger btn-sm rounded-circle" data-bs-toggle="modal"
-                    data-bs-target="#deleteModal" data-user-id="<?php echo $userId; ?>">
-                    <i class="bi bi-trash-fill"></i>
+
+            <?php if ($userData['isDeleted'] == 1): ?>
+                <button data-bs-toggle="modal" data-bs-target="#recoverModal"
+                    class="btn btn-sm text-white rounded-pill px-3" style="background-color: #1cc8c8;">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Recover
                 </button>
-            </div>
+            <?php else: ?>
+                <div class="d-flex gap-2">
+                    <a href="editProfileDriver.php?userId=<?php echo $userId; ?>"
+                        class="btn btn-info btn-sm rounded-circle text-white">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <button class="btn btn-danger btn-sm rounded-circle" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal" data-user-id="<?php echo $userId; ?>">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </div>
+            <?php endif; ?>
         </div>
 
-        <div class="d-flex justify-content-center mb-4">
-            <img src="../assets/images/drivers/<?php echo htmlspecialchars($userData['photo']); ?>" alt="Profile"
-                class="rounded-circle" style="width: 70px; height: 70px; object-fit: cover;" />
+        <div class="d-flex justify-content-center mb-1">
+            <img src="../assets/images/drivers/<?php echo htmlspecialchars($userData['photo']) ?: 'profile-default.png'; ?>"
+                alt="Profile" class="rounded-circle" style="width: 70px; height: 70px; object-fit: cover;" />
         </div>
 
+        <?php if ($userData['isDeleted'] == 1): ?>
+            <p class="text-center text-danger fw-bold small mt-1 mb-3">Inactive account</p>
+        <?php endif; ?>
 
         <div class="px-2" style="overflow-x: hidden;">
             <div class="row mb-2">
@@ -108,48 +126,60 @@ if (!$userData || !$driverData) {
             </div>
         </div>
 
-        <?php include '../assets/shared/navbarAdmin.php'; ?>
 
 
+
+        <!-- Delete Modal -->
         <div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
- 
                 <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
                     style="width: 85%; max-width: 320px; margin: auto;">
                     <h5 class="fw-bold mb-2" id="deleteModalLabel">Confirm Deletion</h5>
-                    <p class="mb-4" style="font-size: 0.95rem;">
-                        Are you sure you want to delete this driver? This action cannot be undone.
-                    </p>
+                    <p class="mb-4" style="font-size: 0.95rem;">Are you sure you want to delete this driver? This action
+                        cannot be undone.</p>
                     <div class="d-flex justify-content-center gap-3">
                         <button type="button" class="btn rounded-pill px-4"
-                            style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
-                            Cancel
-                        </button>
+                            style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">Cancel</button>
                         <a id="confirmDeleteBtn" href="#" class="btn rounded-pill px-4 text-white"
-                            style="background-color: #1cc8c8; font-weight: 600;">
-                            Yes
-                        </a>
+                            style="background-color: #1cc8c8; font-weight: 600;">Yes</a>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Recover Modal -->
+        <div id="recoverModal" class="modal fade" tabindex="-1" aria-labelledby="recoverModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                    style="width: 85%; max-width: 320px; margin: auto;">
+                    <h5 class="fw-bold mb-2" id="recoverModalLabel">Confirm Recovery</h5>
+                    <p class="mb-4" style="font-size: 0.95rem;">Are you sure you want to recover this driver account?
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn rounded-pill px-4" style="background-color: #dcdcdc;"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <form method="post">
+                            <button type="submit" name="recover" class="btn rounded-pill px-4 text-white"
+                                style="background-color: #1cc8c8;">Yes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <?php include '../assets/shared/navbarAdmin.php'; ?>
+
+    <script>
+        const deleteModal = document.getElementById('deleteModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const triggerButton = event.relatedTarget;
+            const userId = triggerButton.getAttribute('data-user-id');
+            confirmDeleteBtn.href = 'deleteDriver.php?userId=' + userId;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-<script>
-    const deleteModal = document.getElementById('deleteModal');
-    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-        const triggerButton = event.relatedTarget;
-        const userId = triggerButton.getAttribute('data-user-id');
-
-
-        confirmDeleteBtn.href = 'deleteDriver.php?userId=' + userId;
-    });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
-    crossorigin="anonymous"></script>
-
 
 </html>

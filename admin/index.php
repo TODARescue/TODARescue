@@ -4,8 +4,9 @@ include '../assets/shared/connect.php';
 $driverCount = 0;
 $passengerCount = 0;
 
-$driverQuery = "SELECT COUNT(*) AS total FROM users WHERE role = 'driver'";
-$passengerQuery = "SELECT COUNT(*) AS total FROM users WHERE role = 'passenger'";
+// Only count drivers/passengers where isDeleted = 0
+$driverQuery = "SELECT COUNT(*) AS total FROM users WHERE role = 'driver' AND isDeleted = 0";
+$passengerQuery = "SELECT COUNT(*) AS total FROM users WHERE role = 'passenger' AND isDeleted = 0";
 
 if ($result = $conn->query($driverQuery)) {
     $row = $result->fetch_assoc();
@@ -42,12 +43,12 @@ $conn->close();
         <h3 class="fw-bold text-center mb-3">TODA Rescue</h3>
         <h5 class="fw-semibold mb-4">Admin Dashboard</h5>
 
-        <div class="d-flex flex-wrap gap-3 position-relative z-1">
+        <div class="d-flex flex-wrap gap-2 position-relative z-1">
 
             <a href="drivers.php" class="text-decoration-none flex-fill" style="min-width: 140px;">
                 <div
                     class="bg-secondary-subtle rounded-5 p-3 d-flex flex-column justify-content-between text-start h-100">
-                    <span class="fw-semibold text-dark">Total Drivers:</span>
+                    <span class="fw-semibold text-dark">Active Drivers:</span>
                     <span class="fw-bold fs-4" style="color: #2DAAA7;"><?php echo $driverCount; ?></span>
                 </div>
             </a>
@@ -55,7 +56,7 @@ $conn->close();
             <a href="passengers.php" class="text-decoration-none flex-fill" style="min-width: 140px;">
                 <div
                     class="bg-secondary-subtle rounded-5 p-3 d-flex flex-column justify-content-between text-start h-100">
-                    <span class="fw-semibold text-dark">Total Passengers:</span>
+                    <span class="fw-semibold text-dark">Active Passengers:</span>
                     <span class="fw-bold fs-4" style="color: #2DAAA7;"><?php echo $passengerCount; ?></span>
                 </div>
             </a>

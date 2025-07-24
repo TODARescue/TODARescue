@@ -1,6 +1,9 @@
 <?php
 include '../assets/shared/connect.php';
+
 $search = $_GET['search'] ?? '';
+$sort = $_GET['sort'] ?? '';
+$filter = $_GET['filter'] ?? 'all';
 ?>
 
 <!doctype html>
@@ -25,30 +28,63 @@ $search = $_GET['search'] ?? '';
         <h3 class="fw-bold text-center mb-3">TODA Rescue</h3>
         <h5 class="mb-3">Passengers</h5>
 
-
+        <!-- Search & Controls -->
         <form method="GET" class="search-bar mb-3">
-            <div class="input-group shadow">
+            <div class="input-group shadow mb-3">
                 <input type="text" name="search" class="form-control" placeholder="Search Passengers"
-                    aria-label="Search" aria-describedby="search-addon"
                     value="<?php echo htmlspecialchars($search); ?>">
-                <button class="btn btn-outline-secondary" type="submit" id="search-addon">
+                <button class="btn btn-outline-secondary" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
+
+            <div class="d-flex gap-2">
+                <select name="sort" class="form-select rounded-5" onchange="this.form.submit()">
+                    <option value="">Sort</option>
+                    <option value="asc" <?php if ($sort === 'asc')
+                        echo 'selected'; ?>>A-Z</option>
+                    <option value="desc" <?php if ($sort === 'desc')
+                        echo 'selected'; ?>>Z-A</option>
+                </select>
+
+                <select name="filter" class="form-select rounded-5" onchange="this.form.submit()">
+                    <option value="all" <?php if ($filter === 'all')
+                        echo 'selected'; ?>>All</option>
+                    <option value="active" <?php if ($filter === 'active')
+                        echo 'selected'; ?>>Active</option>
+                    <option value="inactive" <?php if ($filter === 'inactive')
+                        echo 'selected'; ?>>Inactive</option>
+                </select>
+            </div>
         </form>
 
-
-        <div class="mt-4 d-flex flex-column gap-3 mb-5">
+        <!-- Passenger Cards -->
+        <div class="mt-3 d-flex flex-column gap-3 mb-5">
             <?php
-            $sql = "SELECT * FROM users WHERE role = 'passenger' AND isDeleted = 0";
+            $sql = "SELECT * FROM users WHERE role = 'passenger'";
+
+            // Apply filter
+            if ($filter === 'active') {
+                $sql .= " AND isDeleted = 0";
+            } elseif ($filter === 'inactive') {
+                $sql .= " AND isDeleted = 1";
+            }
+
+            // Apply search
             if (!empty($search)) {
                 $safeSearch = mysqli_real_escape_string($conn, $search);
                 $sql .= " AND (
-        firstName LIKE '%$safeSearch%' 
-        OR lastName LIKE '%$safeSearch%' 
-        OR CONCAT(firstName, ' ', lastName) LIKE '%$safeSearch%')";
+                    firstName LIKE '%$safeSearch%' 
+                    OR lastName LIKE '%$safeSearch%' 
+                    OR CONCAT(firstName, ' ', lastName) LIKE '%$safeSearch%')";
             }
 
+            // Apply sorting
+            if ($sort === 'asc') {
+                $sql .= " ORDER BY firstName ASC";
+            } elseif ($sort === 'desc') {
+                $sql .= " ORDER BY firstName DESC";
+            }
 
             $result = mysqli_query($conn, $sql);
 
@@ -56,8 +92,10 @@ $search = $_GET['search'] ?? '';
                 while ($row = mysqli_fetch_assoc($result)) {
                     $fullName = $row['firstName'] . ' ' . $row['lastName'];
                     $photoPath = '../assets/images/passengers/' . $row['photo'];
+                    $isDeleted = (int) $row['isDeleted'];
+                    $cardOpacity = $isDeleted ? "opacity-50" : "";
                     ?>
-                    <div class="card border-0 clickable-card"
+                    <div class="card border-0 clickable-card <?php echo $cardOpacity; ?>"
                         style="background-color: #D9D9D9; border-radius: 30px; cursor: pointer;"
                         onclick="goToPassengerView(<?php echo $row['userId']; ?>)">
                         <div class="card-body d-flex align-items-center justify-content-between">
@@ -75,17 +113,22 @@ $search = $_GET['search'] ?? '';
                                 </div>
                                 <span class="text-dark fw-medium"><?php echo htmlspecialchars($fullName); ?></span>
                             </div>
-                            <div class="d-flex gap-2">
-                                <a href="editProfilePassenger.php?userId=<?php echo (int) $row['userId']; ?>"
-                                    class="btn btn-info btn-sm rounded-circle text-white" onclick="event.stopPropagation();">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                    data-user-id="<?php echo $row['userId']; ?>"
-                                    class="btn btn-danger btn-sm rounded-circle text-white" onclick="event.stopPropagation();">
-                                    <i class="bi bi-trash-fill"></i>
-                                </a>
-                            </div>
+                            <?php if ($isDeleted): ?>
+                                <span class="badge bg-secondary px-3 py-1 rounded-pill">Inactive</span>
+                            <?php else: ?>
+                                <div class="d-flex gap-2">
+                                    <a href="editProfilePassenger.php?userId=<?php echo (int) $row['userId']; ?>"
+                                        class="btn btn-info btn-sm rounded-circle text-white" onclick="event.stopPropagation();">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        data-user-id="<?php echo $row['userId']; ?>"
+                                        class="btn btn-danger btn-sm rounded-circle text-white" onclick="event.stopPropagation();">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+
                         </div>
                     </div>
                     <?php
@@ -97,6 +140,7 @@ $search = $_GET['search'] ?? '';
         </div>
     </div>
 
+    <!-- Delete Modal -->
     <div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
@@ -118,8 +162,6 @@ $search = $_GET['search'] ?? '';
             </div>
         </div>
     </div>
-
-    
 
     <?php include '../assets/shared/navbarAdmin.php'; ?>
 
