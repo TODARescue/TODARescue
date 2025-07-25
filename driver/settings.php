@@ -11,7 +11,7 @@ $result = executeQuery($circleQuery);
 
 if ($result && mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_assoc($result);
-    $isSharing = (int)$row['isSharing'];
+    $isSharing = (int) $row['isSharing'];
 }
 ?>
 
@@ -93,10 +93,12 @@ if ($result && mysqli_num_rows($result) > 0) {
                             Privacy and Security
                         </div>
 
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
-                            onclick="handleClick('about')">
-                            About
-                        </div>
+                        <a href="../passenger/about.php" style="text-decoration: none; color: inherit;">
+                            <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                                onclick="handleClick('about')">
+                                About
+                            </div>
+                        </a>
 
                         <!-- Log Out (with modal) -->
                         <a href="#" data-bs-toggle="modal" data-bs-target="#leaveCircleModal"
@@ -152,16 +154,16 @@ if ($result && mysqli_num_rows($result) > 0) {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'isSharing=' + isChecked
             })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.success) {
-                    alert('Failed to update sharing status.');
-                }
-            })
-            .catch(error => {
-                console.error("Error updating sharing status:", error);
-                alert("Something went wrong while updating.");
-            });
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Failed to update sharing status.');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error updating sharing status:", error);
+                    alert("Something went wrong while updating.");
+                });
         });
     </script>
 
