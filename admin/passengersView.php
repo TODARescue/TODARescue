@@ -8,7 +8,16 @@ if (!$userId) {
     exit;
 }
 
+// Recover logic
+if (isset($_POST['recover'])) {
+    $recoverStmt = $conn->prepare("UPDATE users SET isDeleted = 0 WHERE userId = ?");
+    $recoverStmt->bind_param("i", $userId);
+    $recoverStmt->execute();
+    header("Location: passengersView.php?userId=" . $userId);
+    exit;
+}
 
+// Get user info
 $userQuery = "SELECT * FROM users WHERE userId = ? AND role = 'passenger'";
 $stmt = $conn->prepare($userQuery);
 $stmt->bind_param("i", $userId);
@@ -21,6 +30,7 @@ if (!$user) {
     exit;
 }
 
+// Get ride history
 $historyQuery = "
 SELECT h.*, d.model, d.plateNumber,
        u.firstName AS driverFirstName, u.lastName AS driverLastName, 
@@ -66,16 +76,25 @@ $historyResult = $stmt->get_result();
                     </a>
                     <h5 class="mb-0 fw">Passenger</h5>
                 </div>
-                <div class="d-flex gap-2">
-                    <a href="editProfilePassenger.php?userId=<?= $userId ?>"
-                        class="btn btn-info text-white btn-sm rounded-circle">
-                        <i class="bi bi-pencil-square"></i>
-                    </a>
-                    <button data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="<?= $userId ?>"
-                        class="btn btn-danger btn-sm rounded-circle">
-                        <i class="bi bi-trash-fill"></i>
+
+                <?php if ($user['isDeleted'] == 1): ?>
+                    <button data-bs-toggle="modal" data-bs-target="#recoverModal" data-user-id="<?= $userId ?>"
+                        class="btn btn-sm text-white rounded-pill px-3" style="background-color: #1cc8c8;">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Recover
                     </button>
-                </div>
+
+                <?php else: ?>
+                    <div class="d-flex gap-2">
+                        <a href="editProfilePassenger.php?userId=<?= $userId ?>"
+                            class="btn btn-info text-white btn-sm rounded-circle">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <button data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="<?= $userId ?>"
+                            class="btn btn-danger btn-sm rounded-circle">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -85,6 +104,9 @@ $historyResult = $stmt->get_result();
             <h4 class="mt-2 mb-0 fw-bolder"><?= htmlspecialchars($user['firstName'] . ' ' . $user['lastName']) ?></h4>
             <p class="mb-0 small text-center">Email: <?= htmlspecialchars($user['email']) ?></p>
             <p class="small text-center">Contact Number: <?= htmlspecialchars($user['contactNumber']) ?></p>
+            <?php if ($user['isDeleted'] == 1): ?>
+                <p class="text-danger fw-bold small mt-1">Inactive account</p>
+            <?php endif; ?>
         </div>
 
         <h4 class="text-center mb-3">Ride History</h4>
@@ -133,6 +155,29 @@ $historyResult = $stmt->get_result();
             </div>
         </div>
 
+        <div id="recoverModal" class="modal fade" tabindex="-1" aria-labelledby="recoverModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                    style="width: 85%; max-width: 320px; margin: auto;">
+                    <h5 class="fw-bold mb-2" id="recoverModalLabel">Confirm Recovery</h5>
+                    <p class="mb-4" style="font-size: 0.95rem;">
+                        Are you sure you want to recover this passenger account?
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn rounded-pill px-4" style="background-color: #dcdcdc;"
+                            data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <form method="post">
+                            <button type="submit" name="recover" class="btn rounded-pill px-4 text-white"
+                                style="background-color: #1cc8c8;">
+                                Yes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <script>
