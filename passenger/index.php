@@ -1,5 +1,5 @@
 <?php
-include("../assets/php/connect.php");
+include("../assets/shared/connect.php");
 session_start();
 // For testing purposes
 // $driverId = 2;
@@ -153,7 +153,7 @@ if (isset($_POST['arrive-button'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODARescue | Home Page</title>
+    <title>Passenger | Home Page</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"

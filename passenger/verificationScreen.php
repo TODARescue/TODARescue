@@ -1,5 +1,5 @@
 <?php
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 session_start();
 
 ini_set('display_errors', 1);
@@ -72,7 +72,7 @@ if (isset($_POST['startRide'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TODA Rescue - Driver Verification</title>
+    <title>Passenger | Driver Verification</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -150,8 +150,10 @@ if (isset($_POST['startRide'])) {
         <div class="row d-flex justify-content-center align-items-center mt-0">
             <div class="col-auto py-3">
                 <form method="POST" class="container-fluid mt-2 mb-4 align-items-center rounded-5 text-center">
-                    <button type="submit" name="startRide" class="btn btn-lg rounded-pill custom-hover text-black fs-3 px-4 py-3"
-                        style="background-color: #2DAAA7;">Start Ride</button>
+                    <button type="submit" name="startRide" class="arrive-button glass rounded-pill text-bold position-absolute start-50 translate-middle-x px-4 py-3 fw-semibold"
+                        style="background-color: rgb(46, 188, 188) !important; top: 75%; width: 90%; max-width: 200px;" id="startRide-button">
+                        START RIDE
+                    </button>
                 </form>
             </div>
         </div>

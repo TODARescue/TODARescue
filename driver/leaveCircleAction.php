@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['userId'])) {
@@ -13,7 +13,7 @@ $errorMsg = '';
 $successMsg = '';
 
 // Get circleId from URL parameter
-$circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
+$circleId = isset($_GET['circleId']) ? intval($_GET['circleId']) : null;
 
 // If no circleId is provided, redirect to circle.php
 if (!$circleId) {
@@ -22,15 +22,17 @@ if (!$circleId) {
 }
 
 // Check if user is a member of this specific circle
-$query = "SELECT cm.role, (SELECT COUNT(*) FROM circlemembers WHERE circleId = ?) as memberCount 
+$query = "SELECT cm.role, 
+                 (SELECT COUNT(*) FROM circlemembers WHERE circleId = ?) AS memberCount 
           FROM circlemembers cm 
           WHERE cm.userId = ? AND cm.circleId = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$circleId, $userId, $circleId]);
-$userCircle = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = $conn->prepare($query);
+$stmt->bind_param("iii", $circleId, $userId, $circleId);
+$stmt->execute();
+$result = $stmt->get_result();
+$userCircle = $result->fetch_assoc();
 
 if (!$userCircle) {
-    // User is not in this circle, redirect to circle page
     header('Location: circle.php');
     exit;
 }
@@ -39,68 +41,68 @@ $userRole = $userCircle['role'];
 $memberCount = $userCircle['memberCount'];
 
 // Start transaction
-$pdo->beginTransaction();
+$conn->begin_transaction();
 
 try {
-    // First remove the user from the circle
+    // Remove the user from the circle
     $removeUserQuery = "DELETE FROM circlemembers WHERE userId = ? AND circleId = ?";
-    $removeUserStmt = $pdo->prepare($removeUserQuery);
-    $removeUserStmt->execute([$userId, $circleId]);
-    
+    $removeUserStmt = $conn->prepare($removeUserQuery);
+    $removeUserStmt->bind_param("ii", $userId, $circleId);
+    $removeUserStmt->execute();
+
     // If this was the last member, delete the circle
     if ($memberCount <= 1) {
         $deleteCircleQuery = "DELETE FROM circles WHERE circleId = ?";
-        $deleteCircleStmt = $pdo->prepare($deleteCircleQuery);
-        $deleteCircleStmt->execute([$circleId]);
+        $deleteCircleStmt = $conn->prepare($deleteCircleQuery);
+        $deleteCircleStmt->bind_param("i", $circleId);
+        $deleteCircleStmt->execute();
     } 
     // If user was owner and there are other members, transfer ownership
     else if ($userRole === 'owner') {
-        // Find another member to promote to owner (prioritize admins)
+        // Find another admin to promote to owner
         $findNewOwnerQuery = "SELECT userId FROM circlemembers 
-                             WHERE circleId = ? AND role = 'admin' 
-                             ORDER BY RAND() LIMIT 1";
-        $newOwnerStmt = $pdo->prepare($findNewOwnerQuery);
-        $newOwnerStmt->execute([$circleId]);
-        $newOwnerId = $newOwnerStmt->fetchColumn();
-        
+                              WHERE circleId = ? AND role = 'admin' 
+                              ORDER BY RAND() LIMIT 1";
+        $newOwnerStmt = $conn->prepare($findNewOwnerQuery);
+        $newOwnerStmt->bind_param("i", $circleId);
+        $newOwnerStmt->execute();
+        $result = $newOwnerStmt->get_result();
+        $newOwner = $result->fetch_assoc();
+        $newOwnerId = $newOwner['userId'] ?? null;
+
         // If no admin found, get any member
         if (!$newOwnerId) {
             $findAnyMemberQuery = "SELECT userId FROM circlemembers 
-                                  WHERE circleId = ? 
-                                  ORDER BY RAND() LIMIT 1";
-            $anyMemberStmt = $pdo->prepare($findAnyMemberQuery);
-            $anyMemberStmt->execute([$circleId]);
-            $newOwnerId = $anyMemberStmt->fetchColumn();
+                                   WHERE circleId = ? 
+                                   ORDER BY RAND() LIMIT 1";
+            $anyMemberStmt = $conn->prepare($findAnyMemberQuery);
+            $anyMemberStmt->bind_param("i", $circleId);
+            $anyMemberStmt->execute();
+            $result = $anyMemberStmt->get_result();
+            $anyMember = $result->fetch_assoc();
+            $newOwnerId = $anyMember['userId'] ?? null;
         }
-        
-        // Promote the selected member to owner if found
+
+        // Promote new owner
         if ($newOwnerId) {
             $promoteQuery = "UPDATE circlemembers SET role = 'owner' WHERE circleId = ? AND userId = ?";
-            $promoteStmt = $pdo->prepare($promoteQuery);
-            $promoteStmt->execute([$circleId, $newOwnerId]);
+            $promoteStmt = $conn->prepare($promoteQuery);
+            $promoteStmt->bind_param("ii", $circleId, $newOwnerId);
+            $promoteStmt->execute();
         }
     }
-    
-    // Commit the transaction
-    $pdo->commit();
-    
-    // Set success message
+
+    // Commit transaction
+    $conn->commit();
+
     $_SESSION['circleSuccessMsg'] = 'You have successfully left the circle.';
-    
-    // Redirect to circle page
     header('Location: circle.php');
     exit;
+
 } catch (Exception $e) {
-    // Rollback the transaction on error
-    $pdo->rollBack();
-    
-    // Log the error
+    $conn->rollback();
     error_log("Error leaving circle: " . $e->getMessage());
-    
-    // Set error message
     $_SESSION['circleErrorMsg'] = 'An error occurred while trying to leave the circle. Please try again.';
-    
-    // Redirect back to circle details
     header('Location: circleDetails.php?circleId=' . $circleId);
     exit;
 }

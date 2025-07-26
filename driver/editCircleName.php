@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['userId'])) {
@@ -27,9 +27,12 @@ if (!$circleId) {
 $query = "SELECT c.circleName, cm.role FROM circles c 
           INNER JOIN circlemembers cm ON c.circleId = cm.circleId 
           WHERE cm.userId = ? AND c.circleId = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$userId, $circleId]);
-$circle = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ii", $userId, $circleId);
+$stmt->execute();
+$result = $stmt->get_result();
+$circle = $result->fetch_assoc();
+
 
 if (!$circle) {
     header('Location: circle.php');
@@ -55,16 +58,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
         $errorMsg = 'Circle name is too long (max 255 characters)';
     } else {
         $checkQuery = "SELECT circleId FROM circles WHERE circleName = ? AND circleId != ?";
-        $checkStmt = $pdo->prepare($checkQuery);
-        $checkStmt->execute([$newCircleName, $circleId]);
-        if ($checkStmt->rowCount() > 0) {
+            $checkStmt = $conn->prepare($checkQuery);
+            $checkStmt->bind_param("si", $newCircleName, $circleId);
+            $checkStmt->execute();
+            $checkStmt->store_result();
+            if ($checkStmt->num_rows > 0) {
             $errorMsg = 'This circle name is already taken. Please choose another one.';
         } else {
             // Update circle name
             $updateQuery = "UPDATE circles SET circleName = ? WHERE circleId = ?";
-            $updateStmt = $pdo->prepare($updateQuery);
-            
-            if ($updateStmt->execute([$newCircleName, $circleId])) {
+            $updateStmt = $conn->prepare($updateQuery);
+            $updateStmt->bind_param("si", $newCircleName, $circleId);
+            if ($updateStmt->execute()) {
+
                 $circleName = $newCircleName;
                 $successMsg = 'Circle name updated successfully!';
                 // Show success modal and redirect
@@ -93,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TODA Rescue - Edit Circle Name</title>
+    <title>Driver | Edit Circle Name</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">

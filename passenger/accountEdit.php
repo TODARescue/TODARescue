@@ -3,7 +3,7 @@ session_start();
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
 if (!isset($_SESSION['userId'])) {
   header('Location: ../login.php');
@@ -93,6 +93,7 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edit Profile</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css"><style>
   <style>
     .preview-img {
       width: 100px;

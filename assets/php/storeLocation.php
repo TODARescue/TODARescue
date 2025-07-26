@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 session_start();
 
-require_once '../php/connect.php';
+require_once '../shared/connect.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'store_location') {
     $userId = intval($_POST['userId']);
     $longitude = $_POST['longitude'];

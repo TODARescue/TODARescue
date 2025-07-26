@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['userId'])) {
@@ -14,9 +14,11 @@ $circleId = isset($_GET['circleId']) ? $_GET['circleId'] : null;
 // If no circleId is provided, try to get user's circle
 if (!$circleId) {
     $query = "SELECT cm.circleId FROM circlemembers cm WHERE cm.userId = ? LIMIT 1";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$userId]);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+
     
     if ($result) {
         $circleId = $result['circleId'];
@@ -29,15 +31,20 @@ if (!$circleId) {
 
 // Get user's role in the circle
 $roleQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
-$roleStmt = $pdo->prepare($roleQuery);
-$roleStmt->execute([$userId, $circleId]);
-$userRole = $roleStmt->fetchColumn();
+$roleStmt = $conn->prepare($roleQuery);
+$roleStmt->bind_param("ii", $userId, $circleId);
+$roleStmt->execute();
+$roleResult = $roleStmt->get_result()->fetch_assoc();
+$userRole = $roleResult ? $roleResult['role'] : null;
 
 // Get circle name
 $circleNameQuery = "SELECT circleName FROM circles WHERE circleId = ?";
-$circleNameStmt = $pdo->prepare($circleNameQuery);
-$circleNameStmt->execute([$circleId]);
-$circleName = $circleNameStmt->fetchColumn();
+$circleNameStmt = $conn->prepare($circleNameQuery);
+$circleNameStmt->bind_param("i", $circleId);
+$circleNameStmt->execute();
+$circleNameResult = $circleNameStmt->get_result()->fetch_assoc();
+$circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +52,7 @@ $circleName = $circleNameStmt->fetchColumn();
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TODA Rescue - Circle Details</title>
+    <title>Passenger | Circle Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -67,13 +74,13 @@ $circleName = $circleNameStmt->fetchColumn();
 
                     <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
                     <!-- Banner for admins and owners -->
-                    <div class="alert alert-info mx-3 mt-5 mb-0" style="margin-top: 90px !important; background-color: #2ebcbc;">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-info-circle-fill me-2 mb-3"></i>
-                            <div>
+                    <div class="alert alert-info mx-3 mt-5 mb-0 d-flex align-items-center" style="margin-top: 90px !important; background-color: #2ebcbc;">
+                        <div>
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="bi bi-info-circle-fill me-2"></i>
                                 <strong>Circle: <?php echo htmlspecialchars($circleName); ?></strong>
-                                <p class="mb-0">You have admin privileges in this circle.</p>
                             </div>
+                            <p class="mb-0 px-4">Admin access granted.</p>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -90,7 +97,7 @@ $circleName = $circleNameStmt->fetchColumn();
                         <!-- Edit Circle Name - Only for admins and owners -->
                         <a href="../passenger/editCircleName.php?circleId=<?php echo $circleId; ?>"
                             style="text-decoration: none; color: inherit;">
-                            <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                            <div class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
                                 <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
                             </div>
                         </a>
@@ -106,7 +113,7 @@ $circleName = $circleNameStmt->fetchColumn();
                         <a href="../passenger/changeAdminStatusPassenger.php?circleId=<?php echo $circleId; ?>"
                             style="text-decoration: none; color: inherit;">
                             <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
                                 Change Admin Status
                             </div>
                         </a>
@@ -116,7 +123,7 @@ $circleName = $circleNameStmt->fetchColumn();
                         <!-- Add Circle Members - Only for admins and owners -->
                         <a href="../passenger/inviteMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
                             <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom  bg-light">
                                 Add Circle Members
                             </div>
                         </a>
@@ -124,14 +131,14 @@ $circleName = $circleNameStmt->fetchColumn();
                         <!-- Remove Circle Members - Only for admins and owners -->
                         <a href="../passenger/removeCircleMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
                             <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light">
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
                                 Remove Circle Members
                             </div>
                         </a>
                         <?php endif; ?>
 
                         <!-- Modal Trigger - Available to all members -->
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary bg-light"
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light"
                             data-bs-toggle="modal" data-bs-target="#leaveCircleModal">
                             Leave Circle
                         </div>

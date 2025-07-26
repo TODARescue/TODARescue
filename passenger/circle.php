@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
 // For testing purposes - set a default user ID
 if (!isset($_SESSION['userId'])) {
@@ -15,9 +15,12 @@ $query = "SELECT c.circleId, c.circleName, cm.role
           FROM circles c 
           INNER JOIN circlemembers cm ON c.circleId = cm.circleId 
           WHERE cm.userId = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$userId]);
-$userCircles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$userCircles = $result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +28,7 @@ $userCircles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TODA Rescue - Circle Management</title>
+    <title>Passenger | Circle Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/css/style.css" />
@@ -81,7 +84,7 @@ $userCircles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <?php endif; ?>
 
                             <!-- Buttons -->
-                            <div class="d-flex justify-content-center gap-3 mt-4">
+                            <div class="d-flex justify-content-center pt-2 pb-0 mt-4 mb-0 gap-4">
                                 <a href="../passenger/createCircle.php"><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Create Circle</button></a>
                                 <a href="../passenger/joinCircle.php"><button class="btn btn-sm rounded-pill px-4" style="background-color: #dcdcdc;">Join Circle</button></a>
                             </div>

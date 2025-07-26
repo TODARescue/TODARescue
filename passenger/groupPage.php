@@ -1,5 +1,5 @@
 <?php
-include "../assets/php/connect.php";
+include "../assets/shared/connect.php";
 session_start();
 
 $userId = $_SESSION['userId'];
@@ -238,9 +238,9 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
 
     <div class="pt-4 pt-lg-5 group-container shadow rounded-bottom-5 bg-white" id="group-container">
         <div id="group-list" class="mb-3 text-center">Loading...</div>
-        <div class="mt-3 d-flex flex-align-center justify-content-center text-start">
+        <div class="pt-2 gap-4 pb-0 d-flex flex-align-center justify-content-center text-center">
             <a href="./createCircle.php" class="text-decoration-none">
-                <button type="button" class="btn rounded-pill action-button mx-3" style="font-size: 16px;">
+                <button type="button" class="btn rounded-pill action-button" style="font-size: 16px;">
                     Create Circle
                 </button>
             </a>

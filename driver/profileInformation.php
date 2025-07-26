@@ -1,8 +1,6 @@
 <?php
-// Include database connection
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
-// Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -24,7 +22,6 @@ $stmt = $conn->prepare("SELECT d.driverId, d.plateNumber, d.model, d.address, d.
                         JOIN users u ON d.userId = u.userId
                         WHERE d.userId = ?");
 
-// Debug query
 error_log("Fetching driver info for userId: " . $userId);
 
 if (!$stmt) {
@@ -39,7 +36,6 @@ if ($result->num_rows === 0) {
     $error = "You are not registered as a driver. Please contact support.";
 } else {
     $driver = $result->fetch_assoc();
-    // Debug driver info
     error_log("Driver data: " . print_r($driver, true));
 }
 
@@ -49,7 +45,6 @@ if (isset($_POST['generateQR']) && isset($driver)) {
     $qrData = $driver['plateNumber'];
     $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($qrData);
     
-    // Save QR code URL to database
     $stmt = $conn->prepare("UPDATE drivers SET qrCode = ? WHERE driverId = ?");
     $stmt->bind_param("si", $qrUrl, $driver['driverId']);
     $stmt->execute();
@@ -60,12 +55,9 @@ if (isset($_POST['generateQR']) && isset($driver)) {
     $success = "QR Code has been generated successfully!";
 }
 
-// We'll handle QR code generation via JavaScript to ensure it's always displayed
-// Even if database update fails, we'll display a QR code for the user
 $plateNumber = isset($driver['plateNumber']) ? $driver['plateNumber'] : '';
 $driverId = isset($driver['driverId']) ? $driver['driverId'] : 0;
 
-// Make these values accessible to JavaScript
 $jsPlateNumber = json_encode($plateNumber);
 $jsDriverId = json_encode($driverId);
 
@@ -78,7 +70,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TODA Rescue - Driver Profile</title>
+    <title>Driver | Driver Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -139,7 +131,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                         <div class="col mb-3 py-1">
                             <h5 class="fw-bold"><?php echo htmlspecialchars($driver['fullName']); ?>
                                 <?php if ($driver['isVerified']): ?>
-                                    <span class="badge bg-success rounded-circle">✓</span>
+                                    <img src="../assets/images/verified.png" alt="Verified" style="width: 25px;">
                                 <?php endif; ?>
                             </h5>
                         </div>
@@ -148,7 +140,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     <!-- Tricycle Details -->
                     <div class="row">
                         <div class="col mb-3 py-1">
-                            <h6 class="mb-2 text-dark">Tricycle Details</h6>
+                            <h6 class="mb-2 text-dark fw-bold">Tricycle Details</h6>
                             <p class="mb-1 text-dark"><?php echo htmlspecialchars($driver['model'] . ' - ' . $driver['plateNumber']); ?></p>
                         </div>
                     </div>
@@ -156,7 +148,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     <!-- Tricycle number -->
                     <div class="row">
                         <div class="col mb-3 py-1">
-                            <h6 class="mb-2 text-dark">Tricycle Number</h6>
+                            <h6 class="mb-2 text-dark fw-bold">Tricycle Number</h6>
                             <p class="mb-1 text-dark" id="tricycle-number"><?php echo htmlspecialchars($driver['plateNumber']); ?></p>
                         </div>
                     </div>
@@ -164,7 +156,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     <!-- Permanent Address -->
                     <div class="row">
                         <div class="col mb-3 py-1">
-                            <h6 class="mb-2 text-dark">Permanent Address</h6>
+                            <h6 class="mb-2 text-dark fw-bold">Permanent Address</h6>
                             <p class="mb-1 text-dark"><?php echo htmlspecialchars($driver['address']); ?></p>
                         </div>
                     </div>
@@ -172,7 +164,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     <!-- Toda Registration -->
                     <div class="row">
                         <div class="col mb-4 py-1">
-                            <h6 class="mb-2 text-dark">TODA Registration</h6>
+                            <h6 class="mb-2 text-dark fw-bold">TODA Registration</h6>
                             <p class="mb-1 text-dark"><?php echo htmlspecialchars($driver['todaRegistration']); ?></p>
                         </div>
                     </div>

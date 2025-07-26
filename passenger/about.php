@@ -32,7 +32,7 @@
 </head>
 
 <body class="bg-white justify-content-center align-items-start min-vh-100 pt-3">
-    <?php include '../assets/shared/navbarAdmin.php'; ?>
+    <?php include '../assets/shared/navbarPassenger.php'; ?>
 
     <div class="container px-4 pt-3" style="max-width: 600px;">
 

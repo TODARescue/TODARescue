@@ -1,5 +1,5 @@
 <?php
-require_once '../php/connect.php';
+require_once '../shared/connect.php';
 session_start();
 
 $userId = intval($_GET['userId']);
