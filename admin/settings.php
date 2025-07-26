@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
 $userId = $_SESSION['userId'] ?? null;
 
@@ -29,7 +29,7 @@ $showPasswordModal = !empty($error);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin - Settings</title>
+    <title>Admin | Settings</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -49,13 +49,20 @@ $showPasswordModal = !empty($error);
                     <!-- Settings List -->
                     <div class="list-group list-group-flush px-0 w-100" style="padding-top: 100px;">
                         <!-- Subheader -->
-                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                        <div class="px-3 pt-1 my-2 pb-1 text-secondary fw-bold text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Admin Settings
                         </div>
 
+                        <a href="../admin/about.php" style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light">
+                                About
+                            </div>
+                        </a>
+
                         <!-- Change Password Option -->
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
                             data-bs-toggle="modal" data-bs-target="#passwordModal">
                             Update Password
                         </div>
@@ -64,7 +71,7 @@ $showPasswordModal = !empty($error);
                         <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"
                             style="text-decoration: none; color: inherit;">
                             <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light">
                                 Log Out
                             </div>
                         </a>

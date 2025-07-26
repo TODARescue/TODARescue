@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'connect.php'; // Adjust path if needed
+require_once '../shared/connect.php'; 
 
 header('Content-Type: application/json');
 

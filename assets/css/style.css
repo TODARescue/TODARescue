@@ -43,20 +43,6 @@ h4 {
     0 0 18px 6px rgba(0, 0, 0, 0.15);
 }
 
-/* EMERGEGENCY CONTACT  */
-.contact-card {
-  background-color: #d9d9d9;
-  max-width: 350px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.dropdown-item.active {
-  font-weight: bold;
-  background-color: #2daaa7;
-  color: black;
-}
-
 /* Home Page */
 .small-logo {
   width: 34px;
@@ -198,7 +184,6 @@ h4 {
 .arrive-button {
   background-color: #2ebcbc;
   border: none;
-  padding: 20px;
   transition: background-color 0.3s ease, transform 0.3s ease,
     box-shadow 0.3s ease, top 0.3s ease;
 }
@@ -369,17 +354,7 @@ h4 {
   max-width: 500px;
 }
 
-.arrive-button {
-  background-color: #2ebcbc;
-  border: none;
-  padding: 20px;
-  transition: background-color 0.3s ease, transform 0.3s ease,
-    box-shadow 0.3s ease, top 0.3s ease;
-}
-
-.arrive-button:hover {
-  background-color: #249e9e;
-  color: white;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+.form-select {
+    background-color: white;
+    color: black;
 }

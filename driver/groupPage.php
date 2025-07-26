@@ -1,5 +1,5 @@
 <?php
-include "../assets/php/connect.php";
+include "../assets/shared/connect.php";
 session_start();
 
 $userId = $_SESSION['userId'];
@@ -127,7 +127,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Passenger | Group Page</title>
+    <title>Driver | Group Page</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@600;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -234,9 +234,9 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
 
     <div class="pt-4 pt-lg-5 group-container shadow rounded-bottom-5 bg-white" id="group-container">
         <div id="group-list" class="mb-3 text-center">Loading...</div>
-        <div class="mt-3 d-flex flex-align-center justify-content-center text-start">
+        <div class="pt-2 pb-0 mt-4 mb-0 gap-4 d-flex flex-align-center justify-content-center text-center">
             <a href="./createCircle.php" class="text-decoration-none">
-                <button type="button" class="btn rounded-pill action-button mx-3" style="font-size: 16px;">
+                <button type="button" class="btn rounded-pill action-button" style="font-size: 16px;">
                     Create Circle
                 </button>
             </a>

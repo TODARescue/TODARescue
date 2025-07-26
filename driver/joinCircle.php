@@ -1,5 +1,5 @@
 <?php
-include("../assets/php/connect.php");
+include("../assets/shared/connect.php");
 session_start();
 date_default_timezone_set('Asia/Manila');
 
@@ -72,7 +72,7 @@ $notFound = ($flash === "notFound");
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Join Circle | TODARescue</title>
+<title>Driver |Join Circle</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/style.css">
 </head>

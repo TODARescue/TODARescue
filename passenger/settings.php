@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
 $userId = $_SESSION['userId'] ?? null;
 $isSharing = 0; // default
@@ -21,7 +21,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TODA Rescue - Settings</title>
+    <title>Passenger | Settings</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -54,20 +54,20 @@ if ($result && mysqli_num_rows($result) > 0) {
                     <div class="list-group list-group-flush px-0 w-100" style="padding-top: 100px;">
 
                         <!-- Subheader -->
-                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                        <div class="px-3 pt-1 my-2 pb-1 text-secondary fw-bolder text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Circle Settings
                         </div>
 
                         <a href="../passenger/circle.php" style="text-decoration: none; color: inherit;">
                             <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light">
                                 Circle Management
                             </div>
                         </a>
 
                         <div
-                            class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom border-secondary w-100 bg-light">
+                            class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom w-100 bg-light">
                             <span>Location Sharing</span>
                             <div class="form-check form-switch m-0">
                                 <input class="form-check-input" type="checkbox" role="switch" id="sharing-toggle"
@@ -76,24 +76,24 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </div>
 
                         <!-- Universal Settings -->
-                        <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
+                        <div class="px-3 pt-1 my-2 pb-1 text-secondary fw-bolder text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Universal Settings
                         </div>
 
                         <a href="../passenger/accountView.php" style="text-decoration: none; color: inherit;">
                             <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light">
                                 Account
                             </div>
                         </a>
 
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
                             onclick="handleClick('privacySecurity')">
                             Privacy and Security
                         </div>
                         <a href="../passenger/about.php" style="text-decoration: none; color: inherit;">
-                            <div class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light"
+                            <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
                                 onclick="handleClick('about')">
                                 About
                             </div>
@@ -102,7 +102,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                         <a href="#" data-bs-toggle="modal" data-bs-target="#leaveCircleModal"
                             style="text-decoration: none; color: inherit;">
                             <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom border-secondary w-100 bg-light">
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light">
                                 Log Out
                             </div>
                         </a>

@@ -1,5 +1,5 @@
 <?php
-include("../assets/php/connect.php");
+include("../assets/shared/connect.php");
 session_start();
 
 $userId = $_SESSION['userId'] ?? null;
@@ -192,7 +192,7 @@ if (isset($_POST['arrive-button']) && $historyId !== null) {
                     <div class="flex-grow-1 me-2">
                         <div class="d-flex align-items-center">
                             <h5 class="mb-0 me-2"><?php echo htmlspecialchars($driverName ?? 'N/A'); ?></h5>
-                            <img src="../assets/images/verified.png" alt="Verified" style="width: 12px;">
+                            <img src="../assets/images/verified.png" alt="Verified" style="width: 20px;">
                         </div>
                         <div class="align-items-center">
                             <b id="passenger-count"></b>

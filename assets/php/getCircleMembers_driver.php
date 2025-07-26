@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once '../php/connect.php';
+require_once '../shared/connect.php';
 session_start();
 
 $circleId = intval($_GET['circleId']);

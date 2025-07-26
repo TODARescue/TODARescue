@@ -1,5 +1,5 @@
 <?php
-include("../assets/php/connect.php");   
+include("../assets/shared/connect.php");   
 session_start();
 
 $_SESSION['userId']    = $_SESSION['userId'];
@@ -81,7 +81,7 @@ if (file_exists($jsonPath)) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TODARescue | Emergency Contact</title>
+  <title>Driver | Emergency Contact</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@600;800&display=swap" rel="stylesheet">
@@ -95,7 +95,7 @@ if (file_exists($jsonPath)) {
 
 <!-- FILTER DROPDOWN -->
 <div class="dropdown" style="padding-top:60px;">
-  <button class="btn border border-black bg-transparent text-black shadow rounded-5 fw-semibold dropdown-toggle d-flex align-items-center gap-5 mt-5 mx-3 mb-3"
+  <button class="btn border border-secondary bg-transparent text-black shadow rounded-5 fw-semibold dropdown-toggle d-flex align-items-center gap-5 mt-5 mx-3 mb-3"
           type="button" id="filterButton" data-bs-toggle="dropdown" aria-expanded="false">
           Filter
   </button>
@@ -172,6 +172,10 @@ if (file_exists($jsonPath)) {
   </div>
 </div>
 
+<p id="noContactsMessage" class="text-center text-muted" style="display: none;">
+    No contacts available.
+</p>
+
 <!-- JS -->
 <script>
 function changePhoneIcon(link){
@@ -188,10 +192,23 @@ $('.dropdown-item').click(function(e){
     $('.dropdown-item').removeClass('active');
     $(this).addClass('active');
 
+    let visibleCount = 0;
+
     $('.contact-card').each(function(){
         const type = $(this).data('type-filter');
-        (selected === 'all' || type === selected) ? $(this).show() : $(this).hide();
+        if (selected === 'all' || type === selected) {
+            $(this).show();
+            visibleCount++;
+        } else {
+            $(this).hide();
+        }
     });
+
+    if (visibleCount === 0) {
+        $('#noContactsMessage').show();
+    } else {
+        $('#noContactsMessage').hide();
+    }
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>

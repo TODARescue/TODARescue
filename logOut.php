@@ -1,5 +1,5 @@
 <?php
-include_once './assets/php/connect.php';
+include_once './assets/shared/connect.php';
 session_start();
 
 $updateStatusQuery = "UPDATE users SET isRiding = 0 WHERE userId = {$_SESSION['userId']}";

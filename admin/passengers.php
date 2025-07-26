@@ -22,11 +22,12 @@ $filter = $_GET['filter'] ?? 'all';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
+
 <body class="bg-white d-flex justify-content-center align-items-start min-vh-100 pt-5">
 
-    <div class="container px-4 pb-4" style="max-width: 400px;">
+    <div class="container px-4 pb-4" style="max-width: 500px;">
         <h3 class="fw-bold text-center mb-3">TODA Rescue</h3>
-        <h5 class="mb-3">Passengers</h5>
+        <h5 class="mb-4">Passengers</h5>
 
         <!-- Search & Controls -->
         <form method="GET" class="search-bar mb-3">
@@ -38,7 +39,7 @@ $filter = $_GET['filter'] ?? 'all';
                 </button>
             </div>
 
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 ">
                 <select name="sort" class="form-select rounded-5" onchange="this.form.submit()">
                     <option value="">Sort</option>
                     <option value="asc" <?php if ($sort === 'asc')

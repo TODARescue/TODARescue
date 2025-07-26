@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once '../php/connect.php';
+require_once '../shared/connect.php';
 
 $selectedUserId = isset($_GET['userId']) ? intval($_GET['userId']) : null;
 

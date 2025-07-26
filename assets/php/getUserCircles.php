@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 session_start();
 
-require_once '../php/connect.php';
+require_once '../shared/connect.php';
 
 $userId = $_SESSION['userId'];
 

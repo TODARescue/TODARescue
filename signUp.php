@@ -1,5 +1,5 @@
 <?php
-include("assets/php/connect.php");
+include("assets/shared/connect.php");
 
 session_start();
 
