@@ -23,9 +23,12 @@ if (!$circleId) {
 // Check if user is a member of this circle and get their role
 $query = "SELECT cm.role FROM circlemembers cm
           WHERE cm.userId = ? AND cm.circleId = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$userId, $circleId]);
-$roleResult = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ii", $userId, $circleId);
+$stmt->execute();
+$result = $stmt->get_result();
+$roleResult = $result->fetch_assoc();
+
 
 if (!$roleResult) {
     header('Location: circle.php');
@@ -42,76 +45,81 @@ if ($userRole !== 'owner') {
 
 // Process AJAX request for toggling admin status
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggleAdmin') {
+    header('Content-Type: application/json'); // Tell browser we're returning JSON
+
     if (isset($_POST['memberId'], $_POST['isAdmin'])) {
         $memberId = intval($_POST['memberId']);
         $isAdmin = $_POST['isAdmin'] === 'true' ? 'admin' : 'member';
-        
-        // Debug info
-        error_log("Toggle admin request: memberId=$memberId, isAdmin=$isAdmin, circleId=$circleId");
-        
+
         // Check if member exists in circle
         $checkMemberQuery = "SELECT COUNT(*) FROM circlemembers WHERE userId = ? AND circleId = ?";
-        $checkMemberStmt = $pdo->prepare($checkMemberQuery);
-        $checkMemberStmt->execute([$memberId, $circleId]);
-        $memberExists = (int)$checkMemberStmt->fetchColumn();
-        
-        if ($memberExists === 0) {
+        $checkMemberStmt = $conn->prepare($checkMemberQuery);
+        $checkMemberStmt->bind_param("ii", $memberId, $circleId);
+        $checkMemberStmt->execute();
+        $checkMemberStmt->bind_result($memberCount);
+        $checkMemberStmt->fetch();
+        $checkMemberStmt->close();
+
+        if ($memberCount === 0) {
             echo json_encode(['success' => false, 'message' => 'This user is not a member of the circle.']);
             exit;
         }
-        
+
         // Check if trying to change owner status
         $checkOwnerQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
-        $checkStmt = $pdo->prepare($checkOwnerQuery);
-        $checkStmt->execute([$memberId, $circleId]);
-        $currentRole = $checkStmt->fetchColumn();
-        
-        error_log("Current role: $currentRole");
-        
+        $checkStmt = $conn->prepare($checkOwnerQuery);
+        $checkStmt->bind_param("ii", $memberId, $circleId);
+        $checkStmt->execute();
+        $checkStmt->bind_result($currentRole);
+        $checkStmt->fetch();
+        $checkStmt->close();
+
         if ($currentRole === 'owner') {
             echo json_encode(['success' => false, 'message' => 'Cannot change owner status']);
             exit;
         }
-        
+
         try {
-            // Begin transaction
-            $pdo->beginTransaction();
-            
-            // Update member role
+            $conn->begin_transaction();
+
             $updateQuery = "UPDATE circlemembers SET role = ? WHERE userId = ? AND circleId = ?";
-            $updateStmt = $pdo->prepare($updateQuery);
-            $updateResult = $updateStmt->execute([$isAdmin, $memberId, $circleId]);
-            
-            error_log("Update query executed. Result: " . ($updateResult ? "Success" : "Failed"));
-            error_log("Affected rows: " . $updateStmt->rowCount());
-            
-            if ($updateResult && $updateStmt->rowCount() > 0) {
-                $pdo->commit();
+            $updateStmt = $conn->prepare($updateQuery);
+            $updateStmt->bind_param("sii", $isAdmin, $memberId, $circleId);
+            $updateResult = $updateStmt->execute();
+
+            if ($updateResult && $updateStmt->affected_rows > 0) {
+                $conn->commit();
                 echo json_encode(['success' => true, 'message' => 'Admin status updated successfully']);
             } else {
-                $pdo->rollBack();
-                echo json_encode(['success' => false, 'message' => 'Failed to update status. No changes made.']);
+                $conn->rollback();
+                echo json_encode(['success' => false, 'message' => 'No changes made.']);
             }
+
+            $updateStmt->close();
         } catch (Exception $e) {
-            $pdo->rollBack();
+            $conn->rollback();
             error_log("Exception: " . $e->getMessage());
             echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
         }
         exit;
     }
-    
-    echo json_encode(['success' => false, 'message' => 'Invalid request: Missing required parameters']);
+
+    echo json_encode(['success' => false, 'message' => 'Invalid request: Missing parameters']);
     exit;
 }
+
 
 // Get all members of the circle
 $membersQuery = "SELECT cm.userId, u.firstName, u.lastName, cm.role 
                 FROM circlemembers cm 
                 INNER JOIN users u ON cm.userId = u.userId 
                 WHERE cm.circleId = ?";
-$membersStmt = $pdo->prepare($membersQuery);
-$membersStmt->execute([$circleId]);
-$members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
+$membersStmt = $conn->prepare($membersQuery);
+$membersStmt->bind_param("i", $circleId);
+$membersStmt->execute();
+$result = $membersStmt->get_result();
+$members = $result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 <!DOCTYPE html>

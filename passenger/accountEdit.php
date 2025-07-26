@@ -93,6 +93,7 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edit Profile</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css"><style>
   <style>
     .preview-img {
       width: 100px;

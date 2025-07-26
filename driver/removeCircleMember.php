@@ -24,9 +24,12 @@ if (!$circleId) {
 // Check if user is a member of this circle and get their role
 $query = "SELECT cm.role FROM circlemembers cm
           WHERE cm.userId = ? AND cm.circleId = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$userId, $circleId]);
-$roleResult = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ii", $userId, $circleId);
+$stmt->execute();
+$result = $stmt->get_result();
+$roleResult = $result->fetch_assoc();
+
 
 if (!$roleResult) {
     header('Location: circle.php');
@@ -45,85 +48,91 @@ if ($userRole !== 'admin' && $userRole !== 'owner') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'removeMember') {
     if (isset($_POST['memberId'])) {
         $memberId = intval($_POST['memberId']);
-        
-        // Debug info
+
         error_log("Remove member request: memberId=$memberId, circleId=$circleId, userRole=$userRole");
-        
-        // Check if trying to remove self
+
         if ($memberId === $userId) {
             echo json_encode(['success' => false, 'message' => 'You cannot remove yourself from the circle. Use the Leave Circle option instead.']);
             exit;
         }
-        
-        // Check if member exists in circle
+
+        // Check if member exists
         $checkMemberQuery = "SELECT COUNT(*) FROM circlemembers WHERE userId = ? AND circleId = ?";
-        $checkMemberStmt = $pdo->prepare($checkMemberQuery);
-        $checkMemberStmt->execute([$memberId, $circleId]);
-        $memberExists = (int)$checkMemberStmt->fetchColumn();
-        
-        if ($memberExists === 0) {
+        $checkMemberStmt = $conn->prepare($checkMemberQuery);
+        $checkMemberStmt->bind_param("ii", $memberId, $circleId);
+        $checkMemberStmt->execute();
+        $result = $checkMemberStmt->get_result();
+        $memberExists = $result->fetch_row()[0];
+
+        if ($memberExists == 0) {
             echo json_encode(['success' => false, 'message' => 'This user is not a member of the circle.']);
             exit;
         }
-        
-        // Check if trying to remove the owner
+
+        // Get member role
         $checkRoleQuery = "SELECT role FROM circlemembers WHERE userId = ? AND circleId = ?";
-        $checkRoleStmt = $pdo->prepare($checkRoleQuery);
-        $checkRoleStmt->execute([$memberId, $circleId]);
-        $memberRole = $checkRoleStmt->fetchColumn();
-        
+        $checkRoleStmt = $conn->prepare($checkRoleQuery);
+        $checkRoleStmt->bind_param("ii", $memberId, $circleId);
+        $checkRoleStmt->execute();
+        $roleResult = $checkRoleStmt->get_result()->fetch_assoc();
+        $memberRole = $roleResult['role'];
+
         error_log("Member role: $memberRole");
-        
+
         if ($memberRole === 'owner') {
             echo json_encode(['success' => false, 'message' => 'You cannot remove the owner of the circle.']);
             exit;
         }
-        
-        // Check if admin is trying to remove another admin (only owner can do this)
+
         if ($userRole === 'admin' && $memberRole === 'admin') {
             echo json_encode(['success' => false, 'message' => 'You need to be the circle owner to remove other admins.']);
             exit;
         }
-        
+
         try {
-            // Begin transaction
-            $pdo->beginTransaction();
-            
-            // Remove member
+            $conn->begin_transaction();
+
             $removeQuery = "DELETE FROM circlemembers WHERE userId = ? AND circleId = ?";
-            $removeStmt = $pdo->prepare($removeQuery);
-            $removeResult = $removeStmt->execute([$memberId, $circleId]);
-            
-            error_log("Remove query executed. Result: " . ($removeResult ? "Success" : "Failed"));
-            error_log("Affected rows: " . $removeStmt->rowCount());
-            
-            if ($removeResult && $removeStmt->rowCount() > 0) {
-                $pdo->commit();
+            $removeStmt = $conn->prepare($removeQuery);
+            $removeStmt->bind_param("ii", $memberId, $circleId);
+            $removeStmt->execute();
+
+            error_log("Remove query executed. Affected rows: " . $removeStmt->affected_rows);
+
+            if ($removeStmt->affected_rows > 0) {
+                $conn->commit();
                 echo json_encode(['success' => true, 'message' => 'Member removed successfully']);
             } else {
-                $pdo->rollBack();
-                echo json_encode(['success' => false, 'message' => 'Failed to remove member. No rows affected.']);
+                $conn->rollback();
+                echo json_encode(['success' => false, 'message' => 'Failed to remove member.']);
             }
         } catch (Exception $e) {
-            $pdo->rollBack();
+            $conn->rollback();
             error_log("Exception: " . $e->getMessage());
             echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
         }
         exit;
     }
-    
+
     echo json_encode(['success' => false, 'message' => 'Invalid request: Missing member ID']);
     exit;
 }
 
+
 // Get all members of the circle except the current user
 $membersQuery = "SELECT cm.userId, u.firstName, u.lastName, cm.role 
-                FROM circlemembers cm 
-                INNER JOIN users u ON cm.userId = u.userId 
-                WHERE cm.circleId = ? AND cm.userId != ?";
-$membersStmt = $pdo->prepare($membersQuery);
-$membersStmt->execute([$circleId, $userId]);
-$members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
+                 FROM circlemembers cm 
+                 INNER JOIN users u ON cm.userId = u.userId 
+                 WHERE cm.circleId = ? AND cm.userId != ?";
+$membersStmt = $conn->prepare($membersQuery);
+$membersStmt->bind_param("ii", $circleId, $userId);
+$membersStmt->execute();
+$result = $membersStmt->get_result();
+$members = [];
+while ($row = $result->fetch_assoc()) {
+    $members[] = $row;
+}
+
 ?>
 
 <!DOCTYPE html>

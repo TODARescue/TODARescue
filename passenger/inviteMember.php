@@ -27,9 +27,12 @@ $query = "SELECT c.circleId, c.circleName, c.inviteCode, cm.role
           FROM circles c 
           INNER JOIN circlemembers cm ON c.circleId = cm.circleId 
           WHERE cm.userId = ? AND c.circleId = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$userId, $circleId]);
-$circle = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ii", $userId, $circleId);
+$stmt->execute();
+$result = $stmt->get_result();
+$circle = $result->fetch_assoc();
+
 
 // If user is not a member of this circle, redirect to circle.php
 if (!$circle) {
@@ -62,10 +65,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generateNewCode'])) {
         }
         
         // Check if this code already exists
-        $checkQuery = "SELECT COUNT(*) FROM circles WHERE inviteCode = ?";
-        $checkStmt = $pdo->prepare($checkQuery);
-        $checkStmt->execute([$newInviteCode]);
-        $codeExists = ($checkStmt->fetchColumn() > 0);
+       $checkQuery = "SELECT COUNT(*) FROM circles WHERE inviteCode = ?";
+        $checkStmt = $conn->prepare($checkQuery);
+        $checkStmt->bind_param("s", $newInviteCode);
+        $checkStmt->execute();
+        $checkStmt->bind_result($codeCount);
+        $checkStmt->fetch();
+        $checkStmt->close(); 
+
+        $codeExists = ($codeCount > 0);
         
         if (!$codeExists) {
             $isUnique = true;
@@ -77,9 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generateNewCode'])) {
     if ($isUnique) {
         // Update the invite code in the database
         $updateQuery = "UPDATE circles SET inviteCode = ? WHERE circleId = ?";
-        $updateStmt = $pdo->prepare($updateQuery);
-        
-        if ($updateStmt->execute([$newInviteCode, $circleId])) {
+        $updateStmt = $conn->prepare($updateQuery);
+        $updateStmt->bind_param("si", $newInviteCode, $circleId);
+        if ($updateStmt->execute()) {
             $inviteCode = $newInviteCode;
             $successMsg = 'New invite code generated successfully!';
         } else {
@@ -90,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generateNewCode'])) {
     }
 }
 ?>
-
 <!doctype html>
 <html lang="en">
 
