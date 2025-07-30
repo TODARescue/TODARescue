@@ -87,11 +87,13 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
 
                     <!-- Options List -->
                     <div class="list-group list-group-flush w-100" style="padding-top: <?php echo ($userRole === 'owner' || $userRole === 'admin') ? '20px' : '120px'; ?>;">
-
+                        
+                        <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
                         <div class="px-3 pt-2 pb-1 text-secondary fw-bold text-uppercase"
                             style="font-size: 0.85rem; user-select: none;">
                             Circle Details
                         </div>
+                        <?php endif; ?>
 
                         <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
                         <!-- Edit Circle Name - Only for admins and owners -->

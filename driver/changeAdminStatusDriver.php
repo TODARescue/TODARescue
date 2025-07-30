@@ -134,13 +134,11 @@ $members = $result->fetch_all(MYSQLI_ASSOC);
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
-<body class="d-flex justify-content-center align-items-center vh-100"
-    style="background-color: #2c2c2c; font-family: 'Inter', sans-serif; margin: 0;">
+<body style="font-family: 'Inter', sans-serif; margin: 0;">
     <div class="container-fluid p-0 m-0 h-100">
-        <div class="row h-100 g-0">
-            <div class="col-12 d-flex justify-content-center align-items-start h-100">
-                <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
-                    style="border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
+        <div class="row g-0">
+            <div class="col-12">
+                <div class="card bg-white w-100 d-flex flex-column p-0">
 
                     <!-- Error Modal -->
                     <div id="errorModal" class="modal fade" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
@@ -203,35 +201,34 @@ $members = $result->fetch_all(MYSQLI_ASSOC);
                     <!-- Member List -->
                     <div class="container-fluid mt-2 pt-2">
                         <div class="row">
-                            <div class="col list-group list-group-flush px-0 w-100">
-                                <div class="mb-1">
-                                    <h4 class="fs-5 mt-3 px-4">Admin Status</h4>
-                                    <p class="text-muted small px-4">Toggle switches to change admin status</p>
-                                </div>
-
-                                <div class="container-fluid p-0">
-                                    <div class="list-group">
-                                        <?php foreach ($members as $member): ?>
-                                            <?php
-                                            $fullName = $member['firstName'] . ' ' . $member['lastName'];
-                                            $isAdmin = $member['role'] === 'admin' || $member['role'] === 'owner';
-                                            $isDisabled = $member['role'] === 'owner' || $member['userId'] == $userId;
-                                            ?>
-                                            <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-4 text-black bg-light w-100 border-0 border-bottom border-secondary">
-                                                <span class="fw-medium"><?php echo htmlspecialchars($fullName); ?>
-                                                    <?php if ($member['role'] === 'owner'): ?>
-                                                        <span class="badge bg-primary ms-2">Owner</span>
-                                                    <?php endif; ?>
-                                                </span>
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input admin-toggle" type="checkbox" 
-                                                           data-member-id="<?php echo $member['userId']; ?>"
-                                                           <?php echo $isAdmin ? 'checked' : ''; ?> 
-                                                           <?php echo $isDisabled ? 'disabled' : ''; ?>>
-                                                </div>
+                            <div class="col px-3">
+                                <h4 class="mb-0 pt-3">Admin Status</h4>
+                                <p class="text-muted small mb-3">Toggle switches to change admin status</p>
+                                
+                                <div class="list-group list-group-flush">
+                                    <?php foreach ($members as $member): ?>
+                                        <?php
+                                        $fullName = $member['firstName'] . ' ' . $member['lastName'];
+                                        $isAdmin = $member['role'] === 'admin' || $member['role'] === 'owner';
+                                        $isDisabled = $member['role'] === 'owner' || $member['userId'] == $userId;
+                                        ?>
+                                        <div class="d-flex align-items-center justify-content-between py-3 border-bottom">
+                                            <div>
+                                                <span class="fw-medium"><?php echo htmlspecialchars($fullName); ?></span>
+                                                <?php if ($member['role'] === 'owner'): ?>
+                                                    <span class="badge rounded-pill bg-primary ms-2">Owner</span>
+                                                <?php endif; ?>
                                             </div>
-                                        <?php endforeach; ?>
-                                    </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input admin-toggle" type="checkbox" 
+                                                       role="switch"
+                                                       style="width: 3em; height: 1.5em;"
+                                                       data-member-id="<?php echo $member['userId']; ?>"
+                                                       <?php echo $isAdmin ? 'checked' : ''; ?> 
+                                                       <?php echo $isDisabled ? 'disabled' : ''; ?>>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>
