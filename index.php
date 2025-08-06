@@ -105,8 +105,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 
                             </div>
+
+                            <p class="mb-1">Password</p>
                             <div class="mb-3 position-relative">
-                                <p class="mb-1">Password</p>
                                 <input type="password" name="password" id="password" class="form-control"
                                     placeholder="Password" required
                                     value="<?php echo htmlspecialchars($storedPassword); ?>"
