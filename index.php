@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter&family=Rethink+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
@@ -83,19 +83,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="bg-white w-100 h-100 d-flex flex-column justify-content-center px-4"
                     style="max-width: 100%; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
 
-                    <div class="text-center mb-5" style="margin-top: -200px;">
-                        <img src="assets/images/Logo.png" alt="TODA Rescue Logo" style="width: 80px;">
-                        <h4 class="fw-bold mt-2">TODA Rescue</h4>
+                    <div class="text-center mb-4" style="margin-top: -80px;">
+                        <img src="assets/images/Logo.png" alt="TODA Rescue Logo" style="width: 100px;">
+                        <h1 class="mt-1" style="font-weight: 800;">TODA Rescue</h1>
                     </div>
 
                     <div class="mx-auto" style="width: 100%; max-width: 350px;">
-                        <h5 class="fw-bold mb-3 text-center">Login</h5>
+                        <h5 class="fw-bold mb-5 text-center">Login</h5>
                         <form method="POST" action="">
                             <?php if (!empty($error)) { ?>
                                 <div class="alert alert-danger text-center py-1 small"><?php echo $error; ?></div>
                             <?php } ?>
 
                             <div class="mb-3">
+                                <p class="mb-1">Contact Number</p>
                                 <input type="text" name="contactNumber" class="form-control"
                                     placeholder="Contact Number" required
                                     value="<?php echo htmlspecialchars($storedContact); ?>" pattern="[0-9]*"
@@ -105,6 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             </div>
                             <div class="mb-3 position-relative">
+                                <p class="mb-1">Password</p>
                                 <input type="password" name="password" id="password" class="form-control"
                                     placeholder="Password" required
                                     value="<?php echo htmlspecialchars($storedPassword); ?>"
