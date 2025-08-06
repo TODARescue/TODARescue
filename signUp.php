@@ -99,23 +99,28 @@ if (isset($_POST['btnSignUp'])) {
 
                         <form method="POST" action="signUp.php">
                             <div class="mb-3">
+                                <p class="mb-1">First Name</p>
                                 <input type="text" class="form-control" placeholder="First Name" name="firstName"
                                     required style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
                             <div class="mb-3">
+                                <p class="mb-1">Password</p>
                                 <input type="text" class="form-control" placeholder="Last Name" name="lastName" required
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
                             <div class="mb-3">
+                                <p class="mb-1">Email</p>
                                 <input type="email" class="form-control" placeholder="Email" name="email" required
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
                             <div class="mb-3">
+                                <p class="mb-1">Contact Number</p>
                                 <input type="text" class="form-control" placeholder="09123456781" name="contact"
                                     pattern="[0-9]*" inputmode="numeric"
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '')" required
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
+                            <p class="mb-1">Password</p>
                             <div class="mb-3 position-relative">
                                 <input type="password" id="password" class="form-control" placeholder="Password"
                                     name="password" required minlength="8"
@@ -127,7 +132,7 @@ if (isset($_POST['btnSignUp'])) {
                                     <i id="toggleIcon1" class="bi bi-eye-fill"></i>
                                 </button>
                             </div>
-
+                            <p class="mb-1">Confirm Password</p>
                             <div class="mb-3 position-relative">
                                 <input type="password" id="confirmPassword" class="form-control"
                                     placeholder="Confirm Password" name="confirmPassword" required minlength="8"
