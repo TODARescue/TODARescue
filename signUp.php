@@ -117,8 +117,7 @@ if (isset($_POST['btnSignUp'])) {
                             <?php } ?>
 
                         <?php } elseif ($error == "CONTACT_INVALID") { ?>
-                            <div class="alert alert-warning text-center mb-3">Contact must start with 09 and be exactly 11
-                                digits long.</div>
+                            <div class="alert alert-warning text-center mb-3">The contact number must start with 09 and contain exactly 11 digits</div>
                         <?php } elseif ($error == "CONTACT_LENGTH") { ?>
                             <div class="alert alert-warning text-center mb-3">Contact number must be exactly 11 digits.
                             </div>
