@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result && mysqli_num_rows($result) === 1) {
         $user = mysqli_fetch_assoc($result);
 
-        // 🔒 Restriction Check: Account is marked as deleted
+        // Restriction Check: Account is marked as deleted
         if ($user['isDeleted'] == 1) {
             $error = "Account is restricted.";
         } elseif ($user['password'] === $password) {
