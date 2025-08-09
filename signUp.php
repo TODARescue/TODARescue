@@ -34,11 +34,11 @@ if (isset($_POST['btnSignUp'])) {
     // Validate names (letters and spaces only, max length 15)
     elseif (!preg_match("/^[a-zA-Z\s]+$/", $firstName)) {
         $error = "FIRSTNAME_INVALID";
-    } elseif (strlen($firstName) > 15) {
+    } elseif (strlen($firstName) > 20) {
         $error = "FIRSTNAME_TOO_LONG";
     } elseif (!preg_match("/^[a-zA-Z\s]+$/", $lastName)) {
         $error = "LASTNAME_INVALID";
-    } elseif (strlen($lastName) > 15) {
+    } elseif (strlen($lastName) > 20) {
         $error = "LASTNAME_TOO_LONG";
     }
     // Validate contact number format
@@ -138,7 +138,7 @@ if (isset($_POST['btnSignUp'])) {
                                     required style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
                             <div class="mb-3">
-                                <p class="mb-1">Password</p>
+                                <p class="mb-1">Last Name</p>
                                 <input type="text" class="form-control" placeholder="Last Name" name="lastName" required
                                     style="border-radius: 25px; background-color: #D9D9D9; border: none;">
                             </div>
