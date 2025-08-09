@@ -12,10 +12,10 @@ $_SESSION['contact'] = "";
 $error = "";
 
 if (isset($_POST['btnSignUp'])) {
-    $firstName = $_POST['firstName'];
-    $lastName = $_POST['lastName'];
+    $firstName = trim($_POST['firstName']);
+    $lastName = trim($_POST['lastName']);
     $email = $_POST['email'];
-    $contact = $_POST['contact'];
+    $contact = trim($_POST['contact']); // Trim spaces before validation
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirmPassword'];
 
@@ -30,6 +30,22 @@ if (isset($_POST['btnSignUp'])) {
         } elseif ($existingUser['contactNumber'] === $contact) {
             $error = "CONTACT_EXISTS";
         }
+    }
+    // Validate names (letters and spaces only, max length 15)
+    elseif (!preg_match("/^[a-zA-Z\s]+$/", $firstName)) {
+        $error = "FIRSTNAME_INVALID";
+    } elseif (strlen($firstName) > 15) {
+        $error = "FIRSTNAME_TOO_LONG";
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $lastName)) {
+        $error = "LASTNAME_INVALID";
+    } elseif (strlen($lastName) > 15) {
+        $error = "LASTNAME_TOO_LONG";
+    }
+    // Validate contact number format
+    elseif (!preg_match('/^(09)\d{9}$/', $contact)) {
+        $error = "CONTACT_INVALID";
+    } elseif (strlen($contact) !== 11) {
+        $error = "CONTACT_LENGTH";
     } elseif (!ctype_digit($contact)) {
         $error = "CONTACT_NOT_INTEGER";
     } elseif (strlen($password) < 8) {
@@ -88,6 +104,24 @@ if (isset($_POST['btnSignUp'])) {
                             <div class="alert alert-warning text-center mb-3">Email already exists.</div>
                         <?php } elseif ($error == "CONTACT_EXISTS") { ?>
                             <div class="alert alert-warning text-center mb-3">Contact number already exists.</div>
+                        <?php } elseif ($error == "FIRSTNAME_TOO_LONG") { ?>
+                            <div class="alert alert-warning text-center mb-3">First name cannot exceed 15 characters.</div>
+                        <?php } elseif ($error == "LASTNAME_TOO_LONG") { ?>
+                            <div class="alert alert-warning text-center mb-3">Last name cannot exceed 15 characters.</div>
+                            <?php if ($error == "FIRSTNAME_INVALID") { ?>
+                                <div class="alert alert-warning text-center mb-3">First name can only contain letters and
+                                    spaces.</div>
+                            <?php } elseif ($error == "LASTNAME_INVALID") { ?>
+                                <div class="alert alert-warning text-center mb-3">Last name can only contain letters and spaces.
+                                </div>
+                            <?php } ?>
+
+                        <?php } elseif ($error == "CONTACT_INVALID") { ?>
+                            <div class="alert alert-warning text-center mb-3">Contact must start with 09 and be exactly 11
+                                digits long.</div>
+                        <?php } elseif ($error == "CONTACT_LENGTH") { ?>
+                            <div class="alert alert-warning text-center mb-3">Contact number must be exactly 11 digits.
+                            </div>
                         <?php } elseif ($error == "CONTACT_NOT_INTEGER") { ?>
                             <div class="alert alert-warning text-center mb-3">Contact number must be digits only.</div>
                         <?php } elseif ($error == "PASSWORD_TOO_SHORT") { ?>
@@ -95,6 +129,7 @@ if (isset($_POST['btnSignUp'])) {
                         <?php } elseif ($error == "PASSWORD_MISMATCH") { ?>
                             <div class="alert alert-danger text-center mb-3">Passwords do not match.</div>
                         <?php } ?>
+
 
 
                         <form method="POST" action="signUp.php">
