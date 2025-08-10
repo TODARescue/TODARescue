@@ -88,46 +88,28 @@ if (!$userData || !$driverData) {
         <?php if ($userData['isDeleted'] == 1): ?>
             <p class="text-center text-danger fw-bold small mt-1 mb-3">Inactive account</p>
         <?php endif; ?>
+<div class="px-2 mt-4">
+    <?php
+    $fields = [
+        'First Name' => htmlspecialchars($userData['firstName']),
+        'Last Name' => htmlspecialchars($userData['lastName']),
+        'Contact Number' => htmlspecialchars($userData['contactNumber']),
+        'Tricycle Model' => htmlspecialchars($driverData['model']),
+        'Plate Number' => htmlspecialchars($driverData['plateNumber']),
+        'Permanent Address' => htmlspecialchars($driverData['address']),
+        'Toda Registration' => htmlspecialchars($driverData['todaRegistration']),
+        'Verification' => $driverData['isVerified'] == 1 ? 'Verified' : 'Not Verified'
+    ];
 
-        <div class="px-2" style="overflow-x: hidden;">
-            <div class="row mb-2">
-                <div class="col-6 fw-medium">First Name:</div>
-                <div class="col-6 text-truncate"><?php echo htmlspecialchars($userData['firstName']); ?></div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6 fw-medium">Last Name:</div>
-                <div class="col-6 text-truncate"><?php echo htmlspecialchars($userData['lastName']); ?></div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6 fw-medium">Contact Number:</div>
-                <div class="col-6 text-truncate"><?php echo htmlspecialchars($userData['contactNumber']); ?></div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6 fw-medium">Tricycle Model:</div>
-                <div class="col-6 text-truncate"><?php echo htmlspecialchars($driverData['model']); ?></div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6 fw-medium">Plate Number:</div>
-                <div class="col-6 text-truncate"><?php echo htmlspecialchars($driverData['plateNumber']); ?></div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6 fw-medium">Permanent Address:</div>
-                <div class="col-6 text-truncate"><?php echo htmlspecialchars($driverData['address']); ?></div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6 fw-medium">Toda Registration:</div>
-                <div class="col-6 text-truncate"><?php echo htmlspecialchars($driverData['todaRegistration']); ?></div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-6 fw-medium">Verification:</div>
-                <div class="col-6 text-truncate">
-                    <?php echo $driverData['isVerified'] == 1 ? 'Verified' : 'Not Verified'; ?>
-                </div>
-            </div>
-        </div>
-
-
-
+    foreach ($fields as $label => $value) {
+        echo '
+        <div class="row py-2 border-bottom">
+            <div class="col-6 fw-semibold text-secondary">' . $label . ':</div>
+            <div class="col-6 text-break">' . $value . '</div>
+        </div>';
+    }
+    ?>
+</div>
 
         <!-- Delete Modal -->
         <div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
