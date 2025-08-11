@@ -158,10 +158,6 @@ if (file_exists($jsonPath)) {
                 <h5 class="fw-semibold mb-1">Circle Name:</h5>
                 <p class="mb-2"><?= htmlspecialchars($c['circleName']) ?></p>
             </div>
-            <div>
-                <h5 class="fw-semibold mb-1">Permanent Address:</h5>
-                <p>Janopol Occidental, Tanauan City, Batangas</p>
-            </div>
         </div>
         <?php endforeach; ?>
 
