@@ -3,7 +3,7 @@ session_start();
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
-require_once '../assets/shared/connect.php';
+require_once '../assets/php/connect.php';
 
 if (!isset($_SESSION['userId'])) {
     header('Location: ../login.php');
@@ -99,7 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $imageFolder = ($role === 'driver') ? 'driver' : 'passengers';
 $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspecialchars($user['photo']) : '';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,12 +106,18 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Edit Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css"><style>
-        
+    <style>
+        /* Make the image responsive */
         .preview-img {
-            width: 100px;
-            height: 100px;
+            max-width: 150px;
+            width: 100%;
+            height: auto;
             object-fit: cover;
+        }
+        @media (max-width: 576px) {
+            .preview-img {
+                max-width: 120px;
+            }
         }
     </style>
 </head>
@@ -133,7 +138,7 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
                      onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
                      class="rounded-circle preview-img mb-2" alt="Profile Photo">
 
-                <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
+                <input type="file" name="photo" class="form-control mt-2" accept="image/*" onchange="previewImage(event)">
             </div>
 
             <div class="mb-3">
@@ -187,7 +192,8 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
     function previewImage(event) {
         const reader = new FileReader();
         reader.onload = function () {
-            document.getElementById('preview').src = reader.result;
+            const img = document.getElementById('preview');
+            img.src = reader.result;
         };
         reader.readAsDataURL(event.target.files[0]);
     }
