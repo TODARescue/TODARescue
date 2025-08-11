@@ -34,6 +34,25 @@ if ($result && mysqli_num_rows($result) > 0) {
         .modal-backdrop.show {
             opacity: 0.7;
         }
+
+        .form-check-input {
+            border-color: #2daaa7;
+            --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%232daaa7'/%3e%3c/svg%3e") !important;
+        }
+
+        .form-check-input:checked {
+            background-color: #2daaa7;
+            border-color: #2daaa7;
+            --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='white'/%3e%3c/svg%3e") !important;
+        }
+
+        .form-check-input:checked::before {
+            background-color: #2daaa7 !important;
+        }
+
+        .form-check-input::before {
+            background-color: #fff !important;
+        }
     </style>
 </head>
 
