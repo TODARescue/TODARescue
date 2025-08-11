@@ -317,7 +317,21 @@ if (isset($_POST['arrive-button'])) {
 
     <!-- Toggling Details -->
     <script src="../assets/js/homePage/details.js"></script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
 
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
 
 </html>

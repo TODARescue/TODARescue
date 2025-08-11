@@ -289,6 +289,21 @@ if (isset($_POST['arrive-button']) && $historyId !== null) {
         console.log("Driver Name:", <?php echo json_encode($_SESSION['driverName'] ?? 'N/A'); ?>);
         console.log("Driver Id:", <?php echo json_encode($_SESSION['driverId'] ?? 'N/A'); ?>);
     </script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
 
 </html>

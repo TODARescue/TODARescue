@@ -300,6 +300,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
                 .catch(err => console.error("Failed to update status:", err));
         }
     </script>
+
     <!-- Buttons -->
     <script>
         const groupContainer = document.getElementById('group-container');

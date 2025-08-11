@@ -102,13 +102,14 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Edit Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css"><style>
-        
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
         .preview-img {
             width: 100px;
             height: 100px;
@@ -118,79 +119,95 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
 </head>
 
 <body class="bg-dark text-white d-flex justify-content-center align-items-center vh-100">
-<div class="container">
-    <div class="card bg-white text-dark p-4 rounded-4 shadow-lg">
-        <h3 class="text-center mb-4">Edit Account</h3>
+    <div class="container">
+        <div class="card bg-white text-dark p-4 rounded-4 shadow-lg">
+            <h3 class="text-center mb-4">Edit Account</h3>
 
-        <?php if ($error): ?>
-            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
-
-        <form method="POST" enctype="multipart/form-data">
-            <div class="text-center mb-3">
-                <img id="preview"
-                     src="<?= $photoPath ?>"
-                     onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
-                     class="rounded-circle preview-img mb-2" alt="Profile Photo">
-
-                <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">First Name</label>
-                <input type="text" name="firstName" class="form-control" required
-                       value="<?= htmlspecialchars($user['firstName']) ?>">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Last Name</label>
-                <input type="text" name="lastName" class="form-control" required
-                       value="<?= htmlspecialchars($user['lastName']) ?>">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Phone Number</label>
-                <input type="tel" name="contactNumber" class="form-control" required
-                       value="<?= htmlspecialchars($user['contactNumber']) ?>">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-control" required
-                       value="<?= htmlspecialchars($user['email']) ?>">
-            </div>
-
-            <?php if ($role === 'driver'): ?>
-                <div class="mb-3">
-                    <label class="form-label">Plate Number</label>
-                    <input type="text" name="plateNumber" class="form-control" value="<?= htmlspecialchars($plateNumber) ?>" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">TODA Registration</label>
-                    <input type="text" name="todaRegistration" class="form-control" value="<?= htmlspecialchars($todaRegistration) ?>" required>
-                </div>
+            <?php if ($error): ?>
+                <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
 
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </div>
-        </form>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="text-center mb-3">
+                    <img id="preview"
+                        src="<?= $photoPath ?>"
+                        onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
+                        class="rounded-circle preview-img mb-2" alt="Profile Photo">
 
-        <div class="d-grid mt-3">
-            <a href="accountView.php" class="btn btn-secondary">Back to Profile</a>
+                    <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="firstName" class="form-control" required
+                        value="<?= htmlspecialchars($user['firstName']) ?>">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="lastName" class="form-control" required
+                        value="<?= htmlspecialchars($user['lastName']) ?>">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" name="contactNumber" class="form-control" required
+                        value="<?= htmlspecialchars($user['contactNumber']) ?>">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-control" required
+                        value="<?= htmlspecialchars($user['email']) ?>">
+                </div>
+
+                <?php if ($role === 'driver'): ?>
+                    <div class="mb-3">
+                        <label class="form-label">Plate Number</label>
+                        <input type="text" name="plateNumber" class="form-control" value="<?= htmlspecialchars($plateNumber) ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">TODA Registration</label>
+                        <input type="text" name="todaRegistration" class="form-control" value="<?= htmlspecialchars($todaRegistration) ?>" required>
+                    </div>
+                <?php endif; ?>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+
+            <div class="d-grid mt-3">
+                <a href="accountView.php" class="btn btn-secondary">Back to Profile</a>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            document.getElementById('preview').src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
-</script>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById('preview').src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
+
 </html>

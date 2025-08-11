@@ -93,7 +93,7 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edit Profile</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/style.css"><style>
+  <link rel="stylesheet" href="../assets/css/style.css">
   <style>
     .preview-img {
       width: 100px;
@@ -160,10 +160,26 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
   <script>
     function previewImage(event) {
       const reader = new FileReader();
-      reader.onload = function () {
+      reader.onload = function() {
         document.getElementById('preview').src = reader.result;
       };
       reader.readAsDataURL(event.target.files[0]);
+    }
+  </script>
+
+  <!-- Change status -->
+  <script>
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") {
+        updateStatus(0);
+      } else {
+        updateStatus(2);
+      }
+    });
+
+    function updateStatus(state) {
+      fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+        .catch(err => console.error("Failed to update status:", err));
     }
   </script>
 </body>

@@ -89,6 +89,21 @@ $result = $stmt->get_result();
 
   <?php include '../assets/shared/navbarDriver.php'; ?>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Change status -->
+  <script>
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") {
+        updateStatus(0);
+      } else {
+        updateStatus(2);
+      }
+    });
+
+    function updateStatus(state) {
+      fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+        .catch(err => console.error("Failed to update status:", err));
+    }
+  </script>
 </body>
 
 </html>

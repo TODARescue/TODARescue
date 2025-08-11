@@ -58,8 +58,8 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
                             <div class="list-group-item list-group-item-action py-3 border-0 px-0">
                                 <div class="d-flex align-items-center">
                                     <?php
-                                    $photoPath = !empty($user['photo']) 
-                                        ? '../assets/images/drivers/' . htmlspecialchars($user['photo']) 
+                                    $photoPath = !empty($user['photo'])
+                                        ? '../assets/images/drivers/' . htmlspecialchars($user['photo'])
                                         : '';
                                     ?>
                                     <img src="<?= $photoPath ?>"
@@ -124,6 +124,21 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
             </div>
         </div>
     </div>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
 
 
