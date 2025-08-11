@@ -285,6 +285,21 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
     <!-- Get Location -->
     <script src="../assets/js/groupPage/members.js"></script>
 
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
     <!-- Buttons -->
     <script>
         const groupContainer = document.getElementById('group-container');
@@ -429,7 +444,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
 
             locationInterval = setInterval(() => {
                 getLocation(userId, userName, profilePicture);
-            }, 5000);
+            }, 7000);
         }
 
         async function loadMembers(circleId, circleName) {
@@ -444,7 +459,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
                     role
                 } = data;
 
-                console.log("Role:", role);
+                // console.log("Role:", role);
                 if (!members || !members.length) {
                     memberContent.innerHTML = '<p class="text-muted">No members found in this circle.</p>';
                     return;
@@ -534,7 +549,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
 
                     memberContent.appendChild(memberBtn);
                 });
-                console.log("Member Role:", role);
+                // console.log("Member Role:", role);
 
                 if (role === 'admin' || role === 'owner') {
                     const addPersonDiv = document.createElement("a");
@@ -552,6 +567,7 @@ if (mysqli_num_rows($checkRidingResult) > /* == */ 0) {
                 memberContent.innerHTML = '<p class="text-danger">Unable to load members.</p>';
             }
         }
+
 
         function showDriverContainer(userID, userName, status, profilePic, statusIcon, statusActive, circleName) {
             isViewed = true;
