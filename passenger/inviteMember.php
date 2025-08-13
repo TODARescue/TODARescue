@@ -52,36 +52,36 @@ $inviteCode = $circle['inviteCode'];
 
 // Generate new invite code if requested
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generateNewCode'])) {
-        // Generate a random unique 6-character alphanumeric code
+    // Generate a random unique 6-character alphanumeric code
     $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $maxAttempts = 10; // Prevent infinite loop
     $attempts = 0;
     $isUnique = false;
-    
+
     while (!$isUnique && $attempts < $maxAttempts) {
         $newInviteCode = '';
         for ($i = 0; $i < 6; $i++) {
             $newInviteCode .= $chars[rand(0, strlen($chars) - 1)];
         }
-        
+
         // Check if this code already exists
-       $checkQuery = "SELECT COUNT(*) FROM circles WHERE inviteCode = ?";
+        $checkQuery = "SELECT COUNT(*) FROM circles WHERE inviteCode = ?";
         $checkStmt = $conn->prepare($checkQuery);
         $checkStmt->bind_param("s", $newInviteCode);
         $checkStmt->execute();
         $checkStmt->bind_result($codeCount);
         $checkStmt->fetch();
-        $checkStmt->close(); 
+        $checkStmt->close();
 
         $codeExists = ($codeCount > 0);
-        
+
         if (!$codeExists) {
             $isUnique = true;
         }
-        
+
         $attempts++;
     }
-    
+
     if ($isUnique) {
         // Update the invite code in the database
         $updateQuery = "UPDATE circles SET inviteCode = ? WHERE circleId = ?";
@@ -121,20 +121,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generateNewCode'])) {
     <div class="container-fluid py-5 mt-5 d-flex justify-content-center">
         <!-- Invite members text -->
         <div class="row d-flex justify-content-center">
-            <div class="col-12 col-md-6 col-lg-4" >
-                
+            <div class="col-12 col-md-6 col-lg-4">
+
                 <?php if ($errorMsg): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <?php echo $errorMsg; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php echo $errorMsg; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 <?php endif; ?>
-                
+
                 <?php if ($successMsg): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?php echo $successMsg; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?php echo $successMsg; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 <?php endif; ?>
 
                 <div class="mb-4 pt-3">
@@ -159,15 +159,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generateNewCode'])) {
                         </button>
                     </form>
                 </div>
-                
+
             </div>
         </div>
-   </div>
+    </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
 
 </html>

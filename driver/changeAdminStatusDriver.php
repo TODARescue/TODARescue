@@ -158,7 +158,7 @@ $members = $result->fetch_all(MYSQLI_ASSOC);
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Success Modal -->
                     <div id="successModal" class="modal fade" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -177,7 +177,7 @@ $members = $result->fetch_all(MYSQLI_ASSOC);
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- HEADER -->
                     <?php include '../assets/shared/header.php'; ?>
 
@@ -189,7 +189,7 @@ $members = $result->fetch_all(MYSQLI_ASSOC);
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         <?php endif; ?>
-                        
+
                         <?php if ($successMsg): ?>
                             <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
                                 <?php echo $successMsg; ?>
@@ -204,7 +204,7 @@ $members = $result->fetch_all(MYSQLI_ASSOC);
                             <div class="col px-3">
                                 <h4 class="mb-0 pt-3">Admin Status</h4>
                                 <p class="text-muted small mb-3">Toggle switches to change admin status</p>
-                                
+
                                 <div class="list-group list-group-flush">
                                     <?php foreach ($members as $member): ?>
                                         <?php
@@ -220,12 +220,12 @@ $members = $result->fetch_all(MYSQLI_ASSOC);
                                                 <?php endif; ?>
                                             </div>
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input admin-toggle" type="checkbox" 
-                                                       role="switch"
-                                                       style="width: 3em; height: 1.5em;"
-                                                       data-member-id="<?php echo $member['userId']; ?>"
-                                                       <?php echo $isAdmin ? 'checked' : ''; ?> 
-                                                       <?php echo $isDisabled ? 'disabled' : ''; ?>>
+                                                <input class="form-check-input admin-toggle" type="checkbox"
+                                                    role="switch"
+                                                    style="width: 3em; height: 1.5em;"
+                                                    data-member-id="<?php echo $member['userId']; ?>"
+                                                    <?php echo $isAdmin ? 'checked' : ''; ?>
+                                                    <?php echo $isDisabled ? 'disabled' : ''; ?>>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -248,70 +248,85 @@ $members = $result->fetch_all(MYSQLI_ASSOC);
             const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
             errorModal.show();
         }
-        
+
         // Function to show success modal
         function showSuccessModal(message) {
             document.getElementById('successModalMessage').textContent = message;
             const successModal = new bootstrap.Modal(document.getElementById('successModal'));
             successModal.show();
         }
-        
+
         document.querySelectorAll(".admin-toggle").forEach(toggle => {
             toggle.addEventListener("change", function() {
                 const memberId = this.getAttribute('data-member-id');
                 const isAdmin = this.checked;
                 const circleId = <?php echo $circleId; ?>;
                 const toggleElement = this;
-                
+
                 // Show loading indicator
                 this.disabled = true;
                 console.log(`Attempting to change admin status for member ${memberId} to ${isAdmin ? 'admin' : 'member'}`);
-                
+
                 // Send AJAX request to update admin status
                 fetch('changeAdminStatusDriver.php?circleId=' + circleId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=toggleAdmin&memberId=${memberId}&isAdmin=${isAdmin}`
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Server responded with status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response:', data);
-                    if (!data.success) {
-                        // Revert toggle if request failed
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `action=toggleAdmin&memberId=${memberId}&isAdmin=${isAdmin}`
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server responded with status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response:', data);
+                        if (!data.success) {
+                            // Revert toggle if request failed
+                            toggleElement.checked = !isAdmin;
+                            showErrorModal(data.message || 'Failed to update admin status');
+                        } else {
+                            // Success feedback
+                            const statusBadge = document.createElement('span');
+                            statusBadge.className = 'badge bg-success ms-2 status-update';
+                            statusBadge.textContent = 'Updated';
+                            toggleElement.parentNode.appendChild(statusBadge);
+
+                            // Show success modal and redirect to circle details after closing
+                            showSuccessModal('Admin status updated successfully');
+
+                            // Redirect to circle details page after a brief delay to show the success badge
+                            setTimeout(() => {
+                                window.location.href = 'circleDetails.php?circleId=' + circleId;
+                            }, 1500);
+                        }
+                        toggleElement.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
                         toggleElement.checked = !isAdmin;
-                        showErrorModal(data.message || 'Failed to update admin status');
-                    } else {
-                        // Success feedback
-                        const statusBadge = document.createElement('span');
-                        statusBadge.className = 'badge bg-success ms-2 status-update';
-                        statusBadge.textContent = 'Updated';
-                        toggleElement.parentNode.appendChild(statusBadge);
-                        
-                        // Show success modal and redirect to circle details after closing
-                        showSuccessModal('Admin status updated successfully');
-                        
-                        // Redirect to circle details page after a brief delay to show the success badge
-                        setTimeout(() => {
-                            window.location.href = 'circleDetails.php?circleId=' + circleId;
-                        }, 1500);
-                    }
-                    toggleElement.disabled = false;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    toggleElement.checked = !isAdmin;
-                    toggleElement.disabled = false;
-                    showErrorModal('An error occurred while updating admin status: ' + error.message);
-                });
+                        toggleElement.disabled = false;
+                        showErrorModal('An error occurred while updating admin status: ' + error.message);
+                    });
             });
         });
+    </script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
     </script>
 </body>
 

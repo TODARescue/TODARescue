@@ -1,4 +1,8 @@
 // const fallbackCoords = [14.08849, 121.0995];
+// // let tanauanBounds = L.latLngBounds(
+// //   [14.04146, 121.06599], //SW
+// //   [14.10694, 121.15791] //NE
+// // );
 
 // const policeStations = [
 //   {
@@ -119,7 +123,7 @@
 // const popupContent = `
 //     <div class="profile-popup" style="position: relative; text-align: center;">
 //         <div class="name-overlay" style="position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); color: white; font-weight: bold; font-size: 12px; text-shadow: 0 0 3px black;">
-//             You
+//             You 
 //         </div>
 //         <img src="../assets/images/profile-default.png" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white;" />
 //     </div>
