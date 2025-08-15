@@ -52,7 +52,7 @@
     </div>
 
     <div class="container px-4 pt-4" style="max-width: 600px;">
-       
+
         <div class="text-center mb-4 px-2">
             <h5 class="fw-bold mb-2">About TODA Rescue</h5>
             <p class="mb-0">
@@ -63,7 +63,7 @@
             </p>
         </div>
 
-  
+
         <div class="text-center mb-4 px-2">
             <h5 class="fw-bold mb-2">Our Mission</h5>
             <p class="mb-0">
@@ -108,6 +108,22 @@
         </div>
 
     </div>
+
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
 
 </html>

@@ -3,7 +3,7 @@ session_start();
 require_once '../assets/shared/connect.php';
 
 $userId = $_SESSION['userId'] ?? null;
-$isSharing = 0; // default
+$isSharing = 1; // default
 
 // Fetch user's sharing status from circlemembers table
 $circleQuery = "SELECT isSharing FROM circlemembers WHERE userId = $userId LIMIT 1";
@@ -33,6 +33,25 @@ if ($result && mysqli_num_rows($result) > 0) {
 
         .modal-backdrop.show {
             opacity: 0.7;
+        }
+
+        .form-check-input {
+            border-color: #2daaa7;
+            --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%232daaa7'/%3e%3c/svg%3e") !important;
+        }
+
+        .form-check-input:checked {
+            background-color: #2daaa7;
+            border-color: #2daaa7;
+            --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='white'/%3e%3c/svg%3e") !important;
+        }
+
+        .form-check-input:checked::before {
+            background-color: #2daaa7 !important;
+        }
+
+        .form-check-input::before {
+            background-color: #fff !important;
         }
     </style>
 </head>
@@ -71,7 +90,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <span>Location Sharing</span>
                             <div class="form-check form-switch m-0">
                                 <input class="form-check-input" type="checkbox" role="switch" id="sharing-toggle"
-                                    <?= $isSharing == 1 ? 'checked' : '' ?>>
+                                    <?= $isSharing === 1 ? 'checked' : '' ?>>
                             </div>
                         </div>
 
@@ -144,14 +163,16 @@ if ($result && mysqli_num_rows($result) > 0) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById('sharing-toggle').addEventListener('change', function () {
+        document.getElementById('sharing-toggle').addEventListener('change', function() {
             const isChecked = this.checked ? 1 : 0;
 
             fetch('../assets/php/updateSharingStatus.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'isSharing=' + isChecked
-            })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'isSharing=' + isChecked
+                })
                 .then(res => res.json())
                 .then(data => {
                     if (!data.success) {
@@ -163,6 +184,21 @@ if ($result && mysqli_num_rows($result) > 0) {
                     alert("Something went wrong while updating.");
                 });
         });
+    </script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
     </script>
 
 </body>

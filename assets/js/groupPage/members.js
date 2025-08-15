@@ -16,7 +16,8 @@ function showLocation(userID, userName, coords, profilePicture) {
   }
 
   const pt = turf.point([coords[0], coords[1]]);
-  const inBounds = turf.booleanPointInPolygon(pt, window.poly);
+  // const inBounds = turf.booleanPointInPolygon(pt, window.poly);
+  const inBounds = window.testBounds.contains(coords);
 
   if (!inBounds && !outOfBoundsMember) {
     outOfBoundsMember = true;

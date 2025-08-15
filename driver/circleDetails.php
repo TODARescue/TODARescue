@@ -19,7 +19,7 @@ if (!$circleId) {
     $stmt->execute();
     $result = $stmt->get_result()->fetch_assoc();
 
-    
+
     if ($result) {
         $circleId = $result['circleId'];
     } else {
@@ -73,36 +73,36 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
                     <?php include '../assets/shared/header.php'; ?>
 
                     <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
-                    <!-- Banner for admins and owners -->
-                    <div class="alert alert-info mx-3 mt-5 mb-0 d-flex align-items-center" style="margin-top: 90px !important; background-color: #2ebcbc;">
-                        <div>
-                            <div class="d-flex align-items-center mb-1">
-                                <i class="bi bi-info-circle-fill me-2"></i>
-                                <strong>Circle: <?php echo htmlspecialchars($circleName); ?></strong>
+                        <!-- Banner for admins and owners -->
+                        <div class="alert alert-info mx-3 mt-5 mb-0 d-flex align-items-center" style="margin-top: 90px !important; background-color: #2ebcbc;">
+                            <div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    <strong>Circle: <?php echo htmlspecialchars($circleName); ?></strong>
+                                </div>
+                                <p class="mb-0 px-4">Admin access granted.</p>
                             </div>
-                            <p class="mb-0 px-4">Admin access granted.</p>
                         </div>
-                    </div>
                     <?php endif; ?>
 
                     <!-- Options List -->
                     <div class="list-group list-group-flush w-100" style="padding-top: <?php echo ($userRole === 'owner' || $userRole === 'admin') ? '20px' : '120px'; ?>;">
-                        
+
                         <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
-                        <div class="px-3 pt-2 pb-1 text-secondary fw-bold text-uppercase"
-                            style="font-size: 0.85rem; user-select: none;">
-                            Circle Details
-                        </div>
+                            <div class="px-3 pt-2 pb-1 text-secondary fw-bold text-uppercase"
+                                style="font-size: 0.85rem; user-select: none;">
+                                Circle Details
+                            </div>
                         <?php endif; ?>
 
                         <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
-                        <!-- Edit Circle Name - Only for admins and owners -->
-                        <a href="../driver/editCircleName.php?circleId=<?php echo $circleId; ?>"
-                            style="text-decoration: none; color: inherit;">
-                            <div class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
-                                <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
-                            </div>
-                        </a>
+                            <!-- Edit Circle Name - Only for admins and owners -->
+                            <a href="../driver/editCircleName.php?circleId=<?php echo $circleId; ?>"
+                                style="text-decoration: none; color: inherit;">
+                                <div class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
+                                    <span>Edit Circle Name <i class="bi bi-pencil-fill ms-1"></i></span>
+                                </div>
+                            </a>
                         <?php endif; ?>
 
                         <div class="px-3 pt-3 pb-1 text-secondary fw-bold text-uppercase"
@@ -111,32 +111,32 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
                         </div>
 
                         <?php if ($userRole === 'owner'): ?>
-                        <!-- Change Admin Status - Only for owners -->
-                        <a href="../driver/changeAdminStatusDriver.php?circleId=<?php echo $circleId; ?>"
-                            style="text-decoration: none; color: inherit;">
-                            <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
-                                Change Admin Status
-                            </div>
-                        </a>
+                            <!-- Change Admin Status - Only for owners -->
+                            <a href="../driver/changeAdminStatusDriver.php?circleId=<?php echo $circleId; ?>"
+                                style="text-decoration: none; color: inherit;">
+                                <div
+                                    class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
+                                    Change Admin Status
+                                </div>
+                            </a>
                         <?php endif; ?>
 
                         <?php if ($userRole === 'owner' || $userRole === 'admin'): ?>
-                        <!-- Add Circle Members - Only for admins and owners -->
-                        <a href="../driver/inviteMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
-                            <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
-                                Add Circle Members
-                            </div>
-                        </a>
+                            <!-- Add Circle Members - Only for admins and owners -->
+                            <a href="../driver/inviteMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
+                                <div
+                                    class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
+                                    Add Circle Members
+                                </div>
+                            </a>
 
-                        <!-- Remove Circle Members - Only for admins and owners -->
-                        <a href="../driver/removeCircleMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
-                            <div
-                                class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
-                                Remove Circle Members
-                            </div>
-                        </a>
+                            <!-- Remove Circle Members - Only for admins and owners -->
+                            <a href="../driver/removeCircleMember.php?circleId=<?php echo $circleId; ?>" style="text-decoration: none; color: inherit;">
+                                <div
+                                    class="list-group-item list-group-item-action py-3 text-black border-bottom bg-light">
+                                    Remove Circle Members
+                                </div>
+                            </a>
                         <?php endif; ?>
 
                         <!-- Modal Trigger - Available to all members -->
@@ -173,7 +173,7 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
                 </div>
             </div>
         </div>
-        
+
         <!-- Error Modal -->
         <div id="errorModal" class="modal fade" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -192,7 +192,7 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
                 </div>
             </div>
         </div>
-        
+
         <!-- Success Modal -->
         <div id="successModal" class="modal fade" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -218,7 +218,7 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
         <!-- Scripts -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        
+
         <script>
             // Function to show error modal
             function showErrorModal(message) {
@@ -226,14 +226,14 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
                 const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
                 errorModal.show();
             }
-            
+
             // Function to show success modal
             function showSuccessModal(message) {
                 document.getElementById('successModalMessage').textContent = message;
                 const successModal = new bootstrap.Modal(document.getElementById('successModal'));
                 successModal.show();
             }
-            
+
             // Check for session messages
             <?php if (isset($_SESSION['circleErrorMsg'])): ?>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -241,7 +241,7 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
                     <?php unset($_SESSION['circleErrorMsg']); ?>
                 });
             <?php endif; ?>
-            
+
             <?php if (isset($_SESSION['circleSuccessMsg'])): ?>
                 document.addEventListener('DOMContentLoaded', function() {
                     showSuccessModal('<?php echo addslashes($_SESSION['circleSuccessMsg']); ?>');
@@ -250,7 +250,21 @@ $circleName = $circleNameResult ? $circleNameResult['circleName'] : 'Unknown';
             <?php endif; ?>
         </script>
     </div>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
 
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
 
 </html>

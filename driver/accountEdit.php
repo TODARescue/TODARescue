@@ -3,7 +3,7 @@ session_start();
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
-require_once '../assets/php/connect.php';
+require_once '../assets/shared/connect.php';
 
 if (!isset($_SESSION['userId'])) {
     header('Location: ../login.php');
@@ -106,20 +106,6 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Edit Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Make the image responsive */
-        .preview-img {
-            max-width: 150px;
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-        }
-        @media (max-width: 576px) {
-            .preview-img {
-                max-width: 120px;
-            }
-        }
-    </style>
 </head>
 
 <body class="bg-dark text-white d-flex justify-content-center align-items-center vh-100">
@@ -136,7 +122,9 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
                 <img id="preview"
                      src="<?= $photoPath ?>"
                      onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
-                     class="rounded-circle preview-img mb-2" alt="Profile Photo">
+                     class="rounded-circle img-fluid d-block mx-auto"
+                     style="max-width: 150px;"
+                     alt="Profile Photo">
 
                 <input type="file" name="photo" class="form-control mt-2" accept="image/*" onchange="previewImage(event)">
             </div>

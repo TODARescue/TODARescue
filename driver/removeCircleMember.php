@@ -174,7 +174,7 @@ while ($row = $result->fetch_assoc()) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Success Modal -->
                     <div id="successModal" class="modal fade" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -193,7 +193,7 @@ while ($row = $result->fetch_assoc()) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- HEADER -->
                     <?php include '../assets/shared/header.php'; ?>
 
@@ -205,7 +205,7 @@ while ($row = $result->fetch_assoc()) {
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         <?php endif; ?>
-                        
+
                         <?php if ($successMsg): ?>
                             <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
                                 <?php echo $successMsg; ?>
@@ -235,7 +235,7 @@ while ($row = $result->fetch_assoc()) {
                                                 $canRemove = $userRole === 'owner' || ($userRole === 'admin' && $member['role'] === 'member');
                                                 ?>
                                                 <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between py-3 px-4 text-black bg-light w-100 border-0 border-bottom border-secondary"
-                                                    <?php if ($canRemove): ?>onclick="openRemoveModal('<?php echo htmlspecialchars($fullName); ?>', <?php echo $member['userId']; ?>)"<?php endif; ?>>
+                                                    <?php if ($canRemove): ?>onclick="openRemoveModal('<?php echo htmlspecialchars($fullName); ?>', <?php echo $member['userId']; ?>)" <?php endif; ?>>
                                                     <span class="fw-medium">
                                                         <?php echo htmlspecialchars($fullName); ?>
                                                         <?php if ($member['role'] === 'owner'): ?>
@@ -269,7 +269,7 @@ while ($row = $result->fetch_assoc()) {
                             <div class="d-flex justify-content-center gap-3">
                                 <button class="btn rounded-pill px-4" style="background-color: #dcdcdc; font-weight: 600;"
                                     onclick="closeModal()">No</button>
-                                <button id="confirmRemoveBtn" class="btn rounded-pill px-4 text-white" 
+                                <button id="confirmRemoveBtn" class="btn rounded-pill px-4 text-white"
                                     style="background-color: #1cc8c8; font-weight: 600;">
                                     Yes
                                 </button>
@@ -293,7 +293,7 @@ while ($row = $result->fetch_assoc()) {
             const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
             errorModal.show();
         }
-        
+
         // Function to show success modal
         function showSuccessModal(message) {
             document.getElementById('successModalMessage').textContent = message;
@@ -320,51 +320,66 @@ while ($row = $result->fetch_assoc()) {
                 this.disabled = true;
                 this.innerText = 'Removing...';
                 const confirmBtn = this;
-                
+
                 const circleId = <?php echo $circleId; ?>;
                 console.log(`Attempting to remove member ${currentMemberId} from circle ${circleId}`);
-                
+
                 // Send AJAX request to remove member
                 fetch('removeCircleMember.php?circleId=' + circleId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=removeMember&memberId=${currentMemberId}`
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Server responded with status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response:', data);
-                    closeModal();
-                    
-                    if (data.success) {
-                        // Show success modal and redirect to circle details page
-                        showSuccessModal('Member removed successfully');
-                        
-                        // Redirect to circle details page
-                        setTimeout(() => {
-                            window.location.href = 'circleDetails.php?circleId=' + circleId;
-                        }, 1500);
-                    } else {
-                        showErrorModal(data.message || 'Failed to remove member');
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `action=removeMember&memberId=${currentMemberId}`
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server responded with status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response:', data);
+                        closeModal();
+
+                        if (data.success) {
+                            // Show success modal and redirect to circle details page
+                            showSuccessModal('Member removed successfully');
+
+                            // Redirect to circle details page
+                            setTimeout(() => {
+                                window.location.href = 'circleDetails.php?circleId=' + circleId;
+                            }, 1500);
+                        } else {
+                            showErrorModal(data.message || 'Failed to remove member');
+                            confirmBtn.disabled = false;
+                            confirmBtn.innerText = 'Yes';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        closeModal();
+                        showErrorModal('An error occurred while removing the member: ' + error.message);
                         confirmBtn.disabled = false;
                         confirmBtn.innerText = 'Yes';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    closeModal();
-                    showErrorModal('An error occurred while removing the member: ' + error.message);
-                    confirmBtn.disabled = false;
-                    confirmBtn.innerText = 'Yes';
-                });
+                    });
             }
         });
+    </script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
     </script>
 </body>
 

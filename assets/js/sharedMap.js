@@ -1,5 +1,6 @@
 window.fallbackCoords = [14.08849, 121.0995];
 window.mapBounds = L.latLngBounds([13.7925, 120.9155], [14.2378, 121.252]);
+window.testBounds = L.latLngBounds([4.5, 116.9], [21.2, 126.6]);
 window.isViewingMember = false;
 
 const policeStations = [
@@ -195,8 +196,8 @@ map.on("locationfound", function (e) {
   const pt = turf.point([e.latlng.lng, e.latlng.lat]);
   const poly = window.tanauanGeoJSON.features[0];
 
-  const inBounds = turf.booleanPointInPolygon(pt, poly);
-  // const inBounds = window.mapBounds.contains(e.latlng);
+  // const inBounds = turf.booleanPointInPolygon(pt, poly);
+  const inBounds = window.testBounds.contains(e.latlng);
   window.poly = poly;
 
   // console.log("Window has arrived:", window.hasArrived);

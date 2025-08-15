@@ -51,8 +51,8 @@ $userCircles = $result->fetch_all(MYSQLI_ASSOC);
         <div class="row h-100 g-0">
             <div class="col-12 d-flex justify-content-center align-items-start h-100">
 
-            <!-- HEADER -->
-            <?php include '../assets/shared/header.php'; ?>
+                <!-- HEADER -->
+                <?php include '../assets/shared/header.php'; ?>
 
                 <div class="card bg-white w-100 h-100 d-flex flex-column p-0"
                     style="border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
@@ -98,6 +98,21 @@ $userCircles = $result->fetch_all(MYSQLI_ASSOC);
     <?php include '../assets/shared/navbarDriver.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/groupPage/navbar.js"></script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
 
 </html>

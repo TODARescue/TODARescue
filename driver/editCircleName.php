@@ -50,7 +50,7 @@ if ($userRole !== 'admin' && $userRole !== 'owner') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
     $newCircleName = trim($_POST['newCircleName']);
-    
+
     // Validate new circle name
     if (empty($newCircleName)) {
         $errorMsg = 'Circle name cannot be empty';
@@ -58,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
         $errorMsg = 'Circle name is too long (max 255 characters)';
     } else {
         $checkQuery = "SELECT circleId FROM circles WHERE circleName = ? AND circleId != ?";
-            $checkStmt = $conn->prepare($checkQuery);
-            $checkStmt->bind_param("si", $newCircleName, $circleId);
-            $checkStmt->execute();
-            $checkStmt->store_result();
-            if ($checkStmt->num_rows > 0) {
+        $checkStmt = $conn->prepare($checkQuery);
+        $checkStmt->bind_param("si", $newCircleName, $circleId);
+        $checkStmt->execute();
+        $checkStmt->store_result();
+        if ($checkStmt->num_rows > 0) {
             $errorMsg = 'This circle name is already taken. Please choose another one.';
         } else {
             // Update circle name
@@ -125,30 +125,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
                                 <h4 class="fs-5 mb-4">Edit Circle Name</h4>
 
                                 <?php if ($errorMsg): ?>
-                                <div class="alert alert-danger" role="alert">
-                                    <?php echo $errorMsg; ?>
-                                </div>
+                                    <div class="alert alert-danger" role="alert">
+                                        <?php echo $errorMsg; ?>
+                                    </div>
                                 <?php endif; ?>
 
                                 <?php if ($successMsg): ?>
-                                <div class="alert alert-success" role="alert">
-                                    <?php echo $successMsg; ?>
-                                </div>
+                                    <div class="alert alert-success" role="alert">
+                                        <?php echo $successMsg; ?>
+                                    </div>
                                 <?php endif; ?>
 
                                 <form method="post" action="">
                                     <div class="mb-3">
                                         <label for="newCircleName" class="form-label">Circle Name</label>
-                                        <input type="text" class="form-control" id="newCircleName" name="newCircleName" 
-                                               value="<?php echo htmlspecialchars($circleName); ?>" required>
+                                        <input type="text" class="form-control" id="newCircleName" name="newCircleName"
+                                            value="<?php echo htmlspecialchars($circleName); ?>" required>
                                     </div>
                                     <div class="d-flex gap-3 mt-4 justify-content-center">
                                         <a href="circleDetails.php" class="btn rounded-pill px-4"
-                                           style="background-color: #dcdcdc; font-weight: 600;">
+                                            style="background-color: #dcdcdc; font-weight: 600;">
                                             Cancel
                                         </a>
                                         <button type="submit" class="btn rounded-pill px-4 text-white"
-                                                style="background-color: #1cc8c8; font-weight: 600;">
+                                            style="background-color: #1cc8c8; font-weight: 600;">
                                             Save Changes
                                         </button>
                                     </div>
@@ -182,6 +182,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['newCircleName'])) {
 
     <?php include '../assets/shared/navbarPassenger.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Change status -->
+    <script>
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                updateStatus(0);
+            } else {
+                updateStatus(2);
+            }
+        });
+
+        function updateStatus(state) {
+            fetch(`../assets/php/updateStatus.php?visibility=${state}`)
+                .catch(err => console.error("Failed to update status:", err));
+        }
+    </script>
 </body>
 
 </html>
