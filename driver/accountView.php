@@ -9,15 +9,26 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 
+// Fetch driver details
 $stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo FROM users WHERE userId = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+$stmt->close();
 
 $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
-?>
 
+// ---- Driver image path with cache-busting
+$imageFolder = 'drivers';
+$photoUrl = '';
+if (!empty($user['photo'])) {
+    $fileName = $user['photo'];
+    $filePathOnDisk = __DIR__ . "/../assets/images/$imageFolder/" . $fileName; // filesystem path
+    $version = is_file($filePathOnDisk) ? filemtime($filePathOnDisk) : time(); // cache-busting version
+    $photoUrl = "../assets/images/$imageFolder/" . htmlspecialchars($fileName) . "?v=" . $version;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,9 +38,15 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
     <title>Driver | Account</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <style>
+        body { overflow-x: hidden; }
+        img { max-width: 100%; height: auto; }
+        .no-horizontal-scroll { overflow-x: hidden; }
+    </style>
 </head>
 
-<body class="bg-dark d-flex justify-content-center align-items-center min-vh-100">
+<body class="bg-dark d-flex justify-content-center align-items-center min-vh-100 no-horizontal-scroll">
     <div class="container-fluid p-0">
         <div class="row g-0 min-vh-100">
             <div class="col-12 d-flex flex-column h-100">
@@ -54,12 +71,8 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
                             <!-- Profile Info -->
                             <div class="list-group-item list-group-item-action py-3 border-0 px-0 bg-transparent">
                                 <div class="d-flex align-items-center">
-                                    <?php
-                                    $photoPath = !empty($user['photo'])
-                                        ? '../assets/images/drivers/' . htmlspecialchars($user['photo'])
-                                        : '';
-                                    ?>
-                                    <img src="<?= $photoPath ?>"
+                                    <img
+                                        src="<?= $photoUrl ?: '../assets/images/profile-default.png' ?>"
                                         onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
                                         alt="Profile Photo"
                                         class="rounded-circle me-3 flex-shrink-0"

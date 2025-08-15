@@ -12,12 +12,11 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 $error = '';
-$success = '';
 $photoFileName = '';
 $plateNumber = '';
 $todaRegistration = '';
 
-// Load user data
+// Load user info
 $stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo, role FROM users WHERE userId = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
@@ -25,7 +24,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $role = $user['role'] ?? 'driver';
 
-// Load driver-specific data if user is a driver
+// Load driver-specific info
 if ($role === 'driver') {
     $driverStmt = $conn->prepare("SELECT plateNumber, todaRegistration FROM drivers WHERE userId = ?");
     $driverStmt->bind_param("i", $userId);
@@ -46,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $todaRegistration = trim($_POST['todaRegistration'] ?? '');
     $photo = $_FILES['photo'];
 
-    // Check for duplicate email/contact
+    // Check duplicate email/contact
     $checkStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ?");
     $checkStmt->bind_param("ssi", $email, $contactNumber, $userId);
     $checkStmt->execute();
@@ -57,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         if (!empty($photo['name'])) {
             $photoFileName = time() . '_' . basename($photo['name']);
-            $targetDir = ($role === 'driver') ? '../assets/images/driver/' : '../assets/images/drivers/';
+            $targetDir = ($role === 'driver') ? '../assets/images/driver/' : '../assets/images/passengers/';
             $targetPath = $targetDir . $photoFileName;
 
             if (!is_dir($targetDir)) {
@@ -79,13 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($stmt->execute()) {
-                // Update driver-specific fields
                 if ($role === 'driver') {
                     $updateDriverStmt = $conn->prepare("UPDATE drivers SET plateNumber=?, todaRegistration=? WHERE userId=?");
                     $updateDriverStmt->bind_param("ssi", $plateNumber, $todaRegistration, $userId);
                     $updateDriverStmt->execute();
                 }
-
                 header("Location: accountView.php?updated=1");
                 exit;
             } else {
@@ -95,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Determine profile image path
+// Set profile photo path
 $imageFolder = ($role === 'driver') ? 'driver' : 'passengers';
 $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspecialchars($user['photo']) : '';
 ?>
@@ -107,7 +104,6 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
     <title>Edit Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body class="bg-dark text-white d-flex justify-content-center align-items-center vh-100">
 <div class="container">
     <div class="card bg-white text-dark p-4 rounded-4 shadow-lg">
@@ -122,11 +118,10 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
                 <img id="preview"
                      src="<?= $photoPath ?>"
                      onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
-                     class="rounded-circle img-fluid d-block mx-auto"
-                     style="max-width: 150px;"
+                     class="rounded-circle img-fluid mb-2"
+                     style="width: 120px; height: 120px; object-fit: cover;"
                      alt="Profile Photo">
-
-                <input type="file" name="photo" class="form-control mt-2" accept="image/*" onchange="previewImage(event)">
+                <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
             </div>
 
             <div class="mb-3">
@@ -158,7 +153,6 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
                     <label class="form-label">Plate Number</label>
                     <input type="text" name="plateNumber" class="form-control" value="<?= htmlspecialchars($plateNumber) ?>" required>
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label">TODA Registration</label>
                     <input type="text" name="todaRegistration" class="form-control" value="<?= htmlspecialchars($todaRegistration) ?>" required>
@@ -177,14 +171,13 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
 </div>
 
 <script>
-    function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            const img = document.getElementById('preview');
-            img.src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
+function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+        document.getElementById('preview').src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
 </script>
 </body>
 </html>
