@@ -9,15 +9,26 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 
+// Fetch driver details
 $stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo FROM users WHERE userId = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+$stmt->close();
 
 $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
-?>
 
+// ---- Driver image path with cache-busting
+$imageFolder = 'drivers';
+$photoUrl = '';
+if (!empty($user['photo'])) {
+    $fileName = $user['photo'];
+    $filePathOnDisk = __DIR__ . "/../assets/images/$imageFolder/" . $fileName; // filesystem path
+    $version = is_file($filePathOnDisk) ? filemtime($filePathOnDisk) : time(); // cache-busting version
+    $photoUrl = "../assets/images/$imageFolder/" . htmlspecialchars($fileName) . "?v=" . $version;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,110 +39,97 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/css/style.css" />
+    <style>
+        body { overflow-x: hidden; }
+        img { max-width: 100%; height: auto; }
+        .no-horizontal-scroll { overflow-x: hidden; }
+    </style>
 </head>
 
-<body class="bg-dark d-flex justify-content-center align-items-center vh-100">
-    <div class="container-fluid p-0 m-0 vh-100">
-        <div class="row h-100 g-0">
-            <div class="col-12 d-flex justify-content-center align-items-start h-100">
+<body class="bg-dark d-flex justify-content-center align-items-center min-vh-100 no-horizontal-scroll">
+    <div class="container-fluid p-0">
+        <div class="row g-0 min-vh-100">
+            <div class="col-12 d-flex flex-column h-100">
 
-                <div class="card bg-white w-100 h-100 d-flex flex-column p-0 rounded-0 rounded-bottom-4 shadow-lg"
-                    style="--bs-border-radius-bottom: 25px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);">
+                <div class="card bg-white flex-grow-1 d-flex flex-column rounded-0 shadow-lg">
 
                     <?php include '../assets/shared/header.php'; ?>
 
-                    <div class="list-group list-group-flush m-2 px-0 w-100 flex-grow-1 overflow-auto"
-                        style="padding-top: 110px;">
+                    <div class="list-group list-group-flush flex-grow-1 overflow-auto pt-5 px-3">
 
                         <?php if ($success): ?>
-                            <div class="alert alert-success mx-3"><?= $success ?></div>
+                            <div class="alert alert-success"><?= $success ?></div>
                         <?php endif; ?>
 
                         <!-- Profile Header -->
-                        <div class="px-3 pt-3 pb-2 text-secondary fw-bold text-uppercase">
+                        <div class="text-secondary fw-bold text-uppercase small mb-3">
                             Profile
                         </div>
 
-                        <form class="w-100 px-3">
+                        <form class="w-100">
 
                             <!-- Profile Info -->
-                            <div class="list-group-item list-group-item-action py-3 border-0 px-0">
+                            <div class="list-group-item list-group-item-action py-3 border-0 px-0 bg-transparent">
                                 <div class="d-flex align-items-center">
-                                    <?php
-                                    $photoPath = !empty($user['photo'])
-                                        ? '../assets/images/drivers/' . htmlspecialchars($user['photo'])
-                                        : '';
-                                    ?>
-                                    <img src="<?= $photoPath ?>"
+                                    <img
+                                        src="<?= $photoUrl ?: '../assets/images/profile-default.png' ?>"
                                         onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
-                                        alt="Profile Photo" class="rounded-circle me-3"
+                                        alt="Profile Photo"
+                                        class="rounded-circle me-3 flex-shrink-0"
                                         style="width: 65px; height: 65px; object-fit: cover;">
-                                    <div class="flex-grow-1 d-flex justify-content-between align-items-center">
-                                        <span>
-                                            <?= htmlspecialchars($user['firstName']) . ' ' . htmlspecialchars($user['lastName']) ?>
-                                        </span>
+                                    <div class="flex-grow-1">
+                                        <?= htmlspecialchars($user['firstName']) . ' ' . htmlspecialchars($user['lastName']) ?>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Account Details Header -->
-                            <div class="pt-3 pb-1 text-secondary fw-bold text-uppercase small">
+                            <!-- Account Details -->
+                            <div class="mt-4 text-secondary fw-bold text-uppercase small">
                                 Account Details
                             </div>
 
-                            <!-- Phone Number -->
-                            <div class="mb-4 my-2">
+                            <div class="mb-3">
                                 <label class="form-label fw-bold">Phone Number</label>
-                                <input type="tel" class="form-control border-0 rounded-0 shadow-none p-0"
-                                    value="<?= htmlspecialchars($user['contactNumber']) ?>" readonly
-                                    style="border-bottom: 1px solid #dee2e6;" />
+                                <input type="tel"
+                                    class="form-control border-0 border-bottom rounded-0 shadow-none p-0"
+                                    value="<?= htmlspecialchars($user['contactNumber']) ?>" readonly />
                             </div>
 
-                            <!-- Email Address -->
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label fw-bold">Email Address</label>
-                                <input type="email" class="form-control border-0 rounded-0 shadow-none p-0"
-                                    value="<?= htmlspecialchars($user['email']) ?>" readonly
-                                    style="border-bottom: 1px solid #dee2e6;" />
+                                <input type="email"
+                                    class="form-control border-0 border-bottom rounded-0 shadow-none p-0"
+                                    value="<?= htmlspecialchars($user['email']) ?>" readonly />
                             </div>
 
-                            <!-- Action Buttons -->
-                            <div class="d-flex mt-4">
-                                <div class="d-flex justify-content-start gap-3 px-3 flex-nowrap" style="width: fit-content;">
-                                    <a href="rideHistory.php" style="text-decoration: none;">
-                                        <button type="button" class="btn text-black px-4"
-                                            style="background-color: #dcdcdc; border-radius: 15px; white-space: nowrap;">
-                                            View Ride History
-                                        </button>
-                                    </a>
-                                    <a href="accountEdit.php" style="text-decoration: none;">
-                                        <button type="button" class="btn text-white px-4"
-                                            style="background-color: #24b3a7; border-radius: 15px; white-space: nowrap;">
-                                            Edit Profile
-                                        </button>
-                                    </a>
-                                </div>
+                            <!-- Buttons -->
+                            <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+                                <a href="rideHistory.php" class="btn text-black w-100"
+                                    style="background-color: #dcdcdc; border-radius: 15px;">
+                                    View Ride History
+                                </a>
+                                <a href="accountEdit.php" class="btn text-white w-100"
+                                    style="background-color: #24b3a7; border-radius: 15px;">
+                                    Edit Profile
+                                </a>
                             </div>
-
                         </form>
                     </div>
 
                     <?php include '../assets/shared/navbarDriver.php'; ?>
 
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
                 </div>
 
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <!-- Change status -->
     <script>
         document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "hidden") {
-                updateStatus(0);
-            } else {
-                updateStatus(2);
-            }
+            updateStatus(document.visibilityState === "hidden" ? 0 : 2);
         });
 
         function updateStatus(state) {
@@ -140,6 +138,4 @@ $success = isset($_GET['updated']) ? "Profile updated successfully!" : '';
         }
     </script>
 </body>
-
-
 </html>
