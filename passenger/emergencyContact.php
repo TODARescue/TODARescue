@@ -13,13 +13,12 @@ $contacts = [];
 
 if ($viewerId !== "") {
 
-    $sql = "
-    SELECT DISTINCT
+        $sql = "
+        SELECT 
             u.userId,
             CONCAT(u.firstName, ' ', u.lastName) AS fullName,
             u.contactNumber,
-            c.circleName AS circleName,
-            'personal' AS contactType
+            GROUP_CONCAT(DISTINCT c.circleName SEPARATOR ', ') AS circles
         FROM       circlemembers viewerCM
         JOIN       circlemembers otherCM
                 ON otherCM.circleId = viewerCM.circleId
@@ -29,8 +28,10 @@ if ($viewerId !== "") {
                 ON c.circleId = otherCM.circleId
         WHERE      viewerCM.userId = ? 
         AND        u.userId <> ?
+        GROUP BY   u.userId, fullName, u.contactNumber
         ORDER BY   fullName;
     ";
+
 
 
     $stmt = mysqli_prepare($conn, $sql);
@@ -113,6 +114,7 @@ if (file_exists($jsonPath)) {
                 </li>
             <?php endforeach; ?>
 
+
         </ul>
     </div>
 
@@ -144,7 +146,7 @@ if (file_exists($jsonPath)) {
             <!-- PERSONAL CONTACTS -->
             <?php foreach ($contacts as $c): ?>
                 <div class="card contact-card col-12 col-md-8 p-4 rounded-5 mb-3"
-                    data-type-filter="<?= htmlspecialchars($c['circleName']) ?>">
+                     data-type-filter="<?= htmlspecialchars($c['circles']) ?>">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3 class="fw-bold mb-0 m-1"><?= htmlspecialchars($c['fullName']) ?></h3>
                         <a href="tel:<?= htmlspecialchars($c['contactNumber']) ?>" onclick="changePhoneIcon(this)">
@@ -156,8 +158,8 @@ if (file_exists($jsonPath)) {
                         <p class="mb-2"><?= htmlspecialchars($c['contactNumber']) ?></p>
                     </div>
                     <div class="mb-2">
-                        <h5 class="fw-semibold mb-1">Circle Name:</h5>
-                        <p class="mb-2"><?= htmlspecialchars($c['circleName']) ?></p>
+                        <h5 class="fw-semibold mb-1">Circles:</h5>
+                        <p class="mb-2"><?= htmlspecialchars($c['circles']) ?></p>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -193,8 +195,9 @@ if (file_exists($jsonPath)) {
             let visibleCount = 0;
 
             $('.contact-card').each(function() {
-                const type = $(this).data('type-filter');
-                if (selected === 'all' || type === selected) {
+                const types = $(this).data('type-filter').toString().split(',').map(t => t.trim());
+                
+                if (selected === 'all' || types.includes(selected)) {
                     $(this).show();
                     visibleCount++;
                 } else {
