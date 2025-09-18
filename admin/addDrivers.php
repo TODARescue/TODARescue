@@ -77,7 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     );
 
                     if ($stmtDriver->execute()) {
-                        $showSuccessModal = true;
+                        header("Location: driverView.php?userId=" . $userId);
+                        exit();
                     } else {
                         $showErrorModal = true;
                         $errorMessage = "Driver insert failed: " . $stmtDriver->error;
