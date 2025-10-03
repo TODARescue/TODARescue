@@ -218,6 +218,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
             // Get plate number and driver ID from PHP
             const plateNumber = <?php echo $jsPlateNumber; ?>;
             const driverId = <?php echo $jsDriverId; ?>;
+            const driverName = <?php echo json_encode($driver['fullName']); ?>;
 
             // Elements
             const qrContainer = document.getElementById('qr-container');
@@ -234,7 +235,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
             let qrCodeDataUrl = null; // Store the QR code as data URL for reliable download
 
             // Function to convert image URL to data URL (for reliable mobile download)
-            function imageUrlToDataUrl(url, callback) {
+            function imageUrlToDataUrl(qrImageUrl, driverName ,callback) {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 const img = new Image();
@@ -243,9 +244,25 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                 img.crossOrigin = 'anonymous';
 
                 img.onload = function() {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
+                    const padding = 40;
+                    const textHeight = 80;
+                    canvas.width = img.width + (padding * 2);
+                    canvas.height = img.height + textHeight + (padding * 2);
+
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const qrX = (canvas.width - img.width) / 2;
+                    const qrY = padding;
+                    ctx.drawImage(img, qrX, qrY);
+
+                    ctx.fillStyle = '#000000';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+
+                    ctx.font = 'bold 24px Rethink Sans, sans-serif';
+                    const nameY = qrY + img.height + (textHeight / 2);
+                    ctx.fillText(driverName, canvas.width / 2, nameY - 15);
 
                     try {
                         const dataUrl = canvas.toDataURL('image/png');
@@ -260,7 +277,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     callback(null);
                 };
 
-                img.src = url;
+                img.src = qrImageUrl;
             }
 
             // Function to download file from data URL (works reliably on mobile)
@@ -304,7 +321,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     qrContainer.style.display = 'block';
 
                     // Convert to data URL for reliable download
-                    imageUrlToDataUrl(qrUrl, function(dataUrl) {
+                    imageUrlToDataUrl(qrUrl, driverName, function(dataUrl) {
                         qrCodeDataUrl = dataUrl;
                         console.log('QR code converted to data URL for download');
                     });
@@ -348,7 +365,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     // Fallback: try to convert current image and download
                     const currentSrc = qrCodeImg.src;
                     if (currentSrc) {
-                        imageUrlToDataUrl(currentSrc, function(dataUrl) {
+                        imageUrlToDataUrl(currentSrc, driverName, function(dataUrl) {
                             if (dataUrl) {
                                 downloadFromDataUrl(dataUrl, `TODA_QRCode_${plateNumber}.png`);
                             } else {
