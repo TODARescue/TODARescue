@@ -212,8 +212,6 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 
 
     <script>
-        // Replace the existing JavaScript section in your PHP file with this improved version
-
         document.addEventListener('DOMContentLoaded', function() {
             // Get plate number and driver ID from PHP
             const plateNumber = <?php echo $jsPlateNumber; ?>;
@@ -235,33 +233,46 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
             let qrCodeDataUrl = null; // Store the QR code as data URL for reliable download
 
             // Function to convert image URL to data URL (for reliable mobile download)
-            function imageUrlToDataUrl(qrImageUrl, driverName ,callback) {
+            function imageUrlToDataUrl(qrImageUrl, driverName, callback) {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const img = new Image();
+                const qrImg = new Image();
+                const logoImg = new Image();
 
-                // Enable CORS for external images
-                img.crossOrigin = 'anonymous';
+                qrImg.crossOrigin = 'anonymous';
+                logoImg.crossOrigin = 'anonymous';
 
-                img.onload = function() {
+                let qrLoaded = false;
+                let logoLoaded = false;
+
+                function drawCanvas() {
+                    if (!qrLoaded || !logoLoaded) return;
+
                     const padding = 40;
                     const textHeight = 80;
-                    canvas.width = img.width + (padding * 2);
-                    canvas.height = img.height + textHeight + (padding * 2);
-
+                    canvas.width = qrImg.width + (padding * 2);
+                    canvas.height = qrImg.height + textHeight + (padding * 2);
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    const qrX = (canvas.width - img.width) / 2;
+                    const qrX = (canvas.width - qrImg.width) / 2;
                     const qrY = padding;
-                    ctx.drawImage(img, qrX, qrY);
+                    const logoSize = qrImg.width * 0.7; 
+                    const logoX = qrX + (qrImg.width - logoSize) / 2; 
+                    const logoY = qrY + (qrImg.height - logoSize) / 2;
+                    ctx.globalAlpha = 0.3;
+                    ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+
+                    ctx.globalAlpha = 1.0;
+                    ctx.globalCompositeOperation = 'multiply';
+                    ctx.drawImage(qrImg, qrX, qrY);
+                    
+                    ctx.globalCompositeOperation = 'source-over';
 
                     ctx.fillStyle = '#000000';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-
                     ctx.font = 'bold 24px Rethink Sans, sans-serif';
-                    const nameY = qrY + img.height + (textHeight / 2);
+                    const nameY = qrY + qrImg.height + (textHeight / 2);
                     ctx.fillText(driverName, canvas.width / 2, nameY - 15);
 
                     try {
@@ -271,13 +282,30 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                         console.error('Failed to convert image to data URL:', error);
                         callback(null);
                     }
+                }
+
+                qrImg.onload = function() {
+                    qrLoaded = true;
+                    drawCanvas();
                 };
 
-                img.onerror = function() {
+                logoImg.onload = function() {
+                    logoLoaded = true;
+                    drawCanvas();
+                };
+
+                qrImg.onerror = function() {
                     callback(null);
                 };
 
-                img.src = qrImageUrl;
+                logoImg.onerror = function() {
+                    console.warn('Logo failed to load, generating QR without logo');
+                    logoLoaded = true;
+                    drawCanvas();
+                };
+
+                qrImg.src = qrImageUrl;
+                logoImg.src = '../assets/images/Logo.png'; // Make sure this path is correct
             }
 
             // Function to download file from data URL (works reliably on mobile)
@@ -383,7 +411,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
     <!-- Change status -->
     <script>
