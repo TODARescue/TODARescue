@@ -21,6 +21,54 @@
     "name": "TMO",
     "contactNumber": "099876543218",
     "permanentAddress": "Janopol East, Tanauan",
-    "type": "TMO"
+    "type": "tmo"
+  },
+  {
+    "name": "Tanauan Medical Center Inc.",
+    "contactNumber": "(043) 784 5401",
+    "permanentAddress": "A. Mabini Ave 27 4232 Tanauan Calabarzon",
+    "type": "medical"
+  },
+  {
+    "name": "Laurel Memorial District Hospital",
+    "contactNumber": "(043) 784 0958",
+    "permanentAddress": "421 4232 Tanauan Calabarzon",
+    "type": "medical"
+  },
+  {
+    "name": "H.M. Corachea General Hospital",
+    "contactNumber": "(043) 778 1298",
+    "permanentAddress": "Collantes St, Barangay 7, Tanauan, 4232 Batangas, Philippines",
+    "type": "medical"
+  },
+  {
+    "name": "Daniel Mercado Medical Center - Emergency Medicine",
+    "contactNumber": "(043) 778 1810",
+    "permanentAddress": "#1 Pres. Laurel Hiway 4232 Tanauan Calabarzon",
+    "type": "medical"
+  },
+  {
+    "name": "Bureau of Fire Tanauan City",
+    "contactNumber": "09223448887",
+    "permanentAddress": "Tanauan City, Batangas",
+    "type": "fire"
+  },
+  {
+    "name": "Tanauan City Police Station",
+    "contactNumber": "09393227848",
+    "permanentAddress": "Tanauan City, Batangas",
+    "type": "police"
+  },
+  {
+    "name": "Traffic Management Office",
+    "contactNumber": "(043) 7784829",
+    "permanentAddress": "Tanauan City, Batangas",
+    "type": "tmo"
+  },
+  {
+    "name": "Philippine Red Cross",
+    "contactNumber": "09303583051",
+    "permanentAddress": "Tanauan City, Batangas",
+    "type": "medical"
   }
 ]
