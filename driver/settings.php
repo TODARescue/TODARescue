@@ -113,7 +113,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </div>
                         </a>
 
-                        <a href="../passenger/about.php" style="text-decoration: none; color: inherit;">
+                        <a href="../driver/about.php" style="text-decoration: none; color: inherit;">
                             <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
                                 onclick="handleClick('about')">
                                 About
