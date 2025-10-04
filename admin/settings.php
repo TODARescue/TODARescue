@@ -67,6 +67,16 @@ $showPasswordModal = !empty($error);
                             Update Password
                         </div>
 
+                        <!-- ✅ Survey Form Button -->
+                        <a href="https://forms.gle/EJ4QKFumr7bbLUdaA" target="_blank"
+                            style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light">
+                                Survey Form
+                            </div>
+                        </a>
+
+
                         <!-- Log Out -->
                         <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"
                             style="text-decoration: none; color: inherit;">
@@ -117,6 +127,7 @@ $showPasswordModal = !empty($error);
         </div>
     </div>
 
+
     <!-- Log Out Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -129,7 +140,7 @@ $showPasswordModal = !empty($error);
                         style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <a href="../logout.php" class="btn rounded-pill px-4 text-white"
+                    <a href="../logOut.php" class="btn rounded-pill px-4 text-white"
                         style="background-color: #1cc8c8; font-weight: 600;">
                         Yes
                     </a>

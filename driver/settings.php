@@ -113,17 +113,22 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </div>
                         </a>
 
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
-                            onclick="handleClick('privacySecurity')">
-                            Privacy and Security
-                        </div>
-
-                        <a href="../passenger/about.php" style="text-decoration: none; color: inherit;">
+                        <a href="../driver/about.php" style="text-decoration: none; color: inherit;">
                             <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
                                 onclick="handleClick('about')">
                                 About
                             </div>
                         </a>
+
+                                                <!--: Survey Forms Button -->
+                        <a href="https://forms.gle/EJ4QKFumr7bbLUdaA" target="_blank"
+                            style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light">
+                                Survey Form
+                            </div>
+                        </a>
+
 
                         <!-- Log Out (with modal) -->
                         <a href="#" data-bs-toggle="modal" data-bs-target="#leaveCircleModal"
@@ -157,7 +162,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                         style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <a href="../logout.php" class="btn rounded-pill px-4 text-white"
+                    <a href="../logOut.php" class="btn rounded-pill px-4 text-white"
                         style="background-color: #1cc8c8; font-weight: 600;">
                         Yes
                     </a>
@@ -165,6 +170,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             </div>
         </div>
     </div>
+    
 
     <?php include '../assets/shared/navbarDriver.php'; ?>
 
