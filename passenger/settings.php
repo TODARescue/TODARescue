@@ -107,16 +107,22 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </div>
                         </a>
 
-                        <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
-                            onclick="handleClick('privacySecurity')">
-                            Privacy and Security
-                        </div>
                         <a href="../passenger/about.php" style="text-decoration: none; color: inherit;">
                             <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
                                 onclick="handleClick('about')">
                                 About
                             </div>
                         </a>
+
+                        <!--: Survey Forms Button -->
+                        <a href="https://forms.gle/EJ4QKFumr7bbLUdaA" target="_blank"
+                            style="text-decoration: none; color: inherit;">
+                            <div
+                                class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light">
+                                Survey Form
+                            </div>
+                        </a>
+
                         <!-- Log Out (with modal) -->
                         <a href="#" data-bs-toggle="modal" data-bs-target="#leaveCircleModal"
                             style="text-decoration: none; color: inherit;">
@@ -163,16 +169,16 @@ if ($result && mysqli_num_rows($result) > 0) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById('sharing-toggle').addEventListener('change', function() {
+        document.getElementById('sharing-toggle').addEventListener('change', function () {
             const isChecked = this.checked ? 1 : 0;
 
             fetch('../assets/php/updateSharingStatus.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'isSharing=' + isChecked
-                })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'isSharing=' + isChecked
+            })
                 .then(res => res.json())
                 .then(data => {
                     if (!data.success) {
