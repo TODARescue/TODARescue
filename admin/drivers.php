@@ -1,5 +1,7 @@
 <?php
 include '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
+
 
 $search = $_GET['search'] ?? '';
 $sort = $_GET['sort'] ?? '';

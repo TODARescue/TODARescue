@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
+
 
 $userId = $_SESSION['userId'] ?? null;
 

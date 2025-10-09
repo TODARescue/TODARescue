@@ -1,5 +1,7 @@
 <?php
 include '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
+
 
 if (isset($_GET['userId'])) {
     $userId = (int) $_GET['userId'];

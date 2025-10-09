@@ -1,5 +1,7 @@
 <?php
 include '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
+
 
 $userId = $_GET['userId'] ?? null;
 if (!$userId) {
