@@ -144,7 +144,7 @@ policeStations.forEach(function (station) {
 // Custom marker icon
 const profileIcon = L.divIcon({
   className: "custom-profile-icon",
-  html: `<img src="${profilePicture}" class="profile-icon-image">`,
+  html: `<img src="${profilePicture}" class="profile-icon-image" onerror="this.onerror=null; this.src='../assets/images/profile-default.png';">`,
   iconSize: [40, 40],
   iconAnchor: [20, 20],
   popupAnchor: [0, -20],
@@ -156,8 +156,11 @@ const popupContent = `
         <div class="name-overlay" style="position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); color: white; font-weight: bold; font-size: 12px; text-shadow: 0 0 3px black;">
             You 
         </div>
-        <img src="${profilePicture}" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white;" />
-    </div>
+        <img
+      src="${profilePicture}"
+      onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
+      style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white;"
+    />
 `;
 
 //Flags
