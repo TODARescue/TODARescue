@@ -1,14 +1,13 @@
 <?php
 session_start();
 require_once '../assets/shared/connect.php';
-include '../assets/php/checkLogin.php';
 
 header('Content-Type: application/json');
 
 $circles = [];
 
 if (!isset($_SESSION['userId'])) {
-    echo json_encode($circles); 
+    echo json_encode($circles);
     exit;
 }
 

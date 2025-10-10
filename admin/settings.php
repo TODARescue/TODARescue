@@ -3,14 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-
-$userId = $_SESSION['userId'] ?? null;
-
-if (!$userId) {
-    header("Location: ../login.php");
-    exit();
-}
-
 // Fetch admin info
 $query = "SELECT * FROM users WHERE userID = $userId AND role = 'admin' LIMIT 1";
 $result = executeQuery($query);
