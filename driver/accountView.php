@@ -38,6 +38,7 @@ if (!empty($user['photo'])) {
     <style>
         body {
             overflow-x: hidden;
+            min-height: 100vh; /* ✅ ensure body fills full height */
         }
 
         img {
@@ -48,12 +49,23 @@ if (!empty($user['photo'])) {
         .no-horizontal-scroll {
             overflow-x: hidden;
         }
+
+        /* ✅ make card always fill remaining height cleanly */
+        .card {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .list-group-flush {
+            flex-grow: 1;
+        }
     </style>
 </head>
 
-<body class="bg-dark d-flex justify-content-center align-items-center min-vh-100 no-horizontal-scroll">
+<body class="bg-dark d-flex justify-content-center align-items-center no-horizontal-scroll">
     <div class="container-fluid p-0">
-        <div class="row g-0 min-vh-100">
+        <div class="row g-0">
             <div class="col-12 d-flex flex-column h-100">
 
                 <div class="card bg-white flex-grow-1 d-flex flex-column rounded-0 shadow-lg">
