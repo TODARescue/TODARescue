@@ -3,13 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-if (!isset($_SESSION['userId'])) {
-  header('Location: ../login.php');
-  exit;
-}
-
-$userId = $_SESSION['userId'];
-
 // ✅ Get driverId based on current logged-in user
 $driverQuery = $conn->prepare("SELECT driverId FROM drivers WHERE userId = ?");
 $driverQuery->bind_param("i", $userId);

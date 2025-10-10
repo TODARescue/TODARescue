@@ -3,7 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-$userId = $_SESSION['userId'] ?? null;
 $isSharing = 1; // default
 
 // Fetch user's sharing status from circlemembers table
@@ -170,16 +169,16 @@ if ($result && mysqli_num_rows($result) > 0) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById('sharing-toggle').addEventListener('change', function () {
+        document.getElementById('sharing-toggle').addEventListener('change', function() {
             const isChecked = this.checked ? 1 : 0;
 
             fetch('../assets/php/updateSharingStatus.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'isSharing=' + isChecked
-            })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'isSharing=' + isChecked
+                })
                 .then(res => res.json())
                 .then(data => {
                     if (!data.success) {

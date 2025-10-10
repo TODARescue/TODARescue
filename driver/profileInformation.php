@@ -1,21 +1,11 @@
 <?php
+session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 if (isset($_GET['testUser'])) {
     $_SESSION['userId'] = (int)$_GET['testUser'];
 }
-
-if (!isset($_SESSION['userId'])) {
-    header('Location: ../index.php');
-    exit;
-}
-
-$userId = $_SESSION['userId'];
 
 $stmt = $conn->prepare("SELECT d.driverId, d.plateNumber, d.model, d.address, d.todaRegistration, 
                         d.isVerified, d.photo, d.qrCode, CONCAT(u.firstName, ' ', u.lastName) as fullName
@@ -257,8 +247,8 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     const qrX = (canvas.width - qrImg.width) / 2;
                     const qrY = padding;
-                    const logoSize = qrImg.width * 0.7; 
-                    const logoX = qrX + (qrImg.width - logoSize) / 2; 
+                    const logoSize = qrImg.width * 0.7;
+                    const logoX = qrX + (qrImg.width - logoSize) / 2;
                     const logoY = qrY + (qrImg.height - logoSize) / 2;
                     ctx.globalAlpha = 0.3;
                     ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
@@ -266,7 +256,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                     ctx.globalAlpha = 1.0;
                     ctx.globalCompositeOperation = 'multiply';
                     ctx.drawImage(qrImg, qrX, qrY);
-                    
+
                     ctx.globalCompositeOperation = 'source-over';
 
                     ctx.fillStyle = '#000000';

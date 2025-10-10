@@ -5,7 +5,6 @@ session_start();
 // $driverId = 2;
 include '../assets/php/checkLogin.php';
 
-$userId = $_SESSION['userId'];
 $historyId = null;
 
 // To ensure different modal popup

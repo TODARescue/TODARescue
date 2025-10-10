@@ -3,13 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-if (!isset($_SESSION['userId'])) {
-  header('Location: ../login.php');
-  exit;
-}
-
-$userId = $_SESSION['userId'];
-
 // ✅ Only show ride history from the past 7 days
 $sql = "
   SELECT h.historyId, h.pickupTime, h.dropoffTime, d.plateNumber, d.model, d.address, d.todaRegistration, u.firstName, u.lastName, u.contactNumber

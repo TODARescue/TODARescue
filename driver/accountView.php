@@ -3,11 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-if (!isset($_SESSION['userId'])) {
-    header('Location: ../login.php');
-    exit;
-}
-
 $userId = $_SESSION['userId'];
 
 // Fetch driver details
@@ -41,9 +36,18 @@ if (!empty($user['photo'])) {
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/css/style.css" />
     <style>
-        body { overflow-x: hidden; }
-        img { max-width: 100%; height: auto; }
-        .no-horizontal-scroll { overflow-x: hidden; }
+        body {
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .no-horizontal-scroll {
+            overflow-x: hidden;
+        }
     </style>
 </head>
 
@@ -139,4 +143,5 @@ if (!empty($user['photo'])) {
         }
     </script>
 </body>
+
 </html>

@@ -1,14 +1,7 @@
 <?php
+session_start();
 include '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
-
-
-$userId = $_GET['userId'] ?? null;
-if (!$userId) {
-    echo "User ID missing.";
-    exit;
-}
-
 
 $userResult = mysqli_query($conn, "SELECT * FROM users WHERE userId = $userId");
 $driverResult = mysqli_query($conn, "SELECT * FROM drivers WHERE userId = $userId");
@@ -147,11 +140,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-
         const photoInput = document.getElementById('photoInput');
         const previewImg = document.getElementById('profilePreview');
 
-        photoInput.addEventListener('change', function () {
+        photoInput.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 previewImg.src = URL.createObjectURL(file);

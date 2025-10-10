@@ -3,13 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-if (!isset($_SESSION['userId'])) {
-    header('Location: ../index.php');
-    exit;
-}
-
-$userId = $_SESSION['userId'];
-
 $query = "SELECT c.circleId, c.circleName, cm.role 
           FROM circles c 
           INNER JOIN circlemembers cm ON c.circleId = cm.circleId 

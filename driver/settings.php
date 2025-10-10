@@ -3,7 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-$userId = $_SESSION['userId'] ?? null;
 $isSharing = 0; // default
 
 // Fetch user's sharing status from circlemembers table
@@ -121,7 +120,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </div>
                         </a>
 
-                                                <!--: Survey Forms Button -->
+                        <!--: Survey Forms Button -->
                         <a href="https://forms.gle/EJ4QKFumr7bbLUdaA" target="_blank"
                             style="text-decoration: none; color: inherit;">
                             <div
@@ -171,7 +170,7 @@ if ($result && mysqli_num_rows($result) > 0) {
             </div>
         </div>
     </div>
-    
+
 
     <?php include '../assets/shared/navbarDriver.php'; ?>
 
