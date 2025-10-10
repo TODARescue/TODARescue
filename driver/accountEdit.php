@@ -78,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $updateDriverStmt->bind_param("ssi", $plateNumber, $todaRegistration, $userId);
                     $updateDriverStmt->execute();
                 }
-                header("Location: accountView.php?updated=1");
+                // ✅ FIX: Redirect to SETTINGS PAGE instead of accountView
+                header("Location: settings.php?updated=1");
                 exit;
             } else {
                 $error = "Update failed.";
@@ -162,7 +163,8 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
             </form>
 
             <div class="d-grid mt-3">
-                <a href="accountView.php" class="btn btn-secondary">Back to Profile</a>
+                <!-- ✅ FIX: Back button now goes to Settings -->
+                <a href="settings.php" class="btn btn-secondary">&lt; Account</a>
             </div>
         </div>
     </div>
