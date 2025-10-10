@@ -3,14 +3,19 @@ session_start();
 include '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
+// Initialize counts
+$driverCount = $passengerCount = 0;
+$inactiveDriverCount = $inactivePassengerCount = 0;
 
-$driverCount = 0;
-$passengerCount = 0;
-
-// Only count drivers/passengers where isDeleted = 0
+// Active users
 $driverQuery = "SELECT COUNT(*) AS total FROM users WHERE role = 'driver' AND isDeleted = 0";
 $passengerQuery = "SELECT COUNT(*) AS total FROM users WHERE role = 'passenger' AND isDeleted = 0";
 
+// Inactive users
+$inactiveDriverQuery = "SELECT COUNT(*) AS total FROM users WHERE role = 'driver' AND isDeleted = 1";
+$inactivePassengerQuery = "SELECT COUNT(*) AS total FROM users WHERE role = 'passenger' AND isDeleted = 1";
+
+// Execute queries
 if ($result = $conn->query($driverQuery)) {
     $row = $result->fetch_assoc();
     $driverCount = $row['total'];
@@ -21,8 +26,19 @@ if ($result = $conn->query($passengerQuery)) {
     $passengerCount = $row['total'];
 }
 
+if ($result = $conn->query($inactiveDriverQuery)) {
+    $row = $result->fetch_assoc();
+    $inactiveDriverCount = $row['total'];
+}
+
+if ($result = $conn->query($inactivePassengerQuery)) {
+    $row = $result->fetch_assoc();
+    $inactivePassengerCount = $row['total'];
+}
+
 $conn->close();
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -63,11 +79,30 @@ $conn->close();
                     <span class="fw-bold fs-4" style="color: #2DAAA7;"><?php echo $passengerCount; ?></span>
                 </div>
             </a>
+
+
+            <a href="drivers.php" class="text-decoration-none flex-fill" style="min-width: 140px;">
+                <div
+                    class="bg-secondary-subtle rounded-5 p-3 d-flex flex-column justify-content-between text-start h-100">
+                    <span class="fw-semibold text-dark" style="font-size: 0.85rem;">Inactive Drivers:</span>
+                    <span class="fw-bold fs-4" style="color: #000000ff;"><?php echo $inactiveDriverCount; ?></span>
+                </div>
+            </a>
+
+
+            <a href="passengers.php" class="text-decoration-none flex-fill" style="min-width: 140px;">
+                <div
+                    class="bg-secondary-subtle rounded-5 p-3 d-flex flex-column justify-content-between text-start h-100">
+                    <span class="fw-semibold text-dark" style="font-size: 0.85rem;">Inactive Passengers:</span>
+                    <span class="fw-bold fs-4" style="color: #000000ff;"><?php echo $inactivePassengerCount; ?></span>
+                </div>
+            </a>
+
         </div>
 
         <div class="mt-5 w-100 text-center">
             <h6 class="fw-semibold mb-3">User Distribution</h6>
-            <div class="w-75 mx-auto">
+            <div class="w-75 mx-auto mb-4">
                 <canvas id="userChart" width="300" height="300"></canvas>
             </div>
         </div>
@@ -84,19 +119,22 @@ $conn->close();
         const userChart = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['Drivers', 'Passengers'],
+                labels: ['Active Drivers', 'Active Passengers', 'Inactive Drivers', 'Inactive Passengers'],
                 datasets: [{
-                    data: [<?php echo $driverCount; ?>, <?php echo $passengerCount; ?>],
-                    backgroundColor: ['#2DAAA7', '#F29E4C'],
+                    data: [
+                        <?php echo $driverCount; ?>,
+                        <?php echo $passengerCount; ?>,
+                        <?php echo $inactiveDriverCount; ?>,
+                        <?php echo $inactivePassengerCount; ?>
+                    ],
+                    backgroundColor: ['#2DAAA7', '#09eeebff', '#000000ff', '#4e4b4bff'],
                     borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
+                    legend: { position: 'bottom' }
                 }
             }
         });
