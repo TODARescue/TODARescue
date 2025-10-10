@@ -1,9 +1,9 @@
 <?php
 include("../assets/shared/connect.php");
 session_start();
+
 include '../assets/php/checkLogin.php';
 
-$userId = $_SESSION['userId'] ?? null;
 $historyId = null;
 $driverId = null;
 $driverName = null;

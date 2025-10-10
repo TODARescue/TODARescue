@@ -4,8 +4,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-
-$userId = $_SESSION['userId'];
 $error = '';
 $photoFileName = '';
 $plateNumber = '';
@@ -102,7 +100,7 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-dark text-white d-flex justify-content-center align-items-center vh-100">
+<body class="text-white d-flex justify-content-center align-items-center p-2">
     <div class="container">
         <div class="card bg-white text-dark p-4 rounded-4 shadow-lg">
             <h3 class="text-center mb-4">Edit Account</h3>
@@ -158,13 +156,14 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
                 <?php endif; ?>
 
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #24b3a7; border-radius: 15px;">Save Changes</button>
                 </div>
             </form>
 
             <div class="d-grid mt-3">
                 <!-- ✅ FIX: Back button now goes to Settings -->
-                <a href="settings.php" class="btn btn-secondary">&lt; Account</a>
+                <a href="settings.php" class="btn text-black w-100"
+                    style="background-color: #dcdcdc; border-radius: 15px;"> Settings</a>
             </div>
         </div>
     </div>
