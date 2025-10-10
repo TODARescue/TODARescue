@@ -3,6 +3,7 @@ include("../assets/shared/connect.php");
 session_start();
 // For testing purposes
 // $driverId = 2;
+include '../assets/php/checkLogin.php';
 
 $userId = $_SESSION['userId'];
 $historyId = null;

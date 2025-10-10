@@ -3,6 +3,7 @@ session_start();
 require_once '../assets/shared/connect.php';
 
 header('Content-Type: application/json');
+include '../assets/php/checkLogin.php';
 
 $circles = [];
 

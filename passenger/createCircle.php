@@ -1,6 +1,7 @@
 <?php
 include("../assets/shared/connect.php");
 session_start();
+include '../assets/php/checkLogin.php';
 
 if (!isset($_SESSION['userId'])) {
     header("Location: ../index.php");

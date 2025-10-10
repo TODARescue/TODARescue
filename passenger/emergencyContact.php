@@ -1,6 +1,7 @@
 <?php
 include("../assets/shared/connect.php");
 session_start();
+include '../assets/php/checkLogin.php';
 
 $_SESSION['userId']    = $_SESSION['userId'];
 $_SESSION['firstName'] = $_SESSION['firstName'] ?? "";
