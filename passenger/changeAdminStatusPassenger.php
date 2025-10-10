@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['userId'])) {

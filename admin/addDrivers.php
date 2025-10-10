@@ -1,5 +1,6 @@
 <?php
 include '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
 
 $showSuccessModal = false;
 $showErrorModal = false;

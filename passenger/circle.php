@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
 
 // For testing purposes - set a default user ID
 if (!isset($_SESSION['userId'])) {

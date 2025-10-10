@@ -1,5 +1,7 @@
 <?php
 include '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
+
 
 $driverCount = 0;
 $passengerCount = 0;
