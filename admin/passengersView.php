@@ -3,6 +3,8 @@ session_start();
 include '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
+$userId = $_GET['userId'] ?? null;
+
 // Recover logic
 if (isset($_POST['recover'])) {
     $recoverStmt = $conn->prepare("UPDATE users SET isDeleted = 0 WHERE userId = ?");
