@@ -1,16 +1,8 @@
 <?php
 session_start();
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
-header("Expires: 0");
 require_once '../assets/shared/connect.php';
+include '../assets/php/checkLogin.php';
 
-if (!isset($_SESSION['userId'])) {
-    header('Location: ../login.php');
-    exit;
-}
-
-$userId = $_SESSION['userId'];
 $error = '';
 $photoFileName = '';
 
