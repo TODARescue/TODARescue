@@ -114,7 +114,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                             </div>
                         </a>
 
-                        <a href="../passenger/about.php" style="text-decoration: none; color: inherit;">
+                        <a href="../driver/about.php" style="text-decoration: none; color: inherit;">
                             <div class="list-group-item list-group-item-action py-3 text-black border-bottom w-100 bg-light"
                                 onclick="handleClick('about')">
                                 About
@@ -163,7 +163,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                         style="background-color: #dcdcdc; font-weight: 600;" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <a href="../logout.php" class="btn rounded-pill px-4 text-white"
+                    <a href="../logOut.php" class="btn rounded-pill px-4 text-white"
                         style="background-color: #1cc8c8; font-weight: 600;">
                         Yes
                     </a>
