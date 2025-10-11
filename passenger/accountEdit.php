@@ -4,7 +4,6 @@ require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
 $error = '';
-$success = '';
 $photoFileName = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $email = trim($_POST['email']);
   $photo = $_FILES['photo'];
 
-  // Check for duplicate email or contact across ALL users except self
+  // Check for duplicate email/contact
   $checkStmt = $conn->prepare("SELECT userId FROM users WHERE (email = ? OR contactNumber = ?) AND userId != ?");
   $checkStmt->bind_param("ssi", $email, $contactNumber, $userId);
   $checkStmt->execute();
@@ -23,29 +22,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($checkResult->num_rows > 0) {
     $error = "Email or Contact Number already exists.";
   } else {
-    // Determine upload directory based on role
-    $roleStmt = $conn->prepare("SELECT role FROM users WHERE userId = ?");
-    $roleStmt->bind_param("i", $userId);
-    $roleStmt->execute();
-    $roleResult = $roleStmt->get_result();
-    $roleRow = $roleResult->fetch_assoc();
-    $role = $roleRow['role'] ?? 'passenger'; // default to passenger
+    // Always use passengers folder for this page
+    $targetDir = '../assets/images/passengers/';
 
     if (!empty($photo['name'])) {
-      $photoFileName = time() . '_' . basename($photo['name']);
-      $targetDir = ($role === 'driver') ? '../assets/images/driver/' : '../assets/images/passengers/';
-      $targetPath = $targetDir . $photoFileName;
+      $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+      if (in_array($photo['type'], $allowedTypes)) {
+        $photoFileName = time() . '_' . basename($photo['name']);
+        $targetPath = $targetDir . $photoFileName;
 
-      if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0755, true);
-      }
+        if (!is_dir($targetDir)) {
+          mkdir($targetDir, 0755, true);
+        }
 
-      if (!move_uploaded_file($photo['tmp_name'], $targetPath)) {
-        $error = "Failed to upload photo. Please check file permissions.";
+        if (!move_uploaded_file($photo['tmp_name'], $targetPath)) {
+          $error = "Failed to upload photo. Please check file permissions.";
+        }
+      } else {
+        $error = "Invalid file type. Please upload JPG, PNG, or GIF.";
       }
     }
 
-    // Proceed with update if no error
     if (!$error) {
       if (!empty($photoFileName)) {
         $stmt = $conn->prepare("UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=?, photo=? WHERE userId=?");
@@ -56,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
 
       if ($stmt->execute()) {
-        header("Location: accountView.php?updated=1");
+        // ✅ Redirect to Settings page after saving
+        header("Location: settings.php?updated=1&t=" . time());
         exit;
       } else {
         $error = "Update failed.";
@@ -65,18 +63,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
-// Load user data for display
-$stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo, role FROM users WHERE userId = ?");
+// Fetch current user data
+$stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo FROM users WHERE userId = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Determine image path
-$imageFolder = ($user['role'] === 'driver') ? 'driver' : 'passengers';
-$photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspecialchars($user['photo']) : '';
+// Profile image path with cache buster
+$photoPath = !empty($user['photo'])
+  ? "../assets/images/passengers/" . htmlspecialchars($user['photo']) . '?t=' . time()
+  : '';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -85,7 +83,6 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edit Profile</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/style.css">
   <style>
     .preview-img {
       width: 100px;
@@ -95,7 +92,7 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
   </style>
 </head>
 
-<body class="bg-dark text-white d-flex justify-content-center align-items-center vh-100">
+<body class="text-white d-flex justify-content-center align-items-center">
   <div class="container">
     <div class="card bg-white text-dark p-4 rounded-4 shadow-lg">
       <h3 class="text-center mb-4">Edit Account</h3>
@@ -106,12 +103,11 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
 
       <form method="POST" enctype="multipart/form-data">
         <div class="text-center mb-3">
-          <img id="preview"
-            src="<?= !empty($user['photo']) ? '../assets/uploads/' . htmlspecialchars($user['photo']) : '' ?>"
+          <img id="preview" src="<?= $photoPath ?>"
             onerror="this.onerror=null; this.src='../assets/images/profile-default.png';"
             class="rounded-circle preview-img mb-2" alt="Profile Photo">
 
-          <input type="file" name="photo" class="form-control" accept="image/*" onchange="previewImage(event)">
+          <input type="file" name="photo" class="form-control mt-2" accept="image/*" onchange="previewImage(event)">
         </div>
 
         <div class="mb-3">
@@ -139,12 +135,14 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
         </div>
 
         <div class="d-grid">
-          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="submit" class="btn btn-primary" style="background-color: #24b3a7; border-radius: 15px;">Save Changes</button>
         </div>
       </form>
 
       <div class="d-grid mt-3">
-        <a href="accountView.php" class="btn btn-secondary">Back to Profile</a>
+        <!-- ✅ FIX: Back button now goes to Settings -->
+        <a href="settings.php" class="btn text-black w-100"
+          style="background-color: #dcdcdc; border-radius: 15px;"> Settings</a>
       </div>
     </div>
   </div>
@@ -158,7 +156,6 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
       reader.readAsDataURL(event.target.files[0]);
     }
   </script>
-
 </body>
 
 </html>
