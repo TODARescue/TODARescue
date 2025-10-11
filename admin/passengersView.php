@@ -1,14 +1,7 @@
 <?php
+session_start();
 include '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
-
-
-$userId = $_GET['userId'] ?? null;
-
-if (!$userId) {
-    echo "User ID missing.";
-    exit;
-}
 
 // Recover logic
 if (isset($_POST['recover'])) {
@@ -186,7 +179,7 @@ $historyResult = $stmt->get_result();
             const deleteModal = document.getElementById('deleteModal');
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-            deleteModal.addEventListener('show.bs.modal', function (event) {
+            deleteModal.addEventListener('show.bs.modal', function(event) {
                 const button = event.relatedTarget;
                 const userId = button.getAttribute('data-user-id');
                 confirmDeleteBtn.href = 'deletePassenger.php?userId=' + userId;

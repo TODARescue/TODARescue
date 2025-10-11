@@ -3,7 +3,6 @@ include("../assets/shared/connect.php");
 session_start();
 include '../assets/php/checkLogin.php';
 
-$_SESSION['userId']    = $_SESSION['userId'];
 $_SESSION['firstName'] = $_SESSION['firstName'] ?? "";
 $_SESSION['lastName']  = $_SESSION['lastName']  ?? "";
 $_SESSION['email']     = $_SESSION['email']     ?? "";
@@ -14,7 +13,7 @@ $contacts = [];
 
 if ($viewerId !== "") {
 
-        $sql = "
+    $sql = "
         SELECT 
             u.userId,
             CONCAT(u.firstName, ' ', u.lastName) AS fullName,
@@ -147,7 +146,7 @@ if (file_exists($jsonPath)) {
             <!-- PERSONAL CONTACTS -->
             <?php foreach ($contacts as $c): ?>
                 <div class="card contact-card col-12 col-md-8 p-4 rounded-5 mb-3"
-                     data-type-filter="<?= htmlspecialchars($c['circles']) ?>">
+                    data-type-filter="<?= htmlspecialchars($c['circles']) ?>">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3 class="fw-bold mb-0 m-1"><?= htmlspecialchars($c['fullName']) ?></h3>
                         <a href="tel:<?= htmlspecialchars($c['contactNumber']) ?>" onclick="changePhoneIcon(this)">
@@ -197,7 +196,7 @@ if (file_exists($jsonPath)) {
 
             $('.contact-card').each(function() {
                 const types = $(this).data('type-filter').toString().split(',').map(t => t.trim());
-                
+
                 if (selected === 'all' || types.includes(selected)) {
                     $(this).show();
                     visibleCount++;

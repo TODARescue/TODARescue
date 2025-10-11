@@ -3,13 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-// Check if user is logged in
-if (!isset($_SESSION['userId'])) {
-    header('Location: ../index.php');
-    exit;
-}
-
-$userId = $_SESSION['userId'];
 $errorMsg = '';
 $successMsg = '';
 
@@ -57,7 +50,7 @@ try {
         $deleteCircleStmt = $conn->prepare($deleteCircleQuery);
         $deleteCircleStmt->bind_param("i", $circleId);
         $deleteCircleStmt->execute();
-    } 
+    }
     // If user was owner and there are other members, transfer ownership
     else if ($userRole === 'owner') {
         // Find another admin to promote to owner
@@ -99,7 +92,6 @@ try {
     $_SESSION['circleSuccessMsg'] = 'You have successfully left the circle.';
     header('Location: circle.php');
     exit;
-
 } catch (Exception $e) {
     $conn->rollback();
     error_log("Error leaving circle: " . $e->getMessage());
@@ -107,4 +99,3 @@ try {
     header('Location: circleDetails.php?circleId=' . $circleId);
     exit;
 }
-?>

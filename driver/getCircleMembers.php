@@ -3,11 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-if (!isset($_SESSION['userId'])) {
-    echo '<p class="text-danger">Unauthorized access.</p>';
-    exit;
-}
-
 if (!isset($_GET['circleId'])) {
     echo '<p class="text-danger">Missing circleId.</p>';
     exit;

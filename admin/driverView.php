@@ -1,14 +1,7 @@
 <?php
+session_start();
 include '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
-
-
-$userId = $_GET['userId'] ?? null;
-
-if (!$userId) {
-    echo "No user ID provided.";
-    exit;
-}
 
 // Recover logic
 if (isset($_POST['recover'])) {
@@ -90,28 +83,28 @@ if (!$userData || !$driverData) {
         <?php if ($userData['isDeleted'] == 1): ?>
             <p class="text-center text-danger fw-bold small mt-1 mb-3">Inactive account</p>
         <?php endif; ?>
-<div class="px-2 mt-4">
-    <?php
-    $fields = [
-        'First Name' => htmlspecialchars($userData['firstName']),
-        'Last Name' => htmlspecialchars($userData['lastName']),
-        'Contact Number' => htmlspecialchars($userData['contactNumber']),
-        'Tricycle Model' => htmlspecialchars($driverData['model']),
-        'Plate Number' => htmlspecialchars($driverData['plateNumber']),
-        'Permanent Address' => htmlspecialchars($driverData['address']),
-        'Toda Registration' => htmlspecialchars($driverData['todaRegistration']),
-        'Verification' => $driverData['isVerified'] == 1 ? 'Verified' : 'Not Verified'
-    ];
+        <div class="px-2 mt-4">
+            <?php
+            $fields = [
+                'First Name' => htmlspecialchars($userData['firstName']),
+                'Last Name' => htmlspecialchars($userData['lastName']),
+                'Contact Number' => htmlspecialchars($userData['contactNumber']),
+                'Tricycle Model' => htmlspecialchars($driverData['model']),
+                'Plate Number' => htmlspecialchars($driverData['plateNumber']),
+                'Permanent Address' => htmlspecialchars($driverData['address']),
+                'Toda Registration' => htmlspecialchars($driverData['todaRegistration']),
+                'Verification' => $driverData['isVerified'] == 1 ? 'Verified' : 'Not Verified'
+            ];
 
-    foreach ($fields as $label => $value) {
-        echo '
+            foreach ($fields as $label => $value) {
+                echo '
         <div class="row py-2 border-bottom">
             <div class="col-6 fw-semibold text-secondary">' . $label . ':</div>
             <div class="col-6 text-break">' . $value . '</div>
         </div>';
-    }
-    ?>
-</div>
+            }
+            ?>
+        </div>
 
         <!-- Delete Modal -->
         <div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -157,7 +150,7 @@ if (!$userData || !$driverData) {
     <script>
         const deleteModal = document.getElementById('deleteModal');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        deleteModal.addEventListener('show.bs.modal', function (event) {
+        deleteModal.addEventListener('show.bs.modal', function(event) {
             const triggerButton = event.relatedTarget;
             const userId = triggerButton.getAttribute('data-user-id');
             confirmDeleteBtn.href = 'deleteDriver.php?userId=' + userId;

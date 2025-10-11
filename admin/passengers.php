@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
@@ -45,18 +46,18 @@ $filter = $_GET['filter'] ?? 'all';
                 <select name="sort" class="form-select rounded-5" onchange="this.form.submit()">
                     <option value="">Sort</option>
                     <option value="asc" <?php if ($sort === 'asc')
-                        echo 'selected'; ?>>A-Z</option>
+                                            echo 'selected'; ?>>A-Z</option>
                     <option value="desc" <?php if ($sort === 'desc')
-                        echo 'selected'; ?>>Z-A</option>
+                                                echo 'selected'; ?>>Z-A</option>
                 </select>
 
                 <select name="filter" class="form-select rounded-5" onchange="this.form.submit()">
                     <option value="all" <?php if ($filter === 'all')
-                        echo 'selected'; ?>>All</option>
+                                            echo 'selected'; ?>>All</option>
                     <option value="active" <?php if ($filter === 'active')
-                        echo 'selected'; ?>>Active</option>
+                                                echo 'selected'; ?>>Active</option>
                     <option value="inactive" <?php if ($filter === 'inactive')
-                        echo 'selected'; ?>>Inactive</option>
+                                                    echo 'selected'; ?>>Inactive</option>
                 </select>
             </div>
         </form>
@@ -97,7 +98,7 @@ $filter = $_GET['filter'] ?? 'all';
                     $photoPath = '../assets/images/passengers/' . $row['photo'];
                     $isDeleted = (int) $row['isDeleted'];
                     $cardOpacity = $isDeleted ? "opacity-50" : "";
-                    ?>
+            ?>
                     <div class="card border-0 clickable-card <?php echo $cardOpacity; ?>"
                         style="background-color: #D9D9D9; border-radius: 30px; cursor: pointer;"
                         onclick="goToPassengerView(<?php echo $row['userId']; ?>)">
@@ -134,7 +135,7 @@ $filter = $_GET['filter'] ?? 'all';
 
                         </div>
                     </div>
-                    <?php
+            <?php
                 }
             } else {
                 echo "<p class='text-center text-muted'>No passengers found.</p>";
@@ -176,7 +177,7 @@ $filter = $_GET['filter'] ?? 'all';
         const deleteModal = document.getElementById('deleteModal');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-        deleteModal.addEventListener('show.bs.modal', function (event) {
+        deleteModal.addEventListener('show.bs.modal', function(event) {
             const triggerButton = event.relatedTarget;
             const userId = triggerButton.getAttribute('data-user-id');
             confirmDeleteBtn.href = 'deletePassenger.php?userId=' + userId;

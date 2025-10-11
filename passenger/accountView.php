@@ -3,13 +3,6 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-if (!isset($_SESSION['userId'])) {
-    header('Location: ../login.php');
-    exit;
-}
-
-$userId = $_SESSION['userId'];
-
 // Get user record
 $stmt = $conn->prepare("SELECT firstName, lastName, contactNumber, email, photo FROM users WHERE userId = ?");
 $stmt->bind_param("i", $userId);
@@ -42,9 +35,18 @@ if (!empty($user['photo'])) {
     <link rel="stylesheet" href="../assets/css/style.css" />
     <style>
         /* Keep your original small helpers; they prevent the mobile “wiggle” */
-        body { overflow-x: hidden; }
-        img { max-width: 100%; height: auto; }
-        .no-horizontal-scroll { overflow-x: hidden; }
+        body {
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .no-horizontal-scroll {
+            overflow-x: hidden;
+        }
     </style>
 </head>
 

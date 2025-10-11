@@ -61,6 +61,7 @@ if ($driverRow = mysqli_fetch_assoc($getDriverResult)) {
     $todaRegistration = $driverRow['todaRegistration'] ?? '';
     $photo = $driverRow['photo'] ?? 'profile-default.png';
     $contact = $driverRow['contact'] ?? '';
+    $isVerified = $driverRow['isVerified'];
 
     // Get driver name
     $getNameQuery = "
@@ -186,14 +187,16 @@ if (isset($_POST['arrive-button']) && $historyId !== null) {
 
                     <!-- Profile Picture -->
                     <div class="me-3 profile-pic ">
-                        <img src="../assets/images/<?php echo $photo ?>" onerror="this.onerror=null; this.src='../assets/images/profile-default.png';" alt="Profile" class="rounded-circle" width="50" height="50" onclick="goView()">
+                        <img src="<?php echo $profilePicture ?>" onerror="this.onerror=null; this.src='../assets/images/profile-default.png';" alt="Profile" class="rounded-circle" width="50" height="50" onclick="goView()">
                     </div>
 
                     <!-- User Info -->
                     <div class="flex-grow-1 me-2">
                         <div class="d-flex align-items-center">
                             <h5 class="mb-0 me-2"><?php echo htmlspecialchars($driverName ?? 'N/A'); ?></h5>
-                            <img src="../assets/images/verified.png" alt="Verified" style="width: 20px;">
+                            <?php if ($isVerified == 1) : ?>
+                                <img src="../assets/images/verified.png" alt="Verified" style="width: 20px;">
+                            <?php endif; ?>
                         </div>
                         <div class="align-items-center">
                             <b id="passenger-count"></b>

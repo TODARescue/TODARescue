@@ -1,7 +1,6 @@
 window.fallbackCoords = [14.08849, 121.0995];
 window.mapBounds = L.latLngBounds([13.7925, 120.9155], [14.2378, 121.252]);
 
-let memberMarker = null;
 let outOfBoundsMember = false;
 let memberCoords = null;
 let hasPanned = false;
@@ -11,8 +10,8 @@ let nameRevealed = false;
 function showLocation(userID, userName, coords, profilePicture) {
   window.isViewingMember = true;
   // Remove existing member marker if any
-  if (memberMarker) {
-    map.removeLayer(memberMarker);
+  if (window.currentMarker) {
+    map.removeLayer(window.currentMarker);
   }
 
   const pt = turf.point([coords[0], coords[1]]);
@@ -62,7 +61,7 @@ function showLocation(userID, userName, coords, profilePicture) {
   });
 
   // Add new member marker
-  memberMarker = L.marker(memberCoords, {
+  window.currentMarker = L.marker(memberCoords, {
     icon: profileIcon,
   })
     .addTo(map)

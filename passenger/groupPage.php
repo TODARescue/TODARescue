@@ -3,8 +3,6 @@ include "../assets/shared/connect.php";
 session_start();
 include '../assets/php/checkLogin.php';
 
-$userId = $_SESSION['userId'];
-
 $hasArrived = isset($_GET['arrived']) && $_GET['arrived'] == '1';
 
 $getPhotoQuery = "SELECT photo, role FROM users WHERE userId = $userId;";

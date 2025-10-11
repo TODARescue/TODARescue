@@ -57,7 +57,7 @@ include '../assets/php/checkLogin.php';
     </div>
 
     <div class="container px-4 pt-4" style="max-width: 600px;">
-       
+
         <div class="text-center mb-4 px-2">
             <h5 class="fw-bold mb-2">About TODA Rescue</h5>
             <p class="mb-0">
@@ -68,7 +68,7 @@ include '../assets/php/checkLogin.php';
             </p>
         </div>
 
-  
+
         <div class="text-center mb-4 px-2">
             <h5 class="fw-bold mb-2">Our Mission</h5>
             <p class="mb-0">

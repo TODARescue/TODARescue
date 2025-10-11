@@ -16,4 +16,3 @@ function executeQuery($query)
 	$conn = $GLOBALS['conn'];
 	return mysqli_query($conn, $query);
 }
-?>

@@ -4,10 +4,6 @@ session_start();
 date_default_timezone_set('Asia/Manila');
 include '../assets/php/checkLogin.php';
 
-if (!isset($_SESSION['userId'])) {
-  header("Location: ../index.php");
-  exit;
-}
 $viewerId = $_SESSION['userId'];
 // $viewerId = 1;
 
