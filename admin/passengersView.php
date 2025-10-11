@@ -57,9 +57,37 @@ $historyResult = $stmt->get_result();
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rethink+Sans:wght@600;800&display=swap"
         rel="stylesheet">
+
+    <style>
+        .driver-photo {
+            width: 65px;
+            /* Default size */
+            height: 65px;
+            border-radius: 50%;
+            /* Perfect circle */
+            object-fit: cover;
+            /* Prevents stretching */
+            object-position: center;
+            /* Keeps face centered */
+            flex-shrink: 0;
+            /* Prevent shrinking in flex layout */
+        }
+
+        @media (max-width: 576px) {
+
+            /* Mobile screens */
+            .driver-photo {
+                width: 50px;
+                /* Slightly smaller for phones */
+                height: 50px;
+            }
+        }
+    </style>
+
+
 </head>
 
-<body class="bg-white d-flex justify-content-center align-items-start min-vh-100 pt-5">
+<body class="bg-white d-flex justify-content-center align-items-start min-vh-100 pt-5 mb-5">
     <?php include '../assets/shared/navbarAdmin.php'; ?>
 
     <div class="container px-4" style="max-width: 400px;">
@@ -79,18 +107,11 @@ $historyResult = $stmt->get_result();
                         class="btn btn-sm text-white rounded-pill px-3" style="background-color: #1cc8c8;">
                         <i class="bi bi-arrow-clockwise me-1"></i> Recover
                     </button>
-
                 <?php else: ?>
-                    <div class="d-flex gap-2">
-                        <a href="editProfilePassenger.php?userId=<?= $userId ?>"
-                            class="btn btn-info text-white btn-sm rounded-circle">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <button data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="<?= $userId ?>"
-                            class="btn btn-danger btn-sm rounded-circle">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </div>
+                    <button data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="<?= $userId ?>"
+                        class="btn btn-danger btn-sm rounded-circle">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
                 <?php endif; ?>
             </div>
         </div>
@@ -110,10 +131,11 @@ $historyResult = $stmt->get_result();
 
         <?php if ($historyResult->num_rows > 0): ?>
             <?php while ($ride = $historyResult->fetch_assoc()): ?>
-                <div class="card border-0 rounded-4 px-3 py-3 mb-4" style="background-color: #d9d9d9;">
+                <div class="card border- rounded-4 px-3 py-3 mb-4" style="background-color: #d9d9d9;">
                     <div class="d-flex align-items-center">
                         <img src="../assets/images/drivers/<?= htmlspecialchars($ride['driverPhoto']) ?: 'profile-default.png' ?>"
-                            class="rounded-circle me-3" width="65" height="65" style="object-fit: cover;">
+                            class="driver-photo me-3" alt="Driver photo">
+
                         <div class="flex-grow-1">
                             <p class="mb-1 fw-semibold">
                                 <?= htmlspecialchars($ride['driverFirstName'] . ' ' . $ride['driverLastName']) ?>
@@ -130,6 +152,7 @@ $historyResult = $stmt->get_result();
             <p class="text-center text-muted">No ride history available.</p>
         <?php endif; ?>
 
+        <!-- Delete Modal -->
         <div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
@@ -152,6 +175,7 @@ $historyResult = $stmt->get_result();
             </div>
         </div>
 
+        <!-- Recover Modal -->
         <div id="recoverModal" class="modal fade" tabindex="-1" aria-labelledby="recoverModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
@@ -176,12 +200,11 @@ $historyResult = $stmt->get_result();
             </div>
         </div>
 
-
         <script>
             const deleteModal = document.getElementById('deleteModal');
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-            deleteModal.addEventListener('show.bs.modal', function(event) {
+            deleteModal.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 const userId = button.getAttribute('data-user-id');
                 confirmDeleteBtn.href = 'deletePassenger.php?userId=' + userId;
