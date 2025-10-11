@@ -7,6 +7,31 @@ if (isset($_GET['testUser'])) {
     $_SESSION['userId'] = (int)$_GET['testUser'];
 }
 
+$photoQuery = "SELECT photo, role FROM users WHERE userId = ?";
+$photoStmt = $conn->prepare($photoQuery);
+$photoStmt->bind_param("i", $userId);
+$photoStmt->execute();
+$photoResult = $photoStmt->get_result();
+
+$profilePicture = '../assets/images/profile-default.png'; // Default fallback
+
+if ($photoResult->num_rows > 0) {
+    $photoRow = $photoResult->fetch_assoc();
+    $userRole = !empty($photoRow['role']) ? $photoRow['role'] : 'driver';
+    
+    if ($userRole === 'driver') {
+        $profilePicture = !empty($photoRow['photo'])
+            ? '../assets/images/drivers/' . $photoRow['photo']
+            : '../assets/images/profile-default.png';
+    } else {
+        $profilePicture = !empty($photoRow['photo'])
+            ? '../assets/images/passengers/' . $photoRow['photo']
+            : '../assets/images/profile-default.png';
+    }
+}
+$photoStmt->close();
+
+// Then get driver information
 $stmt = $conn->prepare("SELECT d.driverId, d.plateNumber, d.model, d.address, d.todaRegistration, 
                         d.isVerified, d.photo, d.qrCode, CONCAT(u.firstName, ' ', u.lastName) as fullName
                         FROM drivers d
@@ -99,20 +124,18 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 
     <?php if (isset($driver)): ?>
         <div class="container-fluid">
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center vh-100">
                 <div class="card border-0">
                     <div class="card-body p-4 text-center">
                         <!-- Driver Photo -->
                         <div class="row">
-                            <div class="col mb-4 py-1">
+                            <div class="col mb-3 py-1">
                                 <div class="rounded-circle d-flex justify-content-center align-items-center mx-auto"
                                     style="width: 120px; height: 120px; background-color: #958D8D; overflow: hidden;">
-                                    <?php if (!empty($driver['photo']) && file_exists($driver['photo'])): ?>
-                                        <img src="<?php echo htmlspecialchars($driver['photo']); ?>" alt="Driver Photo"
-                                            class="img-fluid w-100 h-100 object-fit-cover">
-                                    <?php else: ?>
-                                        <span class="text-white fw-bold">Driver Photo</span>
-                                    <?php endif; ?>
+                                    <img src="<?php echo htmlspecialchars($profilePicture); ?>" 
+                                         onerror="this.onerror=null; this.src='../assets/images/profile-default.png';" 
+                                         alt="Driver Photo"
+                                         class="img-fluid w-100 h-100 object-fit-cover">
                                 </div>
                             </div>
                         </div>
@@ -120,9 +143,11 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                         <!-- Driver Name -->
                         <div class="row">
                             <div class="col mb-3 py-1">
-                                <h5 class="fw-bold"><?php echo htmlspecialchars($driver['fullName']); ?>
+                                <h5 class="fw-bold fs-3"><?php echo htmlspecialchars($driver['fullName']); ?>
                                     <?php if ($driver['isVerified']): ?>
-                                        <img src="../assets/images/verified.png" alt="Verified" style="width: 25px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                                            <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                                        </svg>
                                     <?php endif; ?>
                                 </h5>
                             </div>
@@ -131,32 +156,40 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                         <!-- Tricycle Details -->
                         <div class="row">
                             <div class="col mb-3 py-1">
-                                <h6 class="mb-2 text-dark fw-bold">Tricycle Details</h6>
-                                <p class="mb-1 text-dark"><?php echo htmlspecialchars($driver['model'] . ' - ' . $driver['plateNumber']); ?></p>
+                                <div class="text-start ">
+                                    <h6 class="mb-2 text-dark fw-bold fs-5">Tricycle Details : </h6>
+                                    <p class="mb-1 text-dark"><?php echo htmlspecialchars($driver['model'] . ' - ' . $driver['plateNumber']); ?></p>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Tricycle number -->
                         <div class="row">
                             <div class="col mb-3 py-1">
-                                <h6 class="mb-2 text-dark fw-bold">Tricycle Number</h6>
+                                <div class="text-start">
+                                    <h6 class="mb-2 text-dark fw-bold fs-5">Tricycle Number : </h6>
                                 <p class="mb-1 text-dark" id="tricycle-number"><?php echo htmlspecialchars($driver['plateNumber']); ?></p>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Permanent Address -->
                         <div class="row">
                             <div class="col mb-3 py-1">
-                                <h6 class="mb-2 text-dark fw-bold">Permanent Address</h6>
+                                <div class="text-start">
+                                    <h6 class="mb-2 text-dark fw-bold fs-5">Permanent Address :</h6>
                                 <p class="mb-1 text-dark"><?php echo htmlspecialchars($driver['address']); ?></p>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Toda Registration -->
                         <div class="row">
                             <div class="col mb-4 py-1">
-                                <h6 class="mb-2 text-dark fw-bold">TODA Registration</h6>
-                                <p class="mb-1 text-dark"><?php echo htmlspecialchars($driver['todaRegistration']); ?></p>
+                                <div class="text-start">
+                                   <h6 class="mb-2 text-dark fw-bold fs-5">TODA Registration :</h6>
+                                <p class="mb-1 text-dark"><?php echo htmlspecialchars($driver['todaRegistration']); ?></p> 
+                                </div>
                             </div>
                         </div>
 
@@ -164,7 +197,7 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
                         <div class="row">
                             <div class="col mb-3">
                                 <div id="qr-container" class="text-center">
-                                    <img id="qr-code" alt="QR Code" class="img-fluid mb-3" style="max-width: 100px;">
+                                    <img id="qr-code" alt="QR Code" class="img-fluid mb-3" style="max-width: 300px;">
                                 </div>
                                 <!-- Loading spinner while QR code is generating -->
                                 <div id="qr-loading" class="text-center">
