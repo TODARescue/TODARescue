@@ -53,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
 
       if ($stmt->execute()) {
-        // ✅ Redirect to Settings page after saving
-        header("Location: settings.php?updated=1&t=" . time());
+        // ✅ FIX: Redirect to Account View after saving instead of Settings
+        header("Location: accountView.php?updated=1&t=" . time());
         exit;
       } else {
         $error = "Update failed.";
@@ -140,7 +140,7 @@ $photoPath = !empty($user['photo'])
       </form>
 
       <div class="d-grid mt-3">
-        <!-- ✅ FIX: Back button now goes to Settings -->
+        <!-- ✅ Back to Settings button -->
         <a href="settings.php" class="btn text-black w-100"
           style="background-color: #dcdcdc; border-radius: 15px;"> Settings</a>
       </div>
