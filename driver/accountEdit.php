@@ -4,6 +4,7 @@ session_start();
 require_once '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
+$userId = $_SESSION['userId'];
 $error = '';
 $photoFileName = '';
 $plateNumber = '';
@@ -76,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $updateDriverStmt->bind_param("ssi", $plateNumber, $todaRegistration, $userId);
                     $updateDriverStmt->execute();
                 }
-                // ✅ FIX: Redirect to SETTINGS PAGE instead of accountView
-                header("Location: settings.php?updated=1");
+                // ✅ FIX: Redirect back to ACCOUNT VIEW after saving
+                header("Location: accountView.php?updated=1");
                 exit;
             } else {
                 $error = "Update failed.";
@@ -161,9 +162,8 @@ $photoPath = !empty($user['photo']) ? "../assets/images/$imageFolder/" . htmlspe
             </form>
 
             <div class="d-grid mt-3">
-                <!-- ✅ FIX: Back button now goes to Settings -->
                 <a href="settings.php" class="btn text-black w-100"
-                    style="background-color: #dcdcdc; border-radius: 15px;"> Settings</a>
+                    style="background-color: #dcdcdc; border-radius: 15px;">Settings</a>
             </div>
         </div>
     </div>

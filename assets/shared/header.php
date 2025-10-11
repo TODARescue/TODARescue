@@ -1,24 +1,29 @@
-
-   <div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-bottom-5" style="z-index: 1030;">
-    <div class="row">
-        <div class="col d-flex align-items-center p-3 rounded-bottom-4">
-            <img src="../assets/shared/navbar-icons/arrow-back.svg" alt="Back" class="img-fluid m-2" style="height: 40px;" onclick="history.back();" />
-            <h3 id="page-title" class="fw-bold m-0 ps-2"></h3>
-        </div>
+<div class="container-fluid position-fixed top-0 start-0 end-0 bg-white shadow rounded-bottom-5" style="z-index: 1030;">
+  <div class="row">
+    <div class="col d-flex align-items-center p-3 rounded-bottom-4">
+      <img 
+        src="../assets/shared/navbar-icons/arrow-back.svg" 
+        alt="Back" 
+        class="img-fluid m-2" 
+        style="height: 40px; cursor: pointer;" 
+        id="back-button" 
+      />
+      <h3 id="page-title" class="fw-bold m-0 ps-2"></h3>
     </div>
+  </div>
 </div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const pageTitle = document.getElementById("page-title");
+    const backButton = document.getElementById("back-button");
 
     const pathParts = window.location.pathname.split("/");
+    const folder = pathParts[pathParts.length - 2];
+    const filename = pathParts[pathParts.length - 1];
+    const pageKey = `${folder}/${filename}`;
 
-    const folder = pathParts[pathParts.length - 2]; 
-    const filename = pathParts[pathParts.length - 1]; 
-
-    const pageKey = `${folder}/${filename}`; 
-
+    // ✅ Titles for all pages
     const titles = {
       "passenger/settings.php": "Settings",
       "passenger/emergencyContact.php": "Emergency Contact",
@@ -61,6 +66,18 @@
       "admin/settings.php": "Settings"
     };
 
+    // ✅ Set page title dynamically
     pageTitle.textContent = titles[pageKey] || "Page";
+
+    // ✅ Back button logic
+    backButton.addEventListener("click", function () {
+      if (pageKey === "driver/accountView.php") {
+        window.location.href = "settings.php"; // Driver side redirect
+      } else if (pageKey === "passenger/accountView.php") {
+        window.location.href = "settings.php"; // Passenger side redirect
+      } else {
+        history.back(); // Normal back behavior for all other pages
+      }
+    });
   });
 </script>
