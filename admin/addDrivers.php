@@ -1,6 +1,5 @@
 <?php
 include '../assets/shared/connect.php';
-include '../assets/php/checkLogin.php';
 
 $showSuccessModal = false;
 $showErrorModal = false;
@@ -13,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         empty($_POST['password']) || empty($_POST['contactNumber']) || empty($_POST['model']) ||
         empty($_POST['plateNumber']) || empty($_POST['address']) || empty($_POST['todaRegistration'])
     ) {
-
         $showErrorModal = true;
         $errorMessage = "All fields are required.";
     } elseif (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
@@ -26,15 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $uploadPath = '../assets/images/drivers/' . $photoName;
         move_uploaded_file($photoTmp, $uploadPath);
 
-        $firstName = $_POST['firstName'];
-        $lastName = $_POST['lastName'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $contactNumber = (int) $_POST['contactNumber'];
-        $model = $_POST['model'];
-        $plateNumber = $_POST['plateNumber'];
-        $address = $_POST['address'];
-        $todaRegistration = $_POST['todaRegistration'];
+        // ✅ Fix: no (int) casting, all trimmed strings
+        $firstName = trim($_POST['firstName']);
+        $lastName = trim($_POST['lastName']);
+        $email = trim($_POST['email']);
+        $password = trim($_POST['password']); // as entered, no hash
+        $contactNumber = trim($_POST['contactNumber']); // keep leading zero
+        $model = trim($_POST['model']);
+        $plateNumber = trim($_POST['plateNumber']);
+        $address = trim($_POST['address']);
+        $todaRegistration = trim($_POST['todaRegistration']);
         $isVerified = ($_POST['verification'] === 'verified') ? 1 : 0;
 
         // ========================
@@ -45,8 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtUser = $conn->prepare($insertUser);
 
         if ($stmtUser) {
+            // ✅ All parameters as strings (fixed from ssssis → ssssss)
             $stmtUser->bind_param(
-                "ssssis",
+                "ssssss",
                 $firstName,
                 $lastName,
                 $email,
@@ -113,8 +113,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- ✅ Fix favicon -->
     <link rel="icon" href="../assets/images/logo.png" type="image/png">
 </head>
 
@@ -146,7 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             style="width:100px; height:100px; object-fit: cover;">
                         <div class="small mt-2">Click to upload photo</div>
                     </label>
-                    <!-- ✅ Removed "required" -->
                     <input type="file" id="profile-upload" name="photo" accept="image/*" class="d-none"
                         onchange="previewPhoto(event)">
                 </div>
@@ -159,14 +156,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="lastName" class="form-control border-0 border-bottom mb-3"
                         placeholder="Last Name" required>
 
-                    <!-- Contact Number: only numbers -->
-                    <input type="number" name="contactNumber" class="form-control border-0 border-bottom mb-3"
-                        placeholder="Contact Number" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    <!-- ✅ Changed to type='tel' to preserve leading zero -->
+                    <input type="tel" name="contactNumber" class="form-control border-0 border-bottom mb-3"
+                        placeholder="Contact Number" pattern="[0-9]{11}" maxlength="11" required
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '');">
 
-                    <!-- Email: only valid email format -->
                     <input type="email" name="email" class="form-control border-0 border-bottom mb-4"
                         placeholder="Email" required>
-
                     <input type="text" name="password" class="form-control border-0 border-bottom mb-4"
                         placeholder="Password" required>
                     <input type="text" name="model" class="form-control border-0 border-bottom mb-4"
@@ -228,24 +224,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-<!-- Validation Modal -->
-<div class="modal fade" id="validationModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
-         style="width: 85%; max-width: 320px; margin: auto;">
-         
-      <h5 class="fw-bold mb-2 text-danger">Missing Photo</h5>
-      <p class="mb-4" style="font-size: 0.95rem;">Please upload a driver photo before saving the form.</p>
-      
-      <div class="d-flex justify-content-center">
-        <button type="button" class="btn rounded-pill px-4 text-white"
-                style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
-          Okay
-        </button>
-      </div>
+    <!-- Validation Modal -->
+    <div class="modal fade" id="validationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-white p-4 rounded-5 shadow text-center border-0"
+                style="width: 85%; max-width: 320px; margin: auto;">
+
+                <h5 class="fw-bold mb-2 text-danger">Missing Photo</h5>
+                <p class="mb-4" style="font-size: 0.95rem;">Please upload a driver photo before saving the form.</p>
+
+                <div class="d-flex justify-content-center">
+                    <button type="button" class="btn rounded-pill px-4 text-white"
+                        style="background-color: #1cc8c8; font-weight: 600;" data-bs-dismiss="modal">
+                        Okay
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
     <?php if ($showSuccessModal): ?>
         <script>
@@ -263,27 +259,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-function validateForm(e) {
-    const fileInput = document.getElementById('profile-upload');
-    if (!fileInput.value) {
-        e.preventDefault(); // stop form submit
-        const modal = new bootstrap.Modal(document.getElementById('validationModal'));
-        modal.show(); // show Bootstrap modal instead of alert
-    }
-}
+    <script>
+        function validateForm(e) {
+            const fileInput = document.getElementById('profile-upload');
+            if (!fileInput.value) {
+                e.preventDefault();
+                const modal = new bootstrap.Modal(document.getElementById('validationModal'));
+                modal.show();
+            }
+        }
 
-// Attach validator
-document.getElementById("driverForm").addEventListener("submit", validateForm);
+        document.getElementById("driverForm").addEventListener("submit", validateForm);
 
-// ✅ Preview uploaded photo
-function previewPhoto(event) {
-    const output = document.getElementById('profile-preview');
-    output.style.display = "block"; // make sure preview is visible
-    output.src = URL.createObjectURL(event.target.files[0]);
-}
-</script>
-
+        function previewPhoto(event) {
+            const output = document.getElementById('profile-preview');
+            output.style.display = "block";
+            output.src = URL.createObjectURL(event.target.files[0]);
+        }
+    </script>
 
 </body>
 
