@@ -3,6 +3,14 @@ session_start();
 include '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
+// ✅ Ensure we have the userId (for admin editing)
+$userId = $_GET['userId'] ?? null;
+
+if (!$userId) {
+    echo "Missing userId parameter.";
+    exit;
+}
+
 $userResult = mysqli_query($conn, "SELECT * FROM users WHERE userId = $userId");
 $driverResult = mysqli_query($conn, "SELECT * FROM drivers WHERE userId = $userId");
 
@@ -14,6 +22,7 @@ if (!$user || !$driver) {
     exit;
 }
 
+$errorMessage = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstName = $_POST['firstName'];
@@ -26,28 +35,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $todaRegistration = $_POST['todaRegistration'];
     $isVerified = $_POST['verification'] === 'verified' ? 1 : 0;
 
+    // ✅ Backend validation: only digits
+    if (!preg_match('/^[0-9]+$/', $contactNumber)) {
+        $errorMessage = "Contact number must contain only digits.";
+    } else {
+        $photoFilename = $user['photo'];
 
-    $photoFilename = $user['photo'];
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            $photoFilename = basename($_FILES['photo']['name']);
+            $destination = '../assets/images/drivers/' . $photoFilename;
+            move_uploaded_file($_FILES['photo']['tmp_name'], $destination);
+        }
 
-    if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-        $photoFilename = basename($_FILES['photo']['name']);
-        $destination = '../assets/images/drivers/' . $photoFilename;
-        move_uploaded_file($_FILES['photo']['tmp_name'], $destination);
+        $updateUser = "UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=?, photo=? WHERE userId=?";
+        $stmtUser = $conn->prepare($updateUser);
+        $stmtUser->bind_param("sssssi", $firstName, $lastName, $contactNumber, $email, $photoFilename, $userId);
+        $stmtUser->execute();
+
+        $updateDriver = "UPDATE drivers SET model=?, plateNumber=?, address=?, todaRegistration=?, isVerified=? WHERE userId=?";
+        $stmtDriver = $conn->prepare($updateDriver);
+        $stmtDriver->bind_param("ssssii", $model, $plateNumber, $address, $todaRegistration, $isVerified, $userId);
+        $stmtDriver->execute();
+
+        header("Location: driverView.php?userId=" . $userId);
+        exit;
     }
-
-    $updateUser = "UPDATE users SET firstName=?, lastName=?, contactNumber=?, email=?, photo=? WHERE userId=?";
-    $stmtUser = $conn->prepare($updateUser);
-    $stmtUser->bind_param("sssssi", $firstName, $lastName, $contactNumber, $email, $photoFilename, $userId);
-    $stmtUser->execute();
-
-
-    $updateDriver = "UPDATE drivers SET model=?, plateNumber=?, address=?, todaRegistration=?, isVerified=? WHERE userId=?";
-    $stmtDriver = $conn->prepare($updateDriver);
-    $stmtDriver->bind_param("ssssii", $model, $plateNumber, $address, $todaRegistration, $isVerified, $userId);
-    $stmtDriver->execute();
-
-    header("Location: driverView.php?userId=" . $userId);
-    exit;
 }
 ?>
 
@@ -60,11 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>TODA Rescue - Edit Driver</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rethink+Sans:wght@600;800&display=swap"
-        rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
 <body class="bg-light">
@@ -79,15 +87,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="row mb-4">
             <div class="col d-flex align-items-center ps-4">
-                <a href="#" class="me-2 text-decoration-none">
-                    <img src="../assets/images/arrow-back-admin.svg" alt="Back" style="width: 15px; height: 15px;"
-                        onclick="history.back();">
+                <a href="#" class="me-2 text-decoration-none" onclick="history.back();">
+                    <img src="../assets/images/arrow-back-admin.svg" alt="Back" style="width: 15px; height: 15px;">
                 </a>
                 <h5 class="fw-semibold m-0">Edit Driver</h5>
             </div>
         </div>
 
-        <form method="POST" enctype="multipart/form-data" class="px-4">
+        <?php if (!empty($errorMessage)): ?>
+            <div class="alert alert-danger text-center"><?= htmlspecialchars($errorMessage) ?></div>
+        <?php endif; ?>
+
+        <form method="POST" enctype="multipart/form-data" class="px-4" onsubmit="return validateForm()">
             <div class="text-center mb-3">
                 <input type="file" name="photo" id="photoInput" accept="image/*" class="d-none">
                 <label for="photoInput" style="cursor: pointer;">
@@ -103,8 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="text" class="form-control border-0 border-bottom mb-3" name="lastName" placeholder="Last Name"
                 value="<?php echo htmlspecialchars($user['lastName']); ?>">
 
-            <input type="text" class="form-control border-0 border-bottom mb-3" name="contactNumber"
-                placeholder="Contact Number" value="<?php echo htmlspecialchars($user['contactNumber']); ?>">
+            <!-- ✅ Only allow numbers -->
+            <input type="text" class="form-control border-0 border-bottom mb-3" name="contactNumber" id="contactNumber"
+                placeholder="Contact Number" pattern="^[0-9]+$" maxlength="11"
+                title="Contact number must contain only digits"
+                value="<?php echo htmlspecialchars($user['contactNumber']); ?>" required>
 
             <input type="email" class="form-control border-0 border-bottom mb-4" name="email" placeholder="Email"
                 value="<?php echo htmlspecialchars($user['email']); ?>">
@@ -136,18 +150,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
             </div>
         </form>
-
     </div>
 
     <script>
+        // ✅ Prevent non-numeric input
+        const contactInput = document.getElementById('contactNumber');
+        contactInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        function validateForm() {
+            const value = contactInput.value.trim();
+            if (!/^[0-9]+$/.test(value)) {
+                alert("Contact number must contain only digits.");
+                return false;
+            }
+            return true;
+        }
+
         const photoInput = document.getElementById('photoInput');
         const previewImg = document.getElementById('profilePreview');
-
-        photoInput.addEventListener('change', function() {
+        photoInput.addEventListener('change', function () {
             const file = this.files[0];
-            if (file) {
-                previewImg.src = URL.createObjectURL(file);
-            }
+            if (file) previewImg.src = URL.createObjectURL(file);
         });
     </script>
 
