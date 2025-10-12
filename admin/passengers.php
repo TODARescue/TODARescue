@@ -3,7 +3,6 @@ session_start();
 include '../assets/shared/connect.php';
 include '../assets/php/checkLogin.php';
 
-
 $search = $_GET['search'] ?? '';
 $sort = $_GET['sort'] ?? '';
 $filter = $_GET['filter'] ?? 'all';
@@ -25,7 +24,6 @@ $filter = $_GET['filter'] ?? 'all';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
-
 <body class="bg-white d-flex justify-content-center align-items-start min-vh-100 pt-5">
 
     <div class="container px-4 pb-4" style="max-width: 500px;">
@@ -45,19 +43,14 @@ $filter = $_GET['filter'] ?? 'all';
             <div class="d-flex gap-2 ">
                 <select name="sort" class="form-select rounded-5" onchange="this.form.submit()">
                     <option value="">Sort</option>
-                    <option value="asc" <?php if ($sort === 'asc')
-                                            echo 'selected'; ?>>A-Z</option>
-                    <option value="desc" <?php if ($sort === 'desc')
-                                                echo 'selected'; ?>>Z-A</option>
+                    <option value="asc" <?php if ($sort === 'asc') echo 'selected'; ?>>A-Z</option>
+                    <option value="desc" <?php if ($sort === 'desc') echo 'selected'; ?>>Z-A</option>
                 </select>
 
                 <select name="filter" class="form-select rounded-5" onchange="this.form.submit()">
-                    <option value="all" <?php if ($filter === 'all')
-                                            echo 'selected'; ?>>All</option>
-                    <option value="active" <?php if ($filter === 'active')
-                                                echo 'selected'; ?>>Active</option>
-                    <option value="inactive" <?php if ($filter === 'inactive')
-                                                    echo 'selected'; ?>>Inactive</option>
+                    <option value="all" <?php if ($filter === 'all') echo 'selected'; ?>>All</option>
+                    <option value="active" <?php if ($filter === 'active') echo 'selected'; ?>>Active</option>
+                    <option value="inactive" <?php if ($filter === 'inactive') echo 'selected'; ?>>Inactive</option>
                 </select>
             </div>
         </form>
@@ -67,14 +60,12 @@ $filter = $_GET['filter'] ?? 'all';
             <?php
             $sql = "SELECT * FROM users WHERE role = 'passenger'";
 
-            // Apply filter
             if ($filter === 'active') {
                 $sql .= " AND isDeleted = 0";
             } elseif ($filter === 'inactive') {
                 $sql .= " AND isDeleted = 1";
             }
 
-            // Apply search
             if (!empty($search)) {
                 $safeSearch = mysqli_real_escape_string($conn, $search);
                 $sql .= " AND (
@@ -83,7 +74,6 @@ $filter = $_GET['filter'] ?? 'all';
                     OR CONCAT(firstName, ' ', lastName) LIKE '%$safeSearch%')";
             }
 
-            // Apply sorting
             if ($sort === 'asc') {
                 $sql .= " ORDER BY firstName ASC";
             } elseif ($sort === 'desc') {
@@ -120,25 +110,19 @@ $filter = $_GET['filter'] ?? 'all';
                             <?php if ($isDeleted): ?>
                                 <span class="badge bg-secondary px-3 py-1 rounded-pill">Inactive</span>
                             <?php else: ?>
-                                <div class="d-flex gap-2">
-                                    <a href="editProfilePassenger.php?userId=<?php echo (int) $row['userId']; ?>"
-                                        class="btn btn-info btn-sm rounded-circle text-white" onclick="event.stopPropagation();">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                        data-user-id="<?php echo $row['userId']; ?>"
-                                        class="btn btn-danger btn-sm rounded-circle text-white" onclick="event.stopPropagation();">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </a>
-                                </div>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    data-user-id="<?php echo $row['userId']; ?>"
+                                    class="btn btn-danger btn-sm rounded-circle text-white"
+                                    onclick="event.stopPropagation();">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
                             <?php endif; ?>
-
                         </div>
                     </div>
             <?php
                 }
             } else {
-                echo "<p class='text-center text-muted'>No passengers found.</p>";
+                echo "<p class='text-center text-muted'>No results found.</p>";
             }
             ?>
         </div>

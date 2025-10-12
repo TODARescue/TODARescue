@@ -124,7 +124,7 @@ $filter = $_GET['filter'] ?? 'all';
       <?php
         }
       } else {
-        echo "<p class='text-center text-muted'>No drivers found.</p>";
+        echo "<p class='text-center text-muted'>No results found.</p>";
       }
       ?>
     </div>
