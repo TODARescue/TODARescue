@@ -102,7 +102,7 @@ $conn->close();
 
         <div class="mt-5 w-100 text-center">
             <h6 class="fw-semibold mb-3">User Distribution</h6>
-            <div class="w-75 mx-auto mb-4">
+            <div class="w-75 mx-auto mb-5">
                 <canvas id="userChart" width="300" height="300"></canvas>
             </div>
         </div>
