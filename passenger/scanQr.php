@@ -71,8 +71,10 @@ include '../assets/php/checkLogin.php';
                 <div class="driver-profile mb-3 border rounded p-3">
                     <div class="row">
                         <div class="col-4">
-                            <img id="driverPhoto" src="../assets/img/profile.jpg" alt="Driver Photo"
-                                class="img-fluid rounded-circle border" style="width: 80px; height: 80px; object-fit: cover;">
+                            <img src="<?php echo htmlspecialchars($profilePicture); ?>" 
+                                         onerror="this.onerror=null; this.src='../assets/images/profile-default.png';" 
+                                         alt="Driver Photo"
+                                         class="img-fluid w-100 h-100 object-fit-cover">
                         </div>
                         <div class="col-8 text-start">
                             <h6 id="driverName" class="fw-bold mb-1">Unknown Driver</h6>

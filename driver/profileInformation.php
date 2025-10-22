@@ -215,9 +215,9 @@ $downloadUrl = isset($driver['qrCode']) ? $driver['qrCode'] : '';
 
                         <!-- QR Code Actions -->
                         <div class="row justify-content-center">
-                            <div class="col-auto mb-3">
+                            <div class="col-auto mb-4">
                                 <button id="download-qr-btn"
-                                    class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill"
+                                    class="btn custom-hover text-white fw-bold px-4 py-2 rounded-pill mb-5"
                                     style="background-color: #2DAAA7;">Download QR Code</button>
                             </div>
                             <div id="direct-download-container" class="d-none">
